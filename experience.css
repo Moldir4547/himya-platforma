@@ -445,3 +445,120 @@ progress {
 .lab-tube .liquid {
   transition: background 0.3s ease;
 }
+
+/* Modern chemistry theme: responsive home, navigation and cards. */
+:root { --accent: #087f8c; --accent-soft: #e4f6f5; --violet: #7354b8; --warm: #f5f8fc; --edge: #dce6ef; }
+body { color: rgb(36, 51, 75); font-family: "Segoe UI", Arial, system-ui, sans-serif; background: rgb(245, 248, 252) !important; }
+.site-shell { width: min(1280px, 100%); }
+.topbar { min-height: 96px; height: auto; gap: 24px; border-bottom-color: rgb(220, 230, 239) !important; }
+.brand { flex-shrink: 0; gap: 12px; }
+.brand-symbol { box-shadow: rgba(8, 127, 140, 0.133) 0px 6px 16px; border-radius: 15px; background: linear-gradient(135deg, rgb(8, 127, 140), rgb(17, 91, 209)) !important; border-color: transparent !important; }
+.brand strong { color: rgb(22, 46, 80); }
+.topbar nav { gap: 4px; flex-wrap: nowrap; }
+.topbar nav a, .topbar nav button { color: rgb(69, 85, 109); padding: 11px 13px; border-radius: 12px; white-space: nowrap; }
+.topbar nav a[aria-current="page"] { color: rgb(8, 103, 117); background: rgb(228, 246, 245); padding: 11px 13px; }
+.topbar nav a:hover, .topbar nav button:hover { color: rgb(8, 103, 117); background: rgb(228, 246, 245); }
+.topbar nav .nav-pill { color: rgb(255, 255, 255); border-radius: 12px; background: rgb(8, 127, 140) !important; }
+.topbar nav .nav-pill:hover { color: rgb(255, 255, 255); background: rgb(6, 106, 117) !important; }
+.learn-home { position: relative; isolation: isolate; grid-template-columns: 1.3fr 1fr; gap: 48px; padding: 56px 44px; margin: 28px 0px; border: 1px solid rgb(224, 234, 242); border-radius: 30px; background: radial-gradient(at 15% 0%, rgb(228, 246, 245) 0%, transparent 65%), rgb(255, 255, 255); }
+.learn-home > div { min-width: 0px; }
+.learn-kicker { display: inline-block; padding: 9px 13px; border: 1px solid rgb(194, 231, 229); border-radius: 30px; background: rgb(233, 248, 246); color: rgb(8, 103, 117); font-size: 11px; letter-spacing: 0.06em; line-height: 1.5; }
+.learn-home h1, .learn-hero h1 { color: rgb(22, 46, 80); font-weight: 750; letter-spacing: -0.045em; }
+.learn-home h1 { font-size: clamp(34px, 4.1vw, 56px); line-height: 1.13; margin: 22px 0px 20px; }
+.learn-home p { color: rgb(88, 103, 124); font-size: 17px; line-height: 1.75; }
+.learn-actions { gap: 16px; margin-top: 28px; }
+.primary-button { color: rgb(255, 255, 255); border-radius: 13px; padding: 15px 22px; min-height: 48px; box-shadow: rgba(8, 127, 140, 0.133) 0px 8px 20px; transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s; background: rgb(8, 127, 140) !important; border-color: rgb(8, 127, 140) !important; }
+.primary-button:hover { transform: translateY(-2px); box-shadow: rgba(8, 127, 140, 0.19) 0px 12px 24px; background: rgb(6, 106, 117) !important; }
+.learn-actions a:not(.primary-button) { color: rgb(8, 103, 117); font-size: 14px; }
+.learn-home .lab-visual { padding: 28px 24px; border: 1px solid rgb(46, 78, 112); border-radius: 25px; background-color: rgb(22, 46, 80); background-image: radial-gradient(rgb(69, 96, 128) 1px, transparent 1px), radial-gradient(at 100% 0%, rgb(35, 87, 118), transparent 70%); background-size: 22px 22px, 100% 100%; box-shadow: rgba(22, 46, 80, 0.125) 0px 20px 36px; }
+.learn-home .lab-label { color: rgb(185, 206, 228); font-size: 11px; }
+.learn-home .tube-row { margin: 30px 0px; gap: 14px; }
+.learn-home .tube-cell strong { color: rgb(255, 255, 255); font-size: 20px; }
+.learn-home .tube-cell small { color: rgb(197, 213, 230); font-size: 12px; }
+.learn-home .lab-tube { height: 155px; width: 60px; border-color: rgb(170, 195, 214); background: rgba(233, 245, 255, 0.08); box-shadow: rgba(255, 255, 255, 0.094) 7px 0px 0px inset; }
+.learn-home .liquid.acid { background: rgb(243, 213, 233); opacity: 0.85; }
+.learn-home .liquid.neutral { background: linear-gradient(rgba(225, 197, 154, 0.6) 60%, rgb(155, 102, 62) 62%); }
+.learn-home .liquid.alkaline { background: rgb(115, 184, 117); }
+.learn-steps { gap: 12px; background: transparent; border: 0px; border-radius: 0px; overflow: visible; margin: 24px 0px 32px; }
+.learn-steps a, .learn-steps a:last-child { border: 1px solid rgb(220, 230, 239); border-radius: 16px; background: rgb(255, 255, 255); color: rgb(36, 51, 75); font-weight: 650; padding: 18px; gap: 14px; transition: transform 0.2s, box-shadow 0.2s; }
+.learn-steps span { display: inline-grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 11px; background: rgb(228, 246, 245); color: rgb(8, 103, 117); font-size: 13px; font-weight: 700; }
+.learn-steps a:nth-child(2) span { background: rgb(240, 234, 250); color: rgb(105, 66, 161); }
+.learn-steps a:nth-child(3) span { background: rgb(255, 240, 223); color: rgb(150, 80, 21); }
+.learn-steps a:nth-child(4) span { background: rgb(231, 239, 255); color: rgb(40, 91, 177); }
+.learn-steps a:hover { transform: translateY(-3px); box-shadow: rgba(22, 46, 80, 0.043) 0px 8px 20px; }
+.learn-steps [aria-current] { background: rgb(228, 246, 245); border-color: rgb(152, 206, 207); }
+.home-section { padding: 22px 0px; }
+.home-section h2 { color: rgb(22, 46, 80); font-size: clamp(21px, 2.4vw, 28px); letter-spacing: -0.025em; }
+.home-section > header a { color: rgb(8, 103, 117); font-weight: 650; }
+.materials-grid { gap: 20px; }
+.material-card { padding: 26px; border: 1px solid rgb(220, 230, 239); border-radius: 20px; box-shadow: rgba(22, 46, 80, 0.02) 0px 6px 20px; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+.material-card:hover { transform: translateY(-4px); border-color: rgb(155, 205, 210); box-shadow: rgba(22, 46, 80, 0.055) 0px 14px 30px; }
+.material-meta { align-items: center; gap: 12px; }
+.file-type { padding: 12px 10px; border-radius: 12px; font-size: 11px; letter-spacing: 0.04em; }
+.file-type-doc { background: rgb(231, 239, 255); color: rgb(40, 91, 177); }
+.file-type-pdf { background: rgb(255, 240, 231); color: rgb(164, 72, 39); }
+.material-category { color: rgb(104, 119, 139); font-size: 12px; }
+.material-copy h3 { color: rgb(36, 51, 75); font-size: 18px; line-height: 1.5; }
+.material-copy p, .material-details { color: rgb(104, 119, 139); }
+.material-actions { gap: 8px; }
+.material-actions button { border-radius: 10px; min-height: 44px; }
+.material-actions .material-open { color: rgb(8, 103, 117); background: rgb(233, 247, 246); border-color: rgb(197, 231, 229); }
+.topic-links { gap: 16px; }
+.topic-links > a { position: relative; flex-wrap: wrap; align-content: flex-start; min-height: 164px; padding: 24px; border-radius: 20px; background: rgb(233, 247, 246); border-color: rgb(204, 233, 229); color: rgb(23, 84, 90); transition: transform 0.2s, box-shadow 0.2s; }
+.topic-links > a:nth-child(2) { background: rgb(241, 237, 251); border-color: rgb(226, 217, 245); color: rgb(92, 65, 140); }
+.topic-links > a:nth-child(3) { background: rgb(255, 243, 231); border-color: rgb(244, 226, 203); color: rgb(136, 85, 39); }
+.topic-links > a:nth-child(4) { background: rgb(234, 241, 255); border-color: rgb(214, 226, 250); color: rgb(49, 86, 143); }
+.topic-links > a > span { display: block; width: 100%; color: inherit; opacity: 0.8; font-size: 13px; }
+.topic-links > a > strong { max-width: calc(100% - 24px); font-size: 18px; line-height: 1.4; }
+.topic-links > a > b { font-size: 20px; }
+.topic-links > a:hover { background: rgb(255, 255, 255); transform: translateY(-4px); box-shadow: rgba(22, 46, 80, 0.047) 0px 12px 26px; }
+.learning-footer { color: rgb(104, 119, 139); border-color: rgb(220, 230, 239); }
+.learning-footer a { color: rgb(8, 103, 117); font-weight: 650; }
+.learn-panel { border-radius: 20px; border-color: rgb(220, 230, 239); box-shadow: rgba(22, 46, 80, 0.02) 0px 6px 20px; }
+.learn-panel h2 { color: rgb(22, 46, 80); }
+@media (max-width: 1100px) {
+  .topbar { position: relative; min-height: 82px; }
+  .menu-toggle { display: block; margin-left: auto; color: rgb(22, 46, 80); border-radius: 12px; background: rgb(228, 246, 245); }
+  .topbar nav { display: none; position: absolute; top: 100%; left: 0px; right: 0px; z-index: 200; padding: 14px; border: 1px solid rgb(220, 230, 239); border-radius: 16px; background: rgb(255, 255, 255); box-shadow: rgba(22, 46, 80, 0.08) 0px 12px 30px; max-height: calc(100dvh - 100px); overflow-y: auto; align-items: stretch; }
+  .topbar nav.open { display: flex; flex-direction: column; }
+  .topbar nav a, .topbar nav button { text-align: left; padding: 12px 14px; }
+  .learn-home { padding: 36px 28px; gap: 28px; }
+  .learn-home h1 { font-size: 40px; }
+}
+@media (max-width: 800px) {
+  .learn-home { grid-template-columns: 1fr; padding: 32px; gap: 30px; }
+  .learn-home h1 { font-size: clamp(34px, 6vw, 46px); }
+  .learn-home .lab-visual { width: 100%; }
+  .learn-steps { grid-template-columns: repeat(2, minmax(0px, 1fr)); }
+  .learn-steps a { padding: 14px; }
+  .topic-links { grid-template-columns: repeat(2, minmax(0px, 1fr)); }
+}
+@media (max-width: 560px) {
+  .site-shell { padding: 0px 16px 32px !important; }
+  .topbar { min-height: 76px; }
+  .learn-home { margin: 18px 0px; padding: 26px 20px; border-radius: 22px; gap: 28px; }
+  .learn-home h1 { font-size: clamp(28px, 8.4vw, 40px); letter-spacing: -0.045em; }
+  .learn-kicker { font-size: 10px; padding: 8px 10px; letter-spacing: 0.035em; }
+  .learn-home p { font-size: 16px; }
+  .learn-actions { flex-direction: column; align-items: stretch; gap: 16px; }
+  .learn-actions a { text-align: center; }
+  .learn-home .lab-visual { padding: 22px 16px; border-radius: 18px; }
+  .learn-home .tube-row { gap: 10px; margin: 24px 0px; }
+  .learn-home .lab-tube { width: 48px; height: 112px; }
+  .learn-home .tube-cell strong { font-size: 17px; }
+  .learn-home .tube-cell small { font-size: 10px; }
+  .learn-steps { gap: 10px; margin: 20px 0px; }
+  .learn-steps a { padding: 12px; gap: 8px; font-size: 13px; }
+  .learn-steps span { width: 32px; height: 32px; }
+  .home-section { padding: 18px 0px; }
+  .materials-grid { grid-template-columns: 1fr; gap: 14px; }
+  .material-card { padding: 22px; }
+  .topic-links { gap: 12px; }
+  .topic-links > a { min-height: 154px; padding: 18px; }
+  .topic-links > a > span { display: block; }
+  .topic-links > a > strong { font-size: 16px; }
+  .learning-footer { margin-top: 28px; padding: 22px 0px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary-button:hover, .learn-steps a:hover, .material-card:hover, .topic-links > a:hover { transform: none; }
+}
