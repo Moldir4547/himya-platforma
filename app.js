@@ -448,7 +448,7 @@ async function officePptx(zip) {
   return `<div class="office-slide-toolbar"><strong>${slides.length} слайд</strong><span>Төмен жылжытып оқыңыз</span></div>` + slides.join('');
 }
 const officeStyles = `<style>
-.office-reader{height:100%;overflow:auto;background:#edf2f7;color:#172e49;padding:20px;min-height:320px;box-sizing:border-box}
+.office-reader{width:100%;align-self:stretch;height:100%;overflow:auto;background:#edf2f7;color:#172e49;padding:20px;min-height:320px;box-sizing:border-box}
 .office-reader-status{text-align:center;padding:50px 20px}.office-reader-status button{margin-top:15px;padding:10px 20px}
 .office-document{max-width:900px;margin:auto;padding:40px;background:white;box-shadow:0 4px 20px #172e4914;line-height:1.65;overflow-wrap:anywhere}
 .office-document p{margin:0 0 12px}.office-document h1,.office-document h2,.office-document h3{color:#172e49}
