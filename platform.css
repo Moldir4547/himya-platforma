@@ -97,3 +97,11 @@ input:disabled,select:disabled,textarea:disabled{opacity:.7;cursor:not-allowed;b
 /* Keep preview actions readable on the shared light interface. */
 .file-viewer footer a{color:#245f9f!important;background:#fff!important;border:1px solid #cbd7e6!important;min-height:44px;display:inline-flex;align-items:center;padding:10px 16px;border-radius:10px;font-weight:600}
 .file-viewer footer .viewer-download{background:#286ab5!important;color:#fff!important;border:1px solid #286ab5!important;min-height:44px}
+/* Keep every file preview and its title inside the dialog, including PDFs. */
+.file-viewer{grid-template-columns:minmax(0,1fr);min-width:0}
+.file-viewer>header{width:100%;min-width:0;gap:16px}
+.file-viewer>header>div{min-width:0}
+.file-viewer>header h2{white-space:normal!important;overflow:visible!important;overflow-wrap:anywhere;text-overflow:clip;max-width:100%}
+.file-viewer>.viewer-canvas{width:100%;min-width:0}
+.file-viewer .file-frame{display:block;width:100%;min-width:0;max-width:100%}
+.file-viewer .viewer-close{flex-shrink:0}
