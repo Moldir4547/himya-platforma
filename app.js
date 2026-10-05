@@ -89,7 +89,7 @@ function knowledgeMapPage(item){const parent=state.items.find((entry)=>entry.id=
 function resourceKind(resource){const mime=(resource.mime_type||"").toLowerCase(),name=(resource.filename||"").toLowerCase();if(mime.startsWith("image/"))return"image";if(mime.includes("pdf")||name.endsWith(".pdf"))return"pdf";if(mime.startsWith("video/"))return"video";if(mime.startsWith("audio/"))return"audio";if(/\.(doc|docx)$/.test(name))return"doc";if(/\.(ppt|pptx)$/.test(name))return"ppt";if(/\.(xls|xlsx)$/.test(name))return"xls";return"file";}
 function safeExternalUrl(value){try{const url=new URL(value);return ["https:","http:"].includes(url.protocol)?url.href:"";}catch{return"";}}
 function youtubeEmbedUrl(value=""){try{const url=new URL(value),host=url.hostname.replace(/^www\./,"");let id="";if(host==="youtu.be")id=url.pathname.split("/")[1]||"";else if(host==="youtube.com"||host==="m.youtube.com"){if(url.pathname==="/watch")id=url.searchParams.get("v")||"";else if(/^\/(embed|shorts)\//.test(url.pathname))id=url.pathname.split("/")[2]||"";}return /^[\w-]{6,20}$/.test(id)?`https://www.youtube-nocookie.com/embed/${id}`:"";}catch{return"";}}
-function resourcePreview(resource,admin){const kind=resourceKind(resource);if(!resource.url)return `<div class="resource-preview document"><span>${kind.toUpperCase()}</span></div>`;const url=escapeHtml(resource.url);if(kind==='image')return `<img class="file-image" src="${url}" alt="${escapeHtml(resource.filename)}"/>`;if(kind==='pdf')return `<iframe class="file-frame" src="${url}" title="${escapeHtml(resource.filename)}"></iframe>`;if(kind==='video')return `<video src="${url}" controls></video>`;if(kind==='audio')return `<audio src="${url}" controls></audio>`;return `<div class="document-empty"><strong>${escapeHtml(resource.filename)}</strong><p>Бұл құжатты құрылғыңыздағы Word немесе PowerPoint арқылы ашу үшін жүктеп алыңыз.</p></div>`;}
+function resourcePreview(resource,admin){if(/\.(docx|pptx)$/i.test(resource.filename||""))return `<div id="office-reader" class="office-reader" tabindex="0" aria-label="Материал мазмұны"><div class="office-reader-status" role="status">Материал ашылуда…</div></div>`;const kind=resourceKind(resource);if(!resource.url)return `<div class="resource-preview document"><span>${kind.toUpperCase()}</span></div>`;const url=escapeHtml(resource.url);if(kind==='image')return `<img class="file-image" src="${url}" alt="${escapeHtml(resource.filename)}"/>`;if(kind==='pdf')return `<iframe class="file-frame" src="${url}" title="${escapeHtml(resource.filename)}"></iframe>`;if(kind==='video')return `<video src="${url}" controls></video>`;if(kind==='audio')return `<audio src="${url}" controls></audio>`;return `<div class="document-empty"><strong>${escapeHtml(resource.filename)}</strong><p>Бұл құжатты құрылғыңыздағы Word немесе PowerPoint арқылы ашу үшін жүктеп алыңыз.</p></div>`;}
 function downloadUrl(resource){return resource.url+(resource.url.includes('?')?'&':'?')+'download='+encodeURIComponent(resource.filename);}
 function resourceList(itemId,admin=false){const resources=state.resources[itemId]||[];return `<div class="resource-list">${resources.map(r=>`<article class="resource-card"><span class="file-type">${resourceKind(r).toUpperCase()}</span><strong>${escapeHtml(r.filename)}</strong><small>${formatSize(r.size)}</small><div class="material-actions"><button data-open-resource="${r.id}">Ашу</button><button data-download-resource="${r.id}">Жүктеп алу</button>${admin?`<button data-action="delete-resource" data-id="${r.id}" data-item="${itemId}" data-title="${escapeHtml(r.filename)}">Өшіру</button>`:''}</div></article>`).join('')||'<p>Файлдар жоқ</p>'}</div>`;}
 
@@ -171,6 +171,7 @@ function bindEvents(){
   const resourceInput=app.querySelector("#resource-file");if(resourceInput){resourceInput.multiple=true;resourceInput.addEventListener("change",handleUpload);}app.querySelectorAll('[data-action="delete-resource"]').forEach((button)=>button.addEventListener("click",()=>{state.deleting={kind:"resource",id:button.dataset.id,itemId:button.dataset.item,title:button.dataset.title};render();}));
   app.querySelectorAll('[data-action="preview-resource"]').forEach((button)=>button.addEventListener("click",()=>{state.previewing=(state.resources[button.dataset.item]||[]).find((resource)=>resource.id===button.dataset.id)||null;render();}));app.querySelectorAll('[data-action="close-preview"]').forEach((control)=>control.addEventListener("click",(event)=>{if(control.classList.contains("file-modal-backdrop")&&event.target!==control)return;state.previewing=null;render();}));
   if(state.previewing?.presentation_url)loadPresentationPreview();
+  if(state.previewing && app.querySelector("#office-reader"))loadOfficePreview();
   app.querySelectorAll("[data-rich-command]").forEach((control)=>{control.addEventListener("mousedown",saveRichSelection);if(control.tagName==="BUTTON")control.addEventListener("click",applyRichCommand);else control.addEventListener("change",applyRichCommand);});
   app.querySelector('[data-action="add-question"]')?.addEventListener("click",()=>{const container=app.querySelector("#quiz-questions");container.insertAdjacentHTML("beforeend",quizQuestionEditor({},container.children.length));renumberQuestions();container.lastElementChild?.querySelector(".quiz-question-text")?.focus();});
   app.querySelector("#quiz-questions")?.addEventListener("click",(event)=>{const button=event.target.closest('[data-action="remove-question"]');if(button){button.closest(".quiz-question")?.remove();renumberQuestions();}});
@@ -284,6 +285,207 @@ async function boot(){
  finally{if(generation===bootGeneration){applyTheme();state.loading=false;render();hydrateRoute();}}
 }
 window.addEventListener('storage',event=>{if(['chem_supabase_session_v1','chem_server_session_v1'].includes(event.key)){state.user=null;state.users=[];state.analytics=null;state.resources={};state.allResources=[];state.previewing=null;state.loading=true;render();boot();}});
+// Office files are read on this device; signed storage URLs never go to an external viewer.
+const officePreviewCache = new Map();
+const officeNodes = (node, name) => [...(node?.getElementsByTagNameNS('*', name) || [])];
+const officeFirst = (node, name) => officeNodes(node, name)[0];
+const officeAttr = (node, name) => node?.getAttribute(name) || [...(node?.attributes || [])].find(a => a.localName === name)?.value || '';
+const officeNum = (value, fallback = 0) => Number.isFinite(Number(value)) && value !== '' ? Number(value) : fallback;
+const officePath = (base, target) => {
+  const parts = target.startsWith('/') ? [] : base.split('/').slice(0, -1);
+  for (const part of target.split('/')) { if (part === '..') parts.pop(); else if (part && part !== '.') parts.push(part); }
+  return parts.join('/');
+};
+async function officeArchive(buffer) {
+  const bytes = new Uint8Array(buffer), view = new DataView(buffer), decoder = new TextDecoder();
+  let end = bytes.length - 22;
+  while (end >= Math.max(0, bytes.length - 65557) && view.getUint32(end, true) !== 0x06054b50) end--;
+  if (end < Math.max(0, bytes.length - 65557)) throw new Error('Құжаттың пішімі оқылмады');
+  const entries = new Map(), count = view.getUint16(end + 10, true);
+  let offset = view.getUint32(end + 16, true), total = 0;
+  if (count > 10000) throw new Error('Құжат тым үлкен');
+  for (let i = 0; i < count; i++) {
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) throw new Error('Құжат зақымдалған');
+    const size = view.getUint32(offset + 24, true), packed = view.getUint32(offset + 20, true);
+    const length = view.getUint16(offset + 28, true), extra = view.getUint16(offset + 30, true), comment = view.getUint16(offset + 32, true);
+    total += size;
+    if (total > 150 * 1024 * 1024 || size > 40 * 1024 * 1024) throw new Error('Құжат тым үлкен');
+    const name = decoder.decode(bytes.slice(offset + 46, offset + 46 + length));
+    entries.set(name, {size, packed, method: view.getUint16(offset + 10, true), flags: view.getUint16(offset + 8, true), start: view.getUint32(offset + 42, true)});
+    offset += 46 + length + extra + comment;
+  }
+  const read = async name => {
+    const entry = entries.get(name); if (!entry) return null;
+    if (entry.flags & 1) throw new Error('Құжат құпиясөзбен қорғалған');
+    const start = entry.start;
+    if (start + 30 > bytes.length || view.getUint32(start, true) !== 0x04034b50) throw new Error('Құжат зақымдалған');
+    const dataStart = start + 30 + view.getUint16(start + 26, true) + view.getUint16(start + 28, true);
+    if (dataStart + entry.packed > bytes.length) throw new Error('Құжат зақымдалған');
+    const data = bytes.slice(dataStart, dataStart + entry.packed);
+    if (entry.method === 0) return data;
+    if (entry.method !== 8) throw new Error('Бұл құжаттың қысу пішімі қолдау таппайды');
+    const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    const output = new Uint8Array(await new Response(stream).arrayBuffer());
+    if (output.length !== entry.size) throw new Error('Құжат зақымдалған');
+    return output;
+  };
+  const xml = async name => {
+    const data = await read(name); if (!data) return null;
+    const doc = new DOMParser().parseFromString(decoder.decode(data), 'application/xml');
+    if (doc.querySelector('parsererror')) throw new Error('Құжаттың құрылымы оқылмады');
+    return doc;
+  };
+  const relationships = async name => {
+    const split = name.lastIndexOf('/'), relPath = name.slice(0, split + 1) + '_rels/' + name.slice(split + 1) + '.rels';
+    const doc = await xml(relPath), result = new Map();
+    for (const rel of officeNodes(doc, 'Relationship')) if (officeAttr(rel, 'TargetMode') !== 'External') result.set(officeAttr(rel, 'Id'), officePath(name, officeAttr(rel, 'Target')));
+    return result;
+  };
+  const image = async name => {
+    if (!name || !/\.(png|jpe?g|gif|webp)$/i.test(name)) return '';
+    const data = await read(name); if (!data) return '';
+    let binary = ''; for (let i = 0; i < data.length; i += 8192) binary += String.fromCharCode(...data.subarray(i, i + 8192));
+    const ext = name.split('.').pop().toLowerCase();
+    return `data:image/${ext === 'jpg' ? 'jpeg' : ext};base64,${btoa(binary)}`;
+  };
+  return {read, xml, relationships, image};
+}
+const officeColor = (node, fallback = '') => {
+  const value = officeAttr(officeFirst(node, 'srgbClr'), 'val');
+  return /^[a-f\d]{6}$/i.test(value) ? '#' + value : fallback;
+};
+function officeRuns(node, word = false) {
+  const names = word ? ['t', 'tab', 'br', 'cr'] : ['t', 'br'];
+  const walk = current => {
+    if (names.includes(current.localName)) return current.localName === 't' ? escapeHtml(current.textContent) : current.localName === 'tab' ? '&emsp;' : '<br>';
+    const children = [...current.children].map(walk).join('');
+    if (current.localName !== 'r') return children;
+    const props = officeFirst(current, 'rPr'); if (!props) return children;
+    const styles = [];
+    if (word) {
+      if (officeFirst(props, 'b') && !['0','false'].includes(officeAttr(officeFirst(props,'b'),'val'))) styles.push('font-weight:700');
+      if (officeFirst(props, 'i')) styles.push('font-style:italic');
+      const vertical = officeAttr(officeFirst(props, 'vertAlign'), 'val');
+      if (['subscript', 'superscript'].includes(vertical)) return `<${vertical === 'subscript' ? 'sub' : 'sup'}>${children}</${vertical === 'subscript' ? 'sub' : 'sup'}>`;
+    } else {
+      if (officeAttr(props, 'b') === '1') styles.push('font-weight:700');
+      if (officeAttr(props, 'i') === '1') styles.push('font-style:italic');
+      const color = officeColor(props); if (color) styles.push('color:' + color);
+      const baseline = officeNum(officeAttr(props, 'baseline'));
+      if (baseline) return `<${baseline < 0 ? 'sub' : 'sup'}>${children}</${baseline < 0 ? 'sub' : 'sup'}>`;
+    }
+    return styles.length ? `<span style="${styles.join(';')}">${children}</span>` : children;
+  };
+  return walk(node);
+}
+async function officeDocx(zip) {
+  const doc = await zip.xml('word/document.xml'); if (!doc) throw new Error('Word құжаты табылмады');
+  const rels = await zip.relationships('word/document.xml');
+  const block = async node => {
+    if (node.localName === 'tbl') return '<table>' + (await Promise.all([...node.children].filter(n => n.localName === 'tr').map(async row => '<tr>' + (await Promise.all([...row.children].filter(n => n.localName === 'tc').map(async cell => {
+      const span = Math.max(1, Math.min(50, officeNum(officeAttr(officeFirst(cell, 'gridSpan'), 'val'), 1)));
+      return `<td colspan="${span}">` + (await Promise.all([...cell.children].map(block))).join('') + '</td>';
+    }))).join('') + '</tr>'))).join('') + '</table>';
+    if (node.localName !== 'p') return '';
+    let text = officeRuns(node, true);
+    for (const blip of officeNodes(node, 'blip')) {
+      const src = await zip.image(rels.get(officeAttr(blip, 'embed')));
+      if (src) text += `<img src="${src}" alt="Құжаттағы сурет" loading="lazy">`;
+    }
+    const props = officeFirst(node, 'pPr'), style = officeAttr(officeFirst(props, 'pStyle'), 'val');
+    const heading = /heading([1-6])/i.exec(style), tag = heading ? 'h' + heading[1] : 'p';
+    const align = officeAttr(officeFirst(props, 'jc'), 'val');
+    return `<${tag}${['center','right','justify'].includes(align) ? ` style="text-align:${align}"` : ''}>${officeFirst(props,'numPr') ? '• ' : ''}${text || '<br>'}</${tag}>`;
+  };
+  return '<article class="office-document">' + (await Promise.all([...officeFirst(doc, 'body').children].map(block))).join('') + '</article>';
+}
+async function officePptx(zip) {
+  const presentation = await zip.xml('ppt/presentation.xml'); if (!presentation) throw new Error('Презентация табылмады');
+  const size = officeFirst(presentation, 'sldSz'), width = officeNum(officeAttr(size, 'cx'), 9144000), height = officeNum(officeAttr(size, 'cy'), 6858000);
+  const rels = await zip.relationships('ppt/presentation.xml'), ids = officeNodes(presentation, 'sldId');
+  if (!ids.length || ids.length > 400) throw new Error('Слайдтар саны қолдау шегінен тыс');
+  const slides = [];
+  for (const [index, id] of ids.entries()) {
+    const path = rels.get(id.getAttribute('r:id') || id.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id')), doc = path && await zip.xml(path); if (!doc) continue;
+    const slideRels = await zip.relationships(path);
+    const layoutPath = [...slideRels.values()].find(p => p.includes('/slideLayouts/'));
+    const layout = layoutPath && await zip.xml(layoutPath);
+    const layoutRels = layoutPath ? await zip.relationships(layoutPath) : new Map();
+    const masterPath = [...layoutRels.values()].find(p => p.includes('/slideMasters/'));
+    const master = masterPath && await zip.xml(masterPath), masterRels = masterPath ? await zip.relationships(masterPath) : new Map();
+    const background = officeColor(officeFirst(doc, 'bg')) || officeColor(officeFirst(layout, 'bg')) || officeColor(officeFirst(master, 'bg'), '#fff');
+    const elements = [];
+    for (const [layer, layerRels, inherited] of [[master, masterRels, true], [layout, layoutRels, true], [doc, slideRels, false]]) {
+      for (const shape of [...(officeFirst(layer, 'spTree')?.children || [])]) {
+        if (!['sp','pic','graphicFrame'].includes(shape.localName) || (inherited && officeFirst(shape, 'ph'))) continue;
+        let transform = officeFirst(shape, 'xfrm');
+        if (!transform && !inherited) {
+          const ph = officeFirst(shape, 'ph');
+          const match = officeNodes(layout, 'sp').find(s => {
+            const lp = officeFirst(s, 'ph'); return lp && (officeAttr(lp,'idx') === officeAttr(ph,'idx')) && officeAttr(lp,'type') === officeAttr(ph,'type');
+          });
+          transform = officeFirst(match, 'xfrm');
+        }
+        const off = officeFirst(transform, 'off'), ext = officeFirst(transform, 'ext');
+        const x = officeNum(officeAttr(off,'x')), y = officeNum(officeAttr(off,'y'));
+        const w = officeNum(officeAttr(ext,'cx'), width), h = officeNum(officeAttr(ext,'cy'), height * .15);
+        const position = `left:${x/width*100}%;top:${y/height*100}%;width:${w/width*100}%;height:${h/height*100}%`;
+        const blip = officeFirst(shape,'blip');
+        if (blip) { const src = await zip.image(layerRels.get(officeAttr(blip,'embed'))); if (src) elements.push(`<img src="${src}" alt="Слайдтағы сурет" style="${position}" loading="lazy">`); }
+        const paragraphs = officeNodes(shape,'p');
+        const text = paragraphs.map(p => {
+          const props = officeFirst(p,'pPr'), align = ({ctr:'center',r:'right',just:'justify'})[officeAttr(props,'algn')] || 'left';
+          const runs = officeNodes(p,'rPr'), fontSize = officeNum(officeAttr(runs.find(r=>officeAttr(r,'sz')) || officeFirst(p,'defRPr'),'sz'), 2400)/100;
+          const sizeCqw = Math.max(.7, fontSize * 12700/width * 100);
+          return `<p style="text-align:${align};font-size:${sizeCqw}cqw">${officeRuns(p) || '<br>'}</p>`;
+        }).join('');
+        const fill = officeColor(officeFirst(officeFirst(shape,'spPr'),'solidFill'));
+        if (text || fill) elements.push(`<div class="office-slide-text" style="${position};${fill ? 'background:'+fill+';' : ''}color:${officeColor(officeFirst(shape,'rPr'),'#172e49')}">${text}</div>`);
+      }
+    }
+    slides.push(`<article class="office-slide" aria-label="${index+1}-слайд" style="aspect-ratio:${width}/${height};background:${background}">${elements.join('')}<span class="office-slide-number">${index+1}</span></article>`);
+  }
+  return `<div class="office-slide-toolbar"><strong>${slides.length} слайд</strong><span>Төмен жылжытып оқыңыз</span></div>` + slides.join('');
+}
+const officeStyles = `<style>
+.office-reader{height:100%;overflow:auto;background:#edf2f7;color:#172e49;padding:20px;min-height:320px;box-sizing:border-box}
+.office-reader-status{text-align:center;padding:50px 20px}.office-reader-status button{margin-top:15px;padding:10px 20px}
+.office-document{max-width:900px;margin:auto;padding:40px;background:white;box-shadow:0 4px 20px #172e4914;line-height:1.65;overflow-wrap:anywhere}
+.office-document p{margin:0 0 12px}.office-document h1,.office-document h2,.office-document h3{color:#172e49}
+.office-document table{border-collapse:collapse;width:100%;display:block;overflow:auto;margin:16px 0;font-size:14px}
+.office-document td{border:1px solid #cdd7e2;padding:8px;min-width:50px;vertical-align:top}.office-document img{max-width:100%;height:auto}
+.office-slide-toolbar{display:flex;justify-content:space-between;gap:10px;padding:12px;max-width:1100px;margin:auto;color:#40566c}
+.office-slide{position:relative;container-type:inline-size;width:100%;max-width:1100px;margin:0 auto 22px;overflow:hidden;box-shadow:0 3px 16px #172e491f}
+.office-slide>img,.office-slide-text{position:absolute;box-sizing:border-box}.office-slide>img{object-fit:contain}
+.office-slide-text{padding:.4%;overflow:hidden;line-height:1.15}.office-slide-text p{margin:0 0 .3em;white-space:pre-wrap;color:inherit;line-height:inherit;font-family:Arial,sans-serif}
+.office-slide-number{position:absolute;right:8px;bottom:6px;background:#ffffffd9;border-radius:6px;padding:3px 8px;font:12px Arial;color:#40566c}
+@media(max-width:600px){.office-reader{padding:8px}.office-document{padding:18px;font-size:14px}.office-slide-toolbar{font-size:12px}.office-slide{margin-bottom:12px}}
+</style>`;
+async function loadOfficePreview() {
+  const viewer = app.querySelector('#office-reader'), resource = state.previewing; if (!viewer || !resource?.url) return;
+  const key = resource.id + ':' + (resource.updated_at || resource.size || resource.url);
+  try {
+    let promise = officePreviewCache.get(key);
+    if (!promise) {
+      promise = (async () => {
+        const response = await fetch(resource.url, {signal:AbortSignal.timeout(60000)});
+        if (!response.ok) throw new Error('Материал ашылмады. Қайта көріңіз');
+        const zip = await officeArchive(await response.arrayBuffer());
+        return /\.docx$/i.test(resource.filename) ? officeDocx(zip) : officePptx(zip);
+      })();
+      if (officePreviewCache.size >= 3) officePreviewCache.delete(officePreviewCache.keys().next().value);
+      officePreviewCache.set(key,promise);
+      promise.catch(()=>officePreviewCache.delete(key));
+    }
+    const html = await promise; if (!viewer.isConnected) return;
+    viewer.innerHTML = officeStyles + html;
+  } catch (error) {
+    if (!viewer.isConnected) return;
+    viewer.innerHTML = officeStyles + `<div class="office-reader-status" role="alert"><p>${escapeHtml(error.message || 'Материал ашылмады')}</p><button type="button" id="office-retry">Қайта ашу</button></div>`;
+    viewer.querySelector('#office-retry')?.addEventListener('click',()=>openResource(resource.id));
+  }
+}
+
 render();
 learning.callback().then(()=>boot()).catch(error=>{
  state.loading=false;state.bootError=error.message;render();
