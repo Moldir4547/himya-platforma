@@ -154,6 +154,7 @@ function bindEvents(){
  catalogForm?.addEventListener('input',updateCatalogResults);
  catalogForm?.addEventListener('reset',event=>{event.preventDefault();catalogForm.querySelectorAll('input,select').forEach(field=>{field.value='';});updateCatalogResults();});
 
+  app.querySelectorAll('.bond-jumps a[href^="#"]').forEach((link)=>{link.addEventListener("click",(event)=>{event.preventDefault();const target=document.getElementById(link.getAttribute("href").slice(1));target?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});});});
   app.querySelectorAll('a[href^="/"]').forEach((link)=>{const path=link.getAttribute("href");if(path.startsWith("/api/"))return;link.setAttribute("href",browserPath(path));link.addEventListener("click",(event)=>{if(link.target==="_blank"||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();navigate(path);});});
   app.querySelector('[data-action="logout"]')?.addEventListener("click",async(event)=>{
     event.currentTarget.disabled=true;
