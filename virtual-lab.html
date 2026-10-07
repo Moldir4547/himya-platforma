@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="kk" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Виртуалды химиялық зертхана</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  
+  
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Nunito',sans-serif}
+.glass{background:rgba(255,255,255,0.72);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.5);border-radius:16px}
+.glass-strong{background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.6);border-radius:16px}
+.sim-card{transition:all .3s ease;cursor:pointer;position:relative;overflow:hidden}
+.sim-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(59,130,246,0.18)}
+.sim-card::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);transition:left .5s}
+.sim-card:hover::after{left:100%}
+.btn-action{transition:all .25s ease;position:relative;overflow:hidden}
+.btn-action:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(0,0,0,0.12)}
+.btn-action:active{transform:scale(0.97)}
+.tube{width:80px;height:220px;border-radius:0 0 40px 40px;border:3px solid rgba(148,163,184,0.5);position:relative;overflow:hidden;background:rgba(255,255,255,0.3);margin:0 auto}
+.tube-liquid{position:absolute;bottom:0;width:100%;border-radius:0 0 37px 37px;transition:all 1s cubic-bezier(0.4,0,0.2,1)}
+.tube-rim{width:96px;height:16px;border-radius:8px 8px 0 0;border:3px solid rgba(148,163,184,0.5);border-bottom:none;margin:0 auto;background:rgba(255,255,255,0.5)}
+.bubble{position:absolute;border-radius:50%;background:rgba(255,255,255,0.5);animation:rise 2s ease-in infinite}
+@keyframes rise{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-180px) scale(0.3)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 8px rgba(59,130,246,0.3)}50%{box-shadow:0 0 24px rgba(59,130,246,0.6)}}
+@keyframes wave{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.wave-surface{position:absolute;top:-4px;left:0;width:200%;height:10px;background:repeating-linear-gradient(90deg,transparent,transparent 20px,rgba(255,255,255,0.4) 20px,rgba(255,255,255,0.4) 40px);animation:wave 3s linear infinite}
+.ph-scale{height:24px;border-radius:12px;background:linear-gradient(90deg,#ef4444,#f97316,#facc15,#84cc16,#22c55e,#06b6d4,#3b82f6,#6366f1,#8b5cf6)}
+.ph-marker{width:4px;height:34px;background:#1e293b;border-radius:2px;position:absolute;top:-5px;transition:left .8s cubic-bezier(0.4,0,0.2,1)}
+.nav-tab{transition:all .25s;border-bottom:3px solid transparent;padding:8px 16px;cursor:pointer;white-space:nowrap;font-weight:600;color:#64748b;font-size:14px}
+.nav-tab.active{border-bottom-color:#3b82f6;color:#3b82f6;background:rgba(59,130,246,0.08);border-radius:8px 8px 0 0}
+.nav-tab:hover{color:#3b82f6}
+.indicator-chip{padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .25s;font-size:13px;font-weight:600;border:2px solid transparent}
+.indicator-chip:hover{transform:scale(1.05)}
+.indicator-chip.selected{border-color:#3b82f6;box-shadow:0 0 12px rgba(59,130,246,0.25)}
+.solution-btn{transition:all .2s;cursor:pointer;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:600;border:2px solid transparent}
+.solution-btn:hover{transform:translateX(4px)}
+.solution-btn.selected{border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+.drop{position:absolute;width:8px;height:12px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;animation:drop-fall 1s ease-in forwards}
+@keyframes drop-fall{0%{top:-20px;opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+.gas-particle{position:absolute;width:6px;height:6px;border-radius:50%;animation:gas-rise 1.5s ease-out forwards}
+@keyframes gas-rise{0%{opacity:0.8;transform:translateY(0)}100%{opacity:0;transform:translateY(-100px) translateX(var(--dx))}}
+.glow-ring{animation:pulse-glow 2s ease-in-out infinite}
+.fade-in{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.scroll-area{overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(59,130,246,0.3) transparent}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:rgba(59,130,246,0.3);border-radius:4px}
+.mol-bond{stroke:#475569;stroke-width:2}
+.quiz-opt{cursor:pointer;transition:all .2s;border:2px solid #e2e8f0;border-radius:12px;padding:10px 16px}
+.quiz-opt:hover{border-color:#3b82f6;background:rgba(59,130,246,0.05)}
+.quiz-opt.correct{border-color:#22c55e;background:rgba(34,197,94,0.1)}
+.quiz-opt.wrong{border-color:#ef4444;background:rgba(239,68,68,0.1)}
+.safety-zone{border:2px dashed #e2e8f0;border-radius:12px;padding:16px;transition:all .3s}
+.safety-zone.danger{border-color:#ef4444;background:rgba(239,68,68,0.05)}
+.safety-zone.safe{border-color:#22c55e;background:rgba(34,197,94,0.05)}
+
+/* ChemBridge navigation and small-screen layout */
+.lab-back-link{display:inline-flex;align-items:center;padding:8px 12px;border:1px solid #bfdbfe;border-radius:12px;background:#fff;color:#1d4ed8;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}
+.lab-back-link:hover{background:#eff6ff}.lab-back-link:focus-visible{outline:3px solid #d97706;outline-offset:3px}
+#app>header{gap:12px;flex-wrap:wrap}#app>header>div:last-child{flex-wrap:wrap}
+@media(max-width:800px){html,body{height:auto;min-height:100%;overflow:auto!important}#app{height:auto!important;min-height:100svh;overflow:visible!important}#mainContent{flex:none;overflow:visible!important}#tab-lab{height:auto!important;flex-direction:column}#tab-lab>.glass-strong{width:100%!important;min-width:0!important;max-height:none;overflow:visible}#tab-lab>.flex-1{flex:none;min-height:390px}#tab-lab>.flex-1>.glass-strong:first-child{min-height:310px}#tab-sims,#tab-theory,#tab-research{height:auto!important;overflow:visible}#simBody{overflow-x:auto}.tube{height:200px}.lab-back-link{font-size:12px;padding:7px 10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  
+ </head>
+ <body class="h-full overflow-hidden" style="background:linear-gradient(135deg,#EEF4FF 0%,#E0EAFF 40%,#F0E6FF 100%)">
+  <div id="app" class="h-full flex flex-col overflow-hidden"><!-- HEADER -->
+   <header class="glass-strong px-4 py-3 flex items-center justify-between z-30 relative" style="border-radius:0 0 16px 16px;box-shadow:0 4px 24px rgba(59,130,246,0.08)">
+    <div class="flex items-center gap-3">
+     <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style="background:linear-gradient(135deg,#3B82F6,#8B5CF6)">
+      ⚗️
+     </div>
+     <div>
+      <h1 id="mainTitle" class="text-base font-extrabold text-gray-800 leading-tight">Виртуалды химиялық зертхана</h1>
+      <p id="authorLine" class="text-xs text-gray-500">Абдинағи Мөлдір Уразалиқызы • 8D01510</p>
+     </div>
+    </div>
+    <div class="flex items-center gap-2">
+     <a class="lab-back-link" href="./topics" aria-label="ChemBridge оқу бағыттарына оралу">← Оқу бағыттары</a>
+     <div id="scoreDisplay" class="glass px-3 py-1.5 text-sm font-bold text-blue-600 flex items-center gap-1">
+      🏆 <span id="scoreNum">0</span>
+     </div>
+    </div>
+   </header><!-- NAV TABS -->
+   <nav class="flex gap-1 px-4 pt-2 pb-0 overflow-x-auto scroll-area flex-shrink-0" id="navTabs">
+    <div class="nav-tab active" data-tab="lab" onclick="switchTab('lab')">
+     🧪 Зертхана
+    </div>
+    <div class="nav-tab" data-tab="sims" onclick="switchTab('sims')">
+     🎯 Симуляциялар
+    </div>
+    <div class="nav-tab" data-tab="theory" onclick="switchTab('theory')">
+     📚 Теория
+    </div>
+    <div class="nav-tab" data-tab="research" onclick="switchTab('research')">
+     🔬 Ғылыми
+    </div>
+   </nav><!-- MAIN CONTENT -->
+   <main class="flex-1 overflow-hidden p-3" id="mainContent"><!-- TAB: LAB -->
+    <div id="tab-lab" class="h-full flex gap-3 fade-in"><!-- LEFT PANEL -->
+     <div class="glass-strong p-4 flex flex-col gap-3 scroll-area" style="width:240px;min-width:200px;flex-shrink:0">
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-1">🧴 Ерітінді таңда</p>
+       <div class="flex flex-col gap-1" id="solutionList"></div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-1">🎨 Индикатор</p>
+       <div class="flex flex-wrap gap-1" id="indicatorList"></div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center gap-1">⚙️ Әрекеттер</p>
+       <div class="grid grid-cols-2 gap-2"><button class="btn-action glass text-xs font-bold py-2 px-2 rounded-xl flex items-center justify-center gap-1" onclick="addDrop()">💧 Тамызу</button> <button class="btn-action glass text-xs font-bold py-2 px-2 rounded-xl flex items-center justify-center gap-1" onclick="mixSolution()">🔄 Араластыр</button> <button class="btn-action glass text-xs font-bold py-2 px-2 rounded-xl flex items-center justify-center gap-1" onclick="heatSolution()">🔥 Қыздыру</button> <button class="btn-action glass text-xs font-bold py-2 px-2 rounded-xl flex items-center justify-center gap-1" onclick="coolSolution()">❄️ Суыту</button> <button class="btn-action glass text-xs font-bold py-2 px-2 rounded-xl flex items-center justify-center gap-1 col-span-2" onclick="resetLab()" style="background:rgba(239,68,68,0.1)">🧹 Тазалау</button>
+       </div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">🌡 Температура</p><input type="range" min="0" max="100" value="25" id="tempSlider" class="w-full" oninput="updateTemp(this.value)">
+       <p class="text-center text-sm font-bold text-gray-700"><span id="tempVal">25</span>°C</p>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">🧪 Концентрация</p><input type="range" min="1" max="100" value="50" id="concSlider" class="w-full" oninput="updateConc(this.value)">
+       <p class="text-center text-sm font-bold text-gray-700"><span id="concVal">50</span>%</p>
+      </div>
+     </div><!-- CENTER LAB -->
+     <div class="flex-1 flex flex-col gap-3 min-w-0"><!-- Test Tube Area -->
+      <div class="glass-strong flex-1 flex flex-col items-center justify-center relative p-4">
+       <p class="text-xs font-bold text-gray-400 mb-2" id="labStatus">Ерітінді мен индикатор таңдаңыз</p>
+       <div class="flex items-end gap-8">
+        <div class="text-center">
+         <div class="tube-rim"></div>
+         <div class="tube glow-ring" id="mainTube">
+          <div class="tube-liquid" id="tubeLiquid" style="height:0%;background:#bfdbfe"></div>
+          <div class="wave-surface" id="tubeWave" style="display:none"></div>
+          <div id="bubbleContainer"></div>
+         </div>
+         <p class="text-xs font-bold text-gray-500 mt-2" id="tubeLabel">Негізгі пробирка</p>
+        </div>
+        <div class="text-center" id="secondTubeArea" style="display:none">
+         <div class="tube-rim"></div>
+         <div class="tube" id="secondTube">
+          <div class="tube-liquid" id="secondLiquid" style="height:0%;background:#fde68a"></div>
+         </div>
+         <p class="text-xs font-bold text-gray-500 mt-2" id="secondLabel">Қосымша</p>
+        </div>
+       </div><!-- Gas particles container -->
+       <div id="gasContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden" style="border-radius:16px"></div>
+      </div><!-- pH Scale -->
+      <div class="glass-strong p-3">
+       <p class="text-xs font-bold text-gray-500 mb-2">📊 pH шкаласы</p>
+       <div class="relative">
+        <div class="ph-scale w-full"></div>
+        <div class="ph-marker" id="phMarker" style="left:50%"></div>
+       </div>
+       <div class="flex justify-between text-xs text-gray-400 mt-1 font-bold"><span>0</span><span>Қышқыл</span><span>7</span><span>Негіз</span><span>14</span>
+       </div>
+       <p class="text-center text-sm font-bold mt-1" id="phValue" style="color:#3b82f6">pH: —</p>
+      </div>
+     </div><!-- RIGHT PANEL -->
+     <div class="glass-strong p-4 flex flex-col gap-3 scroll-area" style="width:240px;min-width:200px;flex-shrink:0">
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">👁 Бақылау</p>
+       <div id="observation" class="text-sm text-gray-600 glass p-3 rounded-xl min-h-[60px]">
+        Тәжірибені бастаңыз...
+       </div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">📋 Нәтиже</p>
+       <div id="result" class="text-sm text-gray-600 glass p-3 rounded-xl min-h-[60px]">
+        —
+       </div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">🧪 Реакция теңдеуі</p>
+       <div id="equation" class="text-sm font-mono text-gray-700 glass p-3 rounded-xl min-h-[40px] break-all">
+        —
+       </div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">📜 Журнал</p>
+       <div id="logArea" class="text-xs text-gray-500 glass p-3 rounded-xl max-h-[120px] scroll-area min-h-[40px]">
+        Бос
+       </div>
+      </div>
+      <div>
+       <p class="text-xs font-bold text-gray-500 uppercase mb-2">🎓 Ортасы</p>
+       <div id="envType" class="text-sm font-bold glass p-2 rounded-xl text-center">
+        —
+       </div>
+      </div>
+     </div>
+    </div><!-- TAB: SIMULATIONS -->
+    <div id="tab-sims" class="h-full scroll-area fade-in" style="display:none">
+     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 p-1" id="simGrid"></div><!-- Sim Detail -->
+     <div id="simDetail" style="display:none" class="glass-strong p-5 mt-3 fade-in">
+      <div class="flex items-center justify-between mb-4">
+       <h3 id="simTitle" class="font-extrabold text-lg text-gray-800"></h3><button onclick="closeSimDetail()" class="btn-action glass px-3 py-1 rounded-xl text-sm font-bold">✕ Жабу</button>
+      </div>
+      <div id="simBody"></div>
+     </div>
+    </div><!-- TAB: THEORY -->
+    <div id="tab-theory" class="h-full scroll-area fade-in" style="display:none">
+     <div class="grid md:grid-cols-2 gap-4 p-1">
+      <div class="glass-strong p-5">
+       <h3 class="font-extrabold text-lg text-gray-800 mb-3">📚 Үздіксіз химиялық білім беру</h3>
+       <p class="text-sm text-gray-600 leading-relaxed mb-3">Үздіксіз білім беру жүйесі — мектепте басталып, жоғары оқу орнында жалғасатын химиялық білім берудің тұтас процесі. Бұл тәсіл оқушылардың білім деңгейін біртіндеп арттыруға, ғылыми ойлау қабілетін дамытуға бағытталған.</p>
+       <div class="space-y-2">
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-blue-600">🏫 Мектеп:</span> <span class="text-sm text-gray-600">Негізгі химиялық ұғымдар, қарапайым тәжірибелер</span>
+        </div>
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-green-600">🎓 ЖОО:</span> <span class="text-sm text-gray-600">Тереңдетілген теория, зертханалық жұмыстар, зерттеу</span>
+        </div>
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-purple-600">🔬 Докторантура:</span> <span class="text-sm text-gray-600">Ғылыми зерттеу, инновация, жаңа әдістемелер</span>
+        </div>
+       </div>
+      </div>
+      <div class="glass-strong p-5">
+       <h3 class="font-extrabold text-lg text-gray-800 mb-3">💡 Инновациялық әдістер</h3>
+       <div class="space-y-2">
+        <div class="glass p-3 rounded-xl flex items-start gap-2">
+         <span class="text-xl">🖥</span>
+         <div>
+          <p class="font-bold text-sm text-gray-800">Виртуалды зертхана</p>
+          <p class="text-xs text-gray-500">Онлайн химиялық тәжірибелер жүргізу</p>
+         </div>
+        </div>
+        <div class="glass p-3 rounded-xl flex items-start gap-2">
+         <span class="text-xl">🎮</span>
+         <div>
+          <p class="font-bold text-sm text-gray-800">Геймификация</p>
+          <p class="text-xs text-gray-500">Ойын элементтері арқылы оқыту</p>
+         </div>
+        </div>
+        <div class="glass p-3 rounded-xl flex items-start gap-2">
+         <span class="text-xl">📱</span>
+         <div>
+          <p class="font-bold text-sm text-gray-800">Мобильді оқыту</p>
+          <p class="text-xs text-gray-500">Смартфон арқылы зертхана</p>
+         </div>
+        </div>
+        <div class="glass p-3 rounded-xl flex items-start gap-2">
+         <span class="text-xl">🤖</span>
+         <div>
+          <p class="font-bold text-sm text-gray-800">AI көмекшісі</p>
+          <p class="text-xs text-gray-500">Жасанды интеллект арқылы оқыту</p>
+         </div>
+        </div>
+        <div class="glass p-3 rounded-xl flex items-start gap-2">
+         <span class="text-xl">🔗</span>
+         <div>
+          <p class="font-bold text-sm text-gray-800">Пәнаралық байланыс</p>
+          <p class="text-xs text-gray-500">Химия + физика + биология интеграциясы</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- TAB: RESEARCH -->
+    <div id="tab-research" class="h-full scroll-area fade-in" style="display:none">
+     <div class="grid md:grid-cols-2 gap-4 p-1">
+      <div class="glass-strong p-5">
+       <h3 class="font-extrabold text-lg text-gray-800 mb-3">🔬 Зерттеу мақсаты</h3>
+       <p class="text-sm text-gray-600 leading-relaxed mb-3">Мектеп – ЖОО жүйесінде үздіксіз химиялық білім беруде инновациялық әдістерді қолданудың тиімділігін зерттеу және ғылыми негіздеу.</p>
+       <h4 class="font-bold text-sm text-gray-700 mb-2">Міндеттер:</h4>
+       <ul class="text-sm text-gray-600 space-y-1">
+        <li>• Инновациялық әдістердің теориялық негізін зерттеу</li>
+        <li>• Виртуалды зертхана тиімділігін тәжірибелік тексеру</li>
+        <li>• Оқушылардың білім деңгейіне әсерін бағалау</li>
+        <li>• Әдістемелік ұсыныстар жасау</li>
+       </ul>
+      </div>
+      <div class="glass-strong p-5">
+       <h3 class="font-extrabold text-lg text-gray-800 mb-3">📊 Зерттеу әдістері</h3>
+       <div class="space-y-2">
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-blue-600">Теориялық:</span> <span class="text-xs text-gray-600">Ғылыми әдебиеттерді талдау</span>
+        </div>
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-green-600">Тәжірибелік:</span> <span class="text-xs text-gray-600">Педагогикалық эксперимент</span>
+        </div>
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-purple-600">Статистикалық:</span> <span class="text-xs text-gray-600">Мәліметтерді математикалық өңдеу</span>
+        </div>
+        <div class="glass p-3 rounded-xl">
+         <span class="font-bold text-yellow-600">Сауалнама:</span> <span class="text-xs text-gray-600">Оқушылар мен оқытушылар пікірі</span>
+        </div>
+       </div>
+       <h3 class="font-extrabold text-lg text-gray-800 mt-4 mb-3">🌟 Ғылыми жаңалығы</h3>
+       <p class="text-sm text-gray-600 leading-relaxed">Виртуалды зертхана технологиясын мектеп–ЖОО жүйесінде кешенді қолданудың инновациялық моделі алғаш рет жасалды.</p>
+      </div>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script>
+// ===== DATA =====
+const solutions = [
+  {name:'Тұз қышқылы (HCl)',ph:1,color:'#fca5a5',emoji:'🔴',type:'acid',eq:'HCl'},
+  {name:'Сірке қышқылы',ph:3,color:'#fdba74',emoji:'🟠',type:'acid',eq:'CH₃COOH'},
+  {name:'Лимон шырыны',ph:2.5,color:'#fde047',emoji:'🟡',type:'acid',eq:'C₆H₈O₇'},
+  {name:'Таза су',ph:7,color:'#93c5fd',emoji:'🔵',type:'neutral',eq:'H₂O'},
+  {name:'Ас содасы',ph:8.5,color:'#86efac',emoji:'🟢',type:'base',eq:'NaHCO₃'},
+  {name:'Сабын ерітіндісі',ph:10,color:'#c4b5fd',emoji:'🟣',type:'base',eq:'—'},
+  {name:'Натрий гидроксиді (NaOH)',ph:13,color:'#f9a8d4',emoji:'🩷',type:'base',eq:'NaOH'}
+];
+
+const indicators = [
+  {name:'Лакмус',acidColor:'#ef4444',neutralColor:'#a855f7',baseColor:'#3b82f6',bg:'#f3e8ff'},
+  {name:'Фенолфталеин',acidColor:'transparent',neutralColor:'transparent',baseColor:'#ec4899',bg:'#fce7f3'},
+  {name:'Метилоранж',acidColor:'#ef4444',neutralColor:'#f97316',baseColor:'#facc15',bg:'#fff7ed'},
+  {name:'Универсал',acidColor:'#ef4444',neutralColor:'#22c55e',baseColor:'#6366f1',bg:'#f0fdf4'}
+];
+
+const simulations = [
+  {id:1,icon:'⚗️',title:'Индикатор түс',desc:'Түс өзгерісін бақылау',color:'#3b82f6'},
+  {id:2,icon:'🌈',title:'pH Simulator',desc:'pH шкала 0–14',color:'#8b5cf6'},
+  {id:3,icon:'🔥',title:'Қышқыл + Негіз',desc:'Бейтараптану реакциясы',color:'#ef4444'},
+  {id:4,icon:'💧',title:'Тамызу',desc:'Drop simulation',color:'#06b6d4'},
+  {id:5,icon:'🧪',title:'Detective Lab',desc:'Белгісіз ерітінді анықтау',color:'#22c55e'},
+  {id:6,icon:'🎯',title:'pH Guess',desc:'Түс бойынша pH табу',color:'#f97316'},
+  {id:7,icon:'⚡',title:'Реакция жылдамдығы',desc:'Температура әсері',color:'#eab308'},
+  {id:8,icon:'🧬',title:'Молекула 3D',desc:'HCl, NaOH модельдері',color:'#8b5cf6'},
+  {id:9,icon:'💨',title:'Газ бөліну',desc:'Реакция → газ эффект',color:'#64748b'},
+  {id:10,icon:'🌡',title:'Температура',desc:'Ыстық/суық → өзгеріс',color:'#ef4444'},
+  {id:11,icon:'🧪',title:'Концентрация',desc:'Концентрация ↑↓',color:'#3b82f6'},
+  {id:12,icon:'🎮',title:'Quiz',desc:'Интерактив тест',color:'#22c55e'},
+  {id:13,icon:'⚖️',title:'Теңестіру',desc:'Коэффициент қою',color:'#f97316'},
+  {id:14,icon:'☣️',title:'Қауіпсіздік',desc:'Қате әрекет → нәтиже',color:'#ef4444'},
+  {id:15,icon:'🏆',title:'Final Challenge',desc:'Барлық білім',color:'#eab308'}
+];
+
+let state = {
+  solution: null,
+  indicator: null,
+  temp: 25,
+  conc: 50,
+  score: 0,
+  logs: []
+};
+
+// ===== INIT UI =====
+function initUI() {
+  const sl = document.getElementById('solutionList');
+  sl.innerHTML = '';
+  solutions.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'solution-btn flex items-center gap-2';
+    d.style.background = 'rgba(255,255,255,0.5)';
+    d.innerHTML = `<span>${s.emoji}</span><span class="truncate">${s.name}</span>`;
+    d.onclick = () => selectSolution(i);
+    d.id = 'sol-' + i;
+    sl.appendChild(d);
+  });
+
+  const il = document.getElementById('indicatorList');
+  il.innerHTML = '';
+  indicators.forEach((ind, i) => {
+    const d = document.createElement('div');
+    d.className = 'indicator-chip';
+    d.style.background = ind.bg;
+    d.textContent = ind.name;
+    d.onclick = () => selectIndicator(i);
+    d.id = 'ind-' + i;
+    il.appendChild(d);
+  });
+
+  const sg = document.getElementById('simGrid');
+  sg.innerHTML = '';
+  simulations.forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'sim-card glass-strong p-4 text-center';
+    d.innerHTML = `<div class="text-3xl mb-2">${s.icon}</div><p class="font-bold text-sm text-gray-800">${s.title}</p><p class="text-xs text-gray-500">${s.desc}</p>`;
+    d.style.borderLeft = `4px solid ${s.color}`;
+    d.onclick = () => openSim(s.id);
+    sg.appendChild(d);
+  });
+}
+
+function selectSolution(i) {
+  state.solution = i;
+  document.querySelectorAll('.solution-btn').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  updateLab();
+}
+
+function selectIndicator(i) {
+  state.indicator = i;
+  document.querySelectorAll('.indicator-chip').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  updateLab();
+}
+
+function updateLab() {
+  if (state.solution === null) return;
+  const sol = solutions[state.solution];
+  let color = sol.color;
+  let obsText = `${sol.name} таңдалды (pH ≈ ${sol.ph})`;
+
+  if (state.indicator !== null) {
+    const ind = indicators[state.indicator];
+    if (sol.ph < 7) color = ind.acidColor === 'transparent' ? sol.color : ind.acidColor;
+    else if (sol.ph === 7) color = ind.neutralColor === 'transparent' ? sol.color : ind.neutralColor;
+    else color = ind.baseColor === 'transparent' ? sol.color : ind.baseColor;
+    obsText += `\n${ind.name} → түсі: ${sol.ph < 7 ? 'қышқыл' : sol.ph === 7 ? 'бейтарап' : 'негіз'}`;
+  }
+
+  // Temperature effect on color intensity
+  const tempFactor = state.temp / 100;
+  const concFactor = state.conc / 100;
+
+  const liq = document.getElementById('tubeLiquid');
+  liq.style.height = (30 + concFactor * 50) + '%';
+  liq.style.background = color;
+  liq.style.opacity = 0.5 + concFactor * 0.5;
+  document.getElementById('tubeWave').style.display = 'block';
+
+  // pH marker
+  const phPos = (sol.ph / 14) * 100;
+  document.getElementById('phMarker').style.left = phPos + '%';
+  document.getElementById('phValue').textContent = `pH: ${sol.ph}`;
+
+  // Environment type
+  let envText, envColor;
+  if (sol.ph < 7) { envText = '🔴 Қышқыл орта'; envColor = '#ef4444'; }
+  else if (sol.ph === 7) { envText = '🟢 Бейтарап орта'; envColor = '#22c55e'; }
+  else { envText = '🔵 Негіздік орта'; envColor = '#3b82f6'; }
+  const envEl = document.getElementById('envType');
+  envEl.textContent = envText;
+  envEl.style.color = envColor;
+
+  document.getElementById('observation').textContent = obsText;
+  document.getElementById('equation').textContent = sol.eq;
+  document.getElementById('labStatus').textContent = `${sol.name} • ${state.temp}°C • ${state.conc}%`;
+}
+
+function addDrop() {
+  if (state.solution === null) return;
+  addLog('💧 Тамшы қосылды');
+  const tube = document.getElementById('mainTube');
+  const drop = document.createElement('div');
+  drop.className = 'drop';
+  drop.style.background = solutions[state.solution].color;
+  drop.style.left = (30 + Math.random() * 20) + 'px';
+  tube.appendChild(drop);
+  setTimeout(() => drop.remove(), 1000);
+  addBubbles(2);
+}
+
+function mixSolution() {
+  if (state.solution === null) return;
+  addLog('🔄 Араластырылды');
+  addBubbles(6);
+  const liq = document.getElementById('tubeLiquid');
+  liq.style.transition = 'none';
+  liq.style.transform = 'scaleX(1.1)';
+  setTimeout(() => { liq.style.transition = 'all 0.5s'; liq.style.transform = 'scaleX(1)'; }, 200);
+}
+
+function heatSolution() {
+  state.temp = Math.min(100, state.temp + 10);
+  document.getElementById('tempSlider').value = state.temp;
+  document.getElementById('tempVal').textContent = state.temp;
+  addLog(`🔥 Қыздырылды: ${state.temp}°C`);
+  addBubbles(4);
+  if (state.temp > 70) releaseGas(3);
+  updateLab();
+}
+
+function coolSolution() {
+  state.temp = Math.max(0, state.temp - 10);
+  document.getElementById('tempSlider').value = state.temp;
+  document.getElementById('tempVal').textContent = state.temp;
+  addLog(`❄️ Суытылды: ${state.temp}°C`);
+  updateLab();
+}
+
+function updateTemp(v) {
+  state.temp = parseInt(v);
+  document.getElementById('tempVal').textContent = v;
+  updateLab();
+}
+
+function updateConc(v) {
+  state.conc = parseInt(v);
+  document.getElementById('concVal').textContent = v;
+  updateLab();
+}
+
+function resetLab() {
+  state.solution = null;
+  state.indicator = null;
+  state.temp = 25;
+  state.conc = 50;
+  document.getElementById('tempSlider').value = 25;
+  document.getElementById('tempVal').textContent = '25';
+  document.getElementById('concSlider').value = 50;
+  document.getElementById('concVal').textContent = '50';
+  document.getElementById('tubeLiquid').style.height = '0%';
+  document.getElementById('tubeWave').style.display = 'none';
+  document.getElementById('phMarker').style.left = '50%';
+  document.getElementById('phValue').textContent = 'pH: —';
+  document.getElementById('observation').textContent = 'Тәжірибені бастаңыз...';
+  document.getElementById('result').textContent = '—';
+  document.getElementById('equation').textContent = '—';
+  document.getElementById('envType').textContent = '—';
+  document.getElementById('labStatus').textContent = 'Ерітінді мен индикатор таңдаңыз';
+  document.querySelectorAll('.solution-btn').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.indicator-chip').forEach(el => el.classList.remove('selected'));
+  addLog('🧹 Тазаланды');
+}
+
+function addBubbles(count) {
+  const c = document.getElementById('bubbleContainer');
+  for (let i = 0; i < count; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    b.style.width = (4 + Math.random() * 6) + 'px';
+    b.style.height = b.style.width;
+    b.style.left = (10 + Math.random() * 50) + 'px';
+    b.style.bottom = '10px';
+    b.style.animationDelay = (Math.random() * 0.5) + 's';
+    c.appendChild(b);
+    setTimeout(() => b.remove(), 2500);
+  }
+}
+
+function releaseGas(count) {
+  const c = document.getElementById('gasContainer');
+  const rect = c.getBoundingClientRect();
+  for (let i = 0; i < count; i++) {
+    const g = document.createElement('div');
+    g.className = 'gas-particle';
+    g.style.background = 'rgba(148,163,184,0.5)';
+    g.style.left = (40 + Math.random() * 20) + '%';
+    g.style.bottom = '40%';
+    g.style.setProperty('--dx', (Math.random() * 40 - 20) + 'px');
+    g.style.animationDelay = (Math.random() * 0.3) + 's';
+    c.appendChild(g);
+    setTimeout(() => g.remove(), 2000);
+  }
+}
+
+function addLog(text) {
+  state.logs.unshift(`${new Date().toLocaleTimeString('kk')} ${text}`);
+  if (state.logs.length > 20) state.logs.pop();
+  document.getElementById('logArea').innerHTML = state.logs.map(l => `<div>${l}</div>`).join('');
+}
+
+// ===== TABS =====
+function switchTab(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = tab === 'lab' ? 'flex' : '';
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.toggle('active', el.dataset.tab === tab));
+}
+
+// ===== SIMULATIONS =====
+function openSim(id) {
+  document.getElementById('simDetail').style.display = 'block';
+  const sim = simulations.find(s => s.id === id);
+  document.getElementById('simTitle').textContent = sim.icon + ' ' + sim.title;
+  const body = document.getElementById('simBody');
+
+  switch(id) {
+    case 1: renderIndicatorSim(body); break;
+    case 2: renderPHSim(body); break;
+    case 3: renderNeutralizationSim(body); break;
+    case 4: renderDropSim(body); break;
+    case 5: renderDetectiveSim(body); break;
+    case 6: renderPHGuessSim(body); break;
+    case 7: renderSpeedSim(body); break;
+    case 8: renderMoleculeSim(body); break;
+    case 9: renderGasSim(body); break;
+    case 10: renderTempSim(body); break;
+    case 11: renderConcSim(body); break;
+    case 12: renderQuizSim(body); break;
+    case 13: renderBalanceSim(body); break;
+    case 14: renderSafetySim(body); break;
+    case 15: renderFinalSim(body); break;
+  }
+}
+
+function closeSimDetail() {
+  document.getElementById('simDetail').style.display = 'none';
+}
+
+// Sim 1: Indicator
+function renderIndicatorSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Ерітінді мен индикаторды таңдап, түс өзгерісін бақылаңыз:</p>
+    <div class="flex gap-4 flex-wrap">
+      <div><p class="text-xs font-bold mb-1">Ерітінді:</p><select id="sim1Sol" class="glass p-2 rounded-xl text-sm" onchange="updateSim1()">
+        ${solutions.map((s,i)=>`<option value="${i}">${s.emoji} ${s.name}</option>`).join('')}
+      </select></div>
+      <div><p class="text-xs font-bold mb-1">Индикатор:</p><select id="sim1Ind" class="glass p-2 rounded-xl text-sm" onchange="updateSim1()">
+        ${indicators.map((ind,i)=>`<option value="${i}">${ind.name}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="flex items-center gap-4 mt-4">
+      <div id="sim1Tube" class="w-16 h-32 rounded-b-3xl border-2 border-gray-300 relative overflow-hidden">
+        <div id="sim1Liquid" class="absolute bottom-0 w-full rounded-b-3xl transition-all duration-700" style="height:70%;background:#fca5a5"></div>
+      </div>
+      <div id="sim1Result" class="glass p-4 rounded-xl flex-1 text-sm">Нәтижені мұнда көресіз</div>
+    </div>`;
+  updateSim1();
+}
+function updateSim1() {
+  const si = parseInt(document.getElementById('sim1Sol').value);
+  const ii = parseInt(document.getElementById('sim1Ind').value);
+  const sol = solutions[si], ind = indicators[ii];
+  let color;
+  if (sol.ph < 7) color = ind.acidColor === 'transparent' ? sol.color : ind.acidColor;
+  else if (sol.ph === 7) color = ind.neutralColor === 'transparent' ? sol.color : ind.neutralColor;
+  else color = ind.baseColor === 'transparent' ? sol.color : ind.baseColor;
+  document.getElementById('sim1Liquid').style.background = color;
+  const env = sol.ph < 7 ? 'Қышқыл' : sol.ph === 7 ? 'Бейтарап' : 'Негіз';
+  document.getElementById('sim1Result').innerHTML = `<b>${sol.name}</b> + <b>${ind.name}</b><br>pH: ${sol.ph} | Орта: ${env}<br>Түсі: <span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:${color};vertical-align:middle;border:1px solid #ccc"></span>`;
+}
+
+// Sim 2: pH Scale
+function renderPHSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Слайдерді жылжытып pH мәнін өзгертіңіз:</p>
+    <input type="range" min="0" max="14" step="0.1" value="7" id="sim2PH" class="w-full" oninput="updateSim2()">
+    <div class="relative mt-2"><div class="ph-scale w-full"></div><div class="ph-marker" id="sim2Marker" style="left:50%"></div></div>
+    <p class="text-center text-xl font-extrabold mt-3" id="sim2Val" style="color:#22c55e">pH: 7.0 — Бейтарап</p>
+    <div id="sim2Desc" class="glass p-3 rounded-xl mt-2 text-sm text-gray-600 text-center">Таза су</div>`;
+}
+function updateSim2() {
+  const v = parseFloat(document.getElementById('sim2PH').value);
+  document.getElementById('sim2Marker').style.left = (v/14*100)+'%';
+  let label, color, desc;
+  if (v < 3) { label='Күшті қышқыл'; color='#ef4444'; desc='Тұз қышқылы, күкірт қышқылы'; }
+  else if (v < 6) { label='Әлсіз қышқыл'; color='#f97316'; desc='Сірке қышқылы, лимон шырыны'; }
+  else if (v < 8) { label='Бейтарап'; color='#22c55e'; desc='Таза су'; }
+  else if (v < 11) { label='Әлсіз негіз'; color='#3b82f6'; desc='Ас содасы, сабын'; }
+  else { label='Күшті негіз'; color='#8b5cf6'; desc='NaOH, KOH'; }
+  document.getElementById('sim2Val').textContent = `pH: ${v.toFixed(1)} — ${label}`;
+  document.getElementById('sim2Val').style.color = color;
+  document.getElementById('sim2Desc').textContent = desc;
+}
+
+// Sim 3: Neutralization
+function renderNeutralizationSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Қышқыл мен негізді араластырыңыз:</p>
+    <div class="flex gap-4 items-end justify-center">
+      <div class="text-center"><p class="text-xs font-bold mb-1">🔴 HCl</p>
+        <div class="w-14 h-28 rounded-b-3xl border-2 border-red-300 relative overflow-hidden"><div class="absolute bottom-0 w-full rounded-b-3xl bg-red-400" style="height:70%"></div></div>
+      </div>
+      <button class="btn-action px-4 py-2 rounded-xl font-bold text-white text-sm" style="background:#3b82f6" onclick="runNeutralization()">🔄 Араластыр!</button>
+      <div class="text-center"><p class="text-xs font-bold mb-1">🔵 NaOH</p>
+        <div class="w-14 h-28 rounded-b-3xl border-2 border-blue-300 relative overflow-hidden"><div class="absolute bottom-0 w-full rounded-b-3xl bg-blue-400" style="height:70%"></div></div>
+      </div>
+    </div>
+    <div id="sim3Result" class="glass p-4 rounded-xl mt-4 text-center text-sm" style="display:none"></div>`;
+}
+function runNeutralization() {
+  const r = document.getElementById('sim3Result');
+  r.style.display = 'block';
+  r.innerHTML = `<p class="font-bold text-green-600 text-lg">✅ Бейтараптану реакциясы!</p>
+    <p class="font-mono mt-1">HCl + NaOH → NaCl + H₂O</p>
+    <p class="text-gray-500 mt-1">Қышқыл + Негіз = Тұз + Су (pH ≈ 7)</p>`;
+  addScore(5);
+}
+
+// Sim 4: Drop
+function renderDropSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Тамшыларды қосып реакцияны бақылаңыз:</p>
+    <div class="flex items-center justify-center gap-6">
+      <div class="text-center">
+        <div class="w-16 h-36 rounded-b-3xl border-2 border-gray-300 relative overflow-hidden" id="sim4Tube">
+          <div id="sim4Liquid" class="absolute bottom-0 w-full rounded-b-3xl transition-all duration-500" style="height:10%;background:#93c5fd"></div>
+        </div>
+        <p class="text-xs font-bold mt-1">Тамшы: <span id="sim4Count">0</span></p>
+      </div>
+      <button class="btn-action px-4 py-3 rounded-xl font-bold text-white" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)" onclick="addSim4Drop()">💧 Тамызу</button>
+    </div>
+    <div id="sim4Info" class="glass p-3 rounded-xl mt-3 text-sm text-center text-gray-500">Тамшы қосыңыз</div>`;
+  window._sim4Drops = 0;
+}
+function addSim4Drop() {
+  window._sim4Drops++;
+  const h = Math.min(90, window._sim4Drops * 8 + 10);
+  document.getElementById('sim4Liquid').style.height = h + '%';
+  document.getElementById('sim4Count').textContent = window._sim4Drops;
+  const colors = ['#bfdbfe','#93c5fd','#60a5fa','#3b82f6','#2563eb','#1d4ed8','#1e40af','#1e3a8a','#172554'];
+  const ci = Math.min(colors.length-1, Math.floor(window._sim4Drops / 2));
+  document.getElementById('sim4Liquid').style.background = colors[ci];
+  document.getElementById('sim4Info').textContent = `${window._sim4Drops} тамшы қосылды. Түс қанығуы артуда.`;
+}
+
+// Sim 5: Detective
+function renderDetectiveSim(el) {
+  const mystery = solutions[Math.floor(Math.random() * solutions.length)];
+  window._mystery = mystery;
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">🔍 Белгісіз ерітінді берілді! Индикатор көмегімен анықтаңыз:</p>
+    <div class="flex gap-2 flex-wrap mb-3">${indicators.map((ind,i)=>`<button class="btn-action glass px-3 py-2 rounded-xl text-sm font-bold" onclick="testMystery(${i})">${ind.name}</button>`).join('')}</div>
+    <div id="sim5Clue" class="glass p-3 rounded-xl text-sm mb-3">Индикатор таңдаңыз...</div>
+    <div class="flex gap-2 flex-wrap">${solutions.map((s,i)=>`<button class="btn-action glass px-3 py-2 rounded-xl text-sm" onclick="guessMystery(${i})">${s.emoji} ${s.name}</button>`).join('')}</div>
+    <div id="sim5Result" class="mt-3"></div>`;
+}
+function testMystery(i) {
+  const ind = indicators[i], sol = window._mystery;
+  let color;
+  if (sol.ph < 7) color = ind.acidColor === 'transparent' ? '#ddd' : ind.acidColor;
+  else if (sol.ph === 7) color = ind.neutralColor === 'transparent' ? '#ddd' : ind.neutralColor;
+  else color = ind.baseColor === 'transparent' ? '#ddd' : ind.baseColor;
+  document.getElementById('sim5Clue').innerHTML = `${ind.name} нәтижесі: <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:${color};vertical-align:middle;border:1px solid #ccc"></span> ${sol.ph<7?'Қышқыл реакция':sol.ph===7?'Бейтарап':'Негіздік реакция'}`;
+}
+function guessMystery(i) {
+  const r = document.getElementById('sim5Result');
+  if (solutions[i].name === window._mystery.name) {
+    r.innerHTML = `<div class="p-3 rounded-xl bg-green-50 border border-green-300 text-green-700 font-bold">✅ Дұрыс! Бұл ${window._mystery.name} (pH=${window._mystery.ph})</div>`;
+    addScore(10);
+  } else {
+    r.innerHTML = `<div class="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 font-bold">❌ Қате! Қайтадан көріңіз.</div>`;
+  }
+}
+
+// Sim 6: pH Guess
+function renderPHGuessSim(el) {
+  const sol = solutions[Math.floor(Math.random() * solutions.length)];
+  window._phTarget = sol;
+  const phColor = sol.ph < 4 ? '#ef4444' : sol.ph < 7 ? '#f97316' : sol.ph === 7 ? '#22c55e' : sol.ph < 10 ? '#3b82f6' : '#8b5cf6';
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Түсі бойынша pH мәнін табыңыз:</p>
+    <div class="flex items-center justify-center gap-4 mb-4">
+      <div class="w-20 h-20 rounded-2xl" style="background:${phColor};box-shadow:0 0 20px ${phColor}40"></div>
+    </div>
+    <input type="range" min="0" max="14" step="0.5" value="7" id="sim6Guess" class="w-full" oninput="document.getElementById('sim6GV').textContent=this.value">
+    <p class="text-center font-bold mt-1">Сіздің жауабыңыз: pH = <span id="sim6GV">7</span></p>
+    <button class="btn-action px-4 py-2 rounded-xl font-bold text-white mt-3 block mx-auto" style="background:#3b82f6" onclick="checkPHGuess()">Тексеру</button>
+    <div id="sim6Result" class="mt-3"></div>`;
+}
+function checkPHGuess() {
+  const guess = parseFloat(document.getElementById('sim6Guess').value);
+  const actual = window._phTarget.ph;
+  const diff = Math.abs(guess - actual);
+  const r = document.getElementById('sim6Result');
+  if (diff <= 1) {
+    r.innerHTML = `<div class="p-3 rounded-xl bg-green-50 border border-green-300 text-green-700 font-bold">🎉 Керемет! Дұрыс жауап: pH=${actual} (${window._phTarget.name})</div>`;
+    addScore(10);
+  } else {
+    r.innerHTML = `<div class="p-3 rounded-xl bg-yellow-50 border border-yellow-300 text-yellow-700 font-bold">🤔 Жақын емес. Дұрыс жауап: pH=${actual} (${window._phTarget.name})</div>`;
+  }
+}
+
+// Sim 7: Reaction Speed
+function renderSpeedSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Температура мен реакция жылдамдығы байланысы:</p>
+    <div class="flex items-center gap-4 mb-3">
+      <span>❄️ 0°C</span>
+      <input type="range" min="0" max="100" value="25" id="sim7Temp" class="flex-1" oninput="updateSim7()">
+      <span>🔥 100°C</span>
+    </div>
+    <div class="flex items-end gap-1 justify-center h-32" id="sim7Bars"></div>
+    <p class="text-center font-bold mt-2" id="sim7Info">25°C — Орташа жылдамдық</p>`;
+  updateSim7();
+}
+function updateSim7() {
+  const t = parseInt(document.getElementById('sim7Temp').value);
+  const speed = Math.pow(2, (t - 25) / 10); // Arrhenius approx
+  const bars = document.getElementById('sim7Bars');
+  bars.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const h = Math.min(100, speed * 10 * (0.5 + Math.random() * 0.5));
+    const b = document.createElement('div');
+    b.className = 'rounded-t-lg transition-all duration-300';
+    b.style.width = '20px';
+    b.style.height = h + '%';
+    b.style.background = t < 30 ? '#3b82f6' : t < 60 ? '#f97316' : '#ef4444';
+    bars.appendChild(b);
+  }
+  const label = t < 20 ? 'Баяу' : t < 50 ? 'Орташа' : t < 80 ? 'Жылдам' : 'Өте жылдам';
+  document.getElementById('sim7Info').textContent = `${t}°C — ${label} жылдамдық (×${speed.toFixed(1)})`;
+}
+
+// Sim 8: Molecule
+function renderMoleculeSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Молекула моделін таңдаңыз:</p>
+    <div class="flex gap-2 mb-4">
+      <button class="btn-action glass px-3 py-2 rounded-xl text-sm font-bold" onclick="showMol('hcl')">HCl</button>
+      <button class="btn-action glass px-3 py-2 rounded-xl text-sm font-bold" onclick="showMol('naoh')">NaOH</button>
+      <button class="btn-action glass px-3 py-2 rounded-xl text-sm font-bold" onclick="showMol('h2o')">H₂O</button>
+      <button class="btn-action glass px-3 py-2 rounded-xl text-sm font-bold" onclick="showMol('nacl')">NaCl</button>
+    </div>
+    <div class="flex justify-center"><svg id="molSVG" width="260" height="180" viewBox="0 0 260 180"></svg></div>
+    <p id="molInfo" class="text-center text-sm font-bold mt-2 text-gray-600"></p>`;
+  showMol('h2o');
+}
+function showMol(type) {
+  const svg = document.getElementById('molSVG');
+  const info = document.getElementById('molInfo');
+  const mols = {
+    h2o: {atoms:[{x:130,y:60,r:22,color:'#ef4444',label:'O'},{x:80,y:130,r:16,color:'#93c5fd',label:'H'},{x:180,y:130,r:16,color:'#93c5fd',label:'H'}],bonds:[[0,1],[0,2]],desc:'Су молекуласы — H₂O (104.5°)'},
+    hcl: {atoms:[{x:100,y:90,r:16,color:'#93c5fd',label:'H'},{x:170,y:90,r:24,color:'#22c55e',label:'Cl'}],bonds:[[0,1]],desc:'Тұз қышқылы — HCl (полярлы ковалент)'},
+    naoh: {atoms:[{x:60,y:90,r:22,color:'#8b5cf6',label:'Na'},{x:130,y:90,r:22,color:'#ef4444',label:'O'},{x:200,y:90,r:16,color:'#93c5fd',label:'H'}],bonds:[[0,1],[1,2]],desc:'Натрий гидроксиді — NaOH (ион байланыс)'},
+    nacl: {atoms:[{x:105,y:90,r:22,color:'#8b5cf6',label:'Na⁺'},{x:175,y:90,r:24,color:'#22c55e',label:'Cl⁻'}],bonds:[[0,1]],desc:'Ас тұзы — NaCl (ион кристалл)'}
+  };
+  const m = mols[type];
+  let html = '';
+  m.bonds.forEach(b => {
+    html += `<line x1="${m.atoms[b[0]].x}" y1="${m.atoms[b[0]].y}" x2="${m.atoms[b[1]].x}" y2="${m.atoms[b[1]].y}" class="mol-bond"/>`;
+  });
+  m.atoms.forEach(a => {
+    html += `<circle cx="${a.x}" cy="${a.y}" r="${a.r}" fill="${a.color}" stroke="#475569" stroke-width="1.5"/>`;
+    html += `<text x="${a.x}" y="${a.y+5}" text-anchor="middle" font-size="12" font-weight="bold" fill="white">${a.label}</text>`;
+  });
+  svg.innerHTML = html;
+  info.textContent = m.desc;
+}
+
+// Sim 9: Gas Release
+function renderGasSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Реакция нәтижесінде газ бөлінуін бақылаңыз:</p>
+    <div class="flex items-center justify-center gap-4">
+      <div class="text-center">
+        <div class="w-16 h-32 rounded-b-3xl border-2 border-gray-300 relative overflow-hidden" id="sim9Tube">
+          <div class="absolute bottom-0 w-full rounded-b-3xl bg-yellow-300" style="height:60%"></div>
+          <div id="sim9Gas" class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none"></div>
+        </div>
+      </div>
+      <button class="btn-action px-4 py-3 rounded-xl font-bold text-white" style="background:#f97316" onclick="triggerGas()">💨 Газ бөлу!</button>
+    </div>
+    <p id="sim9Info" class="text-center text-sm font-bold mt-3 text-gray-600">CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑</p>`;
+}
+function triggerGas() {
+  const c = document.getElementById('sim9Gas');
+  for (let i = 0; i < 8; i++) {
+    const g = document.createElement('div');
+    g.className = 'gas-particle';
+    g.style.background = 'rgba(200,200,200,0.6)';
+    g.style.left = (20 + Math.random() * 60) + '%';
+    g.style.bottom = '30%';
+    g.style.setProperty('--dx', (Math.random() * 30 - 15) + 'px');
+    g.style.animationDelay = (Math.random() * 0.4) + 's';
+    c.appendChild(g);
+    setTimeout(() => g.remove(), 2000);
+  }
+  addScore(3);
+}
+
+// Sim 10: Temperature Effect
+function renderTempSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Температураның ерігіштікке әсері:</p>
+    <input type="range" min="0" max="100" value="25" id="sim10T" class="w-full" oninput="updateSim10()">
+    <div class="flex items-end justify-center gap-2 h-28 mt-3" id="sim10Visual">
+      <div class="w-16 h-24 rounded-b-3xl border-2 border-gray-300 relative overflow-hidden">
+        <div id="sim10Liq" class="absolute bottom-0 w-full rounded-b-3xl transition-all duration-500" style="height:50%;background:#60a5fa"></div>
+      </div>
+    </div>
+    <p class="text-center text-sm font-bold mt-2" id="sim10Info">25°C — Орташа ерігіштік</p>`;
+}
+function updateSim10() {
+  const t = parseInt(document.getElementById('sim10T').value);
+  const solubility = 20 + t * 0.7;
+  document.getElementById('sim10Liq').style.height = Math.min(95, solubility) + '%';
+  document.getElementById('sim10Liq').style.background = t < 30 ? '#60a5fa' : t < 60 ? '#fbbf24' : '#ef4444';
+  document.getElementById('sim10Info').textContent = `${t}°C — Ерігіштік: ${solubility.toFixed(0)} г/100мл`;
+}
+
+// Sim 11: Concentration
+function renderConcSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Концентрация мен түс қанығуы:</p>
+    <input type="range" min="1" max="100" value="50" id="sim11C" class="w-full" oninput="updateSim11()">
+    <div class="flex justify-center mt-4">
+      <div class="w-24 h-24 rounded-2xl transition-all duration-500 border-2 border-gray-200" id="sim11Box" style="background:rgba(59,130,246,0.5)"></div>
+    </div>
+    <p class="text-center text-sm font-bold mt-2" id="sim11Info">50% концентрация</p>`;
+}
+function updateSim11() {
+  const c = parseInt(document.getElementById('sim11C').value);
+  document.getElementById('sim11Box').style.background = `rgba(59,130,246,${c/100})`;
+  document.getElementById('sim11Info').textContent = `${c}% концентрация — ${c<30?'Сұйылтылған':c<70?'Орташа':'Қанық'}`;
+}
+
+// Sim 12: Quiz
+const quizData = [
+  {q:'pH=1 болатын ерітінді?',opts:['Тұз қышқылы','Таза су','Ас содасы','Сабын'],ans:0},
+  {q:'Фенолфталеин негізде қандай түске боялады?',opts:['Көк','Қызғылт','Сары','Түссіз'],ans:1},
+  {q:'Бейтарап ерітіндінің pH мәні?',opts:['0','3','7','14'],ans:2},
+  {q:'NaOH — бұл...',opts:['Қышқыл','Тұз','Негіз','Оксид'],ans:2},
+  {q:'Лакмус қышқылда қандай түске боялады?',opts:['Көк','Қызыл','Жасыл','Сары'],ans:1}
+];
+function renderQuizSim(el) {
+  window._quizIdx = 0;
+  window._quizScore = 0;
+  showQuizQ(el);
+}
+function showQuizQ(el) {
+  if (!el) el = document.getElementById('simBody');
+  const qi = window._quizIdx;
+  if (qi >= quizData.length) {
+    el.innerHTML = `<div class="text-center p-6"><p class="text-4xl mb-3">🎉</p><p class="text-xl font-extrabold text-gray-800">${window._quizScore}/${quizData.length} дұрыс!</p><button class="btn-action px-4 py-2 rounded-xl font-bold text-white mt-3" style="background:#3b82f6" onclick="renderQuizSim(this.parentElement.parentElement)">🔁 Қайта бастау</button></div>`;
+    addScore(window._quizScore * 5);
+    return;
+  }
+  const q = quizData[qi];
+  el.innerHTML = `<p class="text-sm font-bold text-gray-500 mb-1">${qi+1}/${quizData.length}</p>
+    <p class="font-bold text-gray-800 mb-3">${q.q}</p>
+    <div class="space-y-2">${q.opts.map((o,i)=>`<div class="quiz-opt" id="qopt${i}" onclick="answerQuiz(${i},${q.ans})">${o}</div>`).join('')}</div>`;
+}
+function answerQuiz(sel, ans) {
+  document.getElementById('qopt'+ans).classList.add('correct');
+  if (sel !== ans) document.getElementById('qopt'+sel).classList.add('wrong');
+  else window._quizScore++;
+  setTimeout(() => { window._quizIdx++; showQuizQ(document.getElementById('simBody')); }, 1000);
+}
+
+// Sim 13: Balance Equation
+function renderBalanceSim(el) {
+  const eqs = [
+    {reactants:'H₂ + O₂',product:'H₂O',coeffs:[2,1,2],display:'_H₂ + _O₂ → _H₂O'},
+    {reactants:'Na + Cl₂',product:'NaCl',coeffs:[2,1,2],display:'_Na + _Cl₂ → _NaCl'},
+    {reactants:'Fe + O₂',product:'Fe₂O₃',coeffs:[4,3,2],display:'_Fe + _O₂ → _Fe₂O₃'}
+  ];
+  const eq = eqs[Math.floor(Math.random()*eqs.length)];
+  window._balEq = eq;
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">Реакция теңдеуін теңестіріңіз:</p>
+    <p class="font-mono text-lg font-bold text-center mb-4">${eq.display}</p>
+    <div class="flex gap-3 justify-center items-center mb-3">
+      ${eq.coeffs.map((_,i)=>`<input type="number" min="1" max="9" value="1" id="coef${i}" class="glass w-14 h-10 text-center rounded-xl font-bold text-lg">`).join('<span class="font-bold text-gray-400">:</span>')}
+    </div>
+    <button class="btn-action px-4 py-2 rounded-xl font-bold text-white block mx-auto" style="background:#3b82f6" onclick="checkBalance()">✓ Тексеру</button>
+    <div id="sim13Result" class="mt-3 text-center"></div>`;
+}
+function checkBalance() {
+  const eq = window._balEq;
+  const vals = eq.coeffs.map((_,i)=>parseInt(document.getElementById('coef'+i).value));
+  const correct = eq.coeffs.every((c,i)=>vals[i]===c);
+  document.getElementById('sim13Result').innerHTML = correct
+    ? `<div class="p-3 rounded-xl bg-green-50 border border-green-300 text-green-700 font-bold">✅ Дұрыс теңестірдіңіз!</div>`
+    : `<div class="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 font-bold">❌ Қате. Дұрыс жауап: ${eq.coeffs.join(', ')}</div>`;
+  if (correct) addScore(10);
+}
+
+// Sim 14: Safety
+function renderSafetySim(el) {
+  const scenarios = [
+    {text:'Қышқылды суға құйып жатырсыз. Қандай тәртіппен?',opts:['Қышқылды суға құю','Суды қышқылға құю'],correct:0,explain:'Әрқашан қышқылды суға құяды, керісінше емес!'},
+    {text:'Зертханада не киюіміз керек?',opts:['Қорғаныш көзілдірік + халат','Тек халат'],correct:0,explain:'Көзілдірік пен халат — міндетті қорғаныс!'},
+    {text:'Химиялық зат төгілді. Не істейсіз?',opts:['Мұғалімге хабарлау','Қолмен жинау'],correct:0,explain:'Әрқашан мұғалімге хабарлаңыз!'}
+  ];
+  const s = scenarios[Math.floor(Math.random()*scenarios.length)];
+  window._safetyScenario = s;
+  el.innerHTML = `<div class="safety-zone" id="safetyZone">
+    <p class="font-bold text-gray-800 mb-3">⚠️ ${s.text}</p>
+    <div class="space-y-2">${s.opts.map((o,i)=>`<button class="btn-action glass px-4 py-2 rounded-xl text-sm font-bold w-full text-left" onclick="checkSafety(${i})">${o}</button>`).join('')}</div>
+    <div id="sim14Result" class="mt-3"></div>
+  </div>`;
+}
+function checkSafety(i) {
+  const s = window._safetyScenario;
+  const zone = document.getElementById('safetyZone');
+  const r = document.getElementById('sim14Result');
+  if (i === s.correct) {
+    zone.classList.add('safe');
+    r.innerHTML = `<p class="font-bold text-green-600">✅ Дұрыс! ${s.explain}</p>`;
+    addScore(5);
+  } else {
+    zone.classList.add('danger');
+    r.innerHTML = `<p class="font-bold text-red-600">❌ Қауіпті! ${s.explain}</p>`;
+  }
+}
+
+// Sim 15: Final Challenge
+function renderFinalSim(el) {
+  el.innerHTML = `<p class="text-sm text-gray-600 mb-3">🏆 Барлық білімді қолданыңыз! 5 сұраққа жауап беріңіз:</p>`;
+  window._finalIdx = 0;
+  window._finalScore = 0;
+  const questions = [
+    {q:'pH=13 болса, орта қандай?',opts:['Қышқыл','Бейтарап','Негіздік'],ans:2},
+    {q:'HCl + NaOH → ?',opts:['NaCl + H₂O','NaOH + HCl','H₂ + Cl₂'],ans:0},
+    {q:'Температура артса, реакция жылдамдығы...?',opts:['Артады','Азаяды','Өзгермейді'],ans:0},
+    {q:'Лакмус негізде қандай түс?',opts:['Қызыл','Көк','Сары'],ans:1},
+    {q:'Бейтараптану — бұл...',opts:['Қышқыл + негіз','Тұз + су','Газ бөліну'],ans:0}
+  ];
+  window._finalQs = questions;
+  showFinalQ(el);
+}
+function showFinalQ(el) {
+  if (!el) el = document.getElementById('simBody');
+  const i = window._finalIdx;
+  if (i >= window._finalQs.length) {
+    el.innerHTML = `<div class="text-center p-6"><p class="text-5xl mb-3">🏆</p><p class="text-2xl font-extrabold">Нәтиже: ${window._finalScore}/${window._finalQs.length}</p><p class="text-gray-500 mt-2">${window._finalScore>=4?'Керемет! Сіз химия маманысыз!':'Жақсы! Тағы жаттығыңыз.'}</p></div>`;
+    addScore(window._finalScore * 10);
+    return;
+  }
+  const q = window._finalQs[i];
+  el.innerHTML += `<div id="fq${i}" class="glass p-3 rounded-xl mb-2 fade-in"><p class="font-bold text-sm">${i+1}. ${q.q}</p>
+    <div class="flex gap-2 mt-2 flex-wrap">${q.opts.map((o,j)=>`<button class="quiz-opt text-sm" id="fopt${i}_${j}" onclick="answerFinal(${i},${j},${q.ans})">${o}</button>`).join('')}</div></div>`;
+}
+function answerFinal(qi, sel, ans) {
+  document.getElementById(`fopt${qi}_${ans}`).classList.add('correct');
+  if (sel !== ans) document.getElementById(`fopt${qi}_${sel}`).classList.add('wrong');
+  else window._finalScore++;
+  // Disable all buttons for this question
+  document.querySelectorAll(`[id^="fopt${qi}_"]`).forEach(b => b.onclick = null);
+  setTimeout(() => { window._finalIdx++; showFinalQ(document.getElementById('simBody')); }, 800);
+}
+
+function addScore(n) {
+  state.score += n;
+  document.getElementById('scoreNum').textContent = state.score;
+}
+
+// ===== ELEMENT SDK =====
+const defaultConfig = {
+  platform_title: 'Виртуалды химиялық зертхана',
+  author_name: 'Абдинағи Мөлдір Уразалиқызы • 8D01510',
+  background_color: '#EEF4FF',
+  surface_color: '#FFFFFF',
+  text_color: '#1e293b',
+  primary_color: '#3B82F6',
+  accent_color: '#8B5CF6',
+  font_family: 'Nunito',
+  font_size: 14
+};
+
+function applyConfig(config) {
+  const c = {...defaultConfig, ...config};
+  document.getElementById('mainTitle').textContent = c.platform_title;
+  document.getElementById('authorLine').textContent = c.author_name;
+
+  document.body.style.background = `linear-gradient(135deg,${c.background_color} 0%,${adjustColor(c.background_color,-10)} 100%)`;
+
+  document.querySelectorAll('.glass-strong, .glass').forEach(el => {
+    el.style.color = c.text_color;
+  });
+  document.getElementById('mainTitle').style.color = c.text_color;
+
+  const ff = `${c.font_family}, Nunito, sans-serif`;
+  document.body.style.fontFamily = ff;
+
+  const bs = c.font_size;
+  document.getElementById('mainTitle').style.fontSize = (bs * 1.14) + 'px';
+  document.getElementById('authorLine').style.fontSize = (bs * 0.85) + 'px';
+}
+
+function adjustColor(hex, amt) {
+  let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  r = Math.max(0,Math.min(255,r+amt)); g = Math.max(0,Math.min(255,g+amt)); b = Math.max(0,Math.min(255,b+amt));
+  return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+
+// INIT
+initUI();
+applyConfig(defaultConfig);
+
+</script>
+ </body>
+</html>
