@@ -651,3 +651,46 @@ body::before { background: radial-gradient(circle at 8% 15%, #e3f6f2, transparen
 .course-total { box-shadow: inset 0 0 0 10px #ffffffcc; }
 @media (max-width: 600px) { .paper-grid::before, .paper-grid::after { background-size: 700px 650px; opacity: .13; } }
 @media (prefers-reduced-motion: reduce) { .paper-grid::before, .paper-grid::after { animation: none; } }
+
+/* Keep complete document names readable in every resource collection. */
+.resource-list, .resource-card, .resource-meta, .material-card { min-width: 0; }
+.resource-card { align-items: stretch; text-align: left; }
+.resource-card strong, .material-card h3 {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.5;
+}
+.resource-card > strong { width: 100%; font-size: 16px; }
+.resource-card > .file-type { align-self: flex-start; }
+.resource-card > small { margin: 0; }
+.resource-card > .material-actions {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 8px;
+  flex-wrap: wrap;
+}
+.resource-card > .material-actions button {
+  min-width: 0;
+  flex: 1 1 110px;
+  white-space: normal;
+  color: #174d7b;
+  border-color: #cad8e6;
+  background: #ffffff;
+}
+.resource-card > .material-actions button[data-open-resource] {
+  color: #086775;
+  background: #e9f7f6;
+  border-color: #c5e7e5;
+  font-weight: 700;
+}
+.resource-card > .material-actions button:hover { background: #eaf3fc; }
+.resource-card > .material-actions button[data-open-resource]:hover { background: #d8efed; }
+.resource-card > .material-actions button[data-delete-resource] { color: #a52d38; }
+@media (max-width: 760px) {
+  .document-hub .resource-list, .resource-list { grid-template-columns: minmax(0, 1fr); }
+}
