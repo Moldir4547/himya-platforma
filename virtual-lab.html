@@ -4,6 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Виртуалды химиялық зертхана</title>
+
+  <style id="member-access-style">
+  html:not(.member-authorized) body > :not(#member-auth-status){display:none!important}
+  #member-auth-status{max-width:520px;margin:12vh auto;padding:28px;background:#fff;border-radius:20px;color:#18314f;text-align:center;font:17px/1.6 system-ui,sans-serif;box-shadow:0 12px 36px #18314f18}
+  #member-auth-status a,#member-auth-status button{display:inline-block;margin:12px 8px 0;padding:10px 18px;background:#087d89;color:#fff;border:0;border-radius:10px;text-decoration:none;font:inherit;cursor:pointer}
+  #member-auth-status [hidden]{display:none}
+  html.member-authorized #member-auth-status{display:none}
+  </style>
+  <script src="./config.js"></script>
+  <script type="module" id="member-access-script">
+  import {createStore} from './store.js';
+  const memberStore=createStore();let memberCheck=0;
+  const memberLogin=new URL('./login',location.href);
+  const memberTarget='/virtual-lab.html'+location.search+location.hash;
+  memberLogin.searchParams.set('next',memberTarget);
+  async function verifyLabMember(){
+   const check=++memberCheck;document.documentElement.classList.remove('member-authorized');
+   try{
+    const user=await memberStore.currentUser();if(check!==memberCheck)return;
+    if(!user){try{sessionStorage.setItem('chem_member_next_v1',memberTarget);}catch{}location.replace(memberLogin.href);return;}
+    document.documentElement.classList.add('member-authorized');
+   }catch{
+    if(check!==memberCheck)return;
+    document.querySelector('#member-auth-status p').textContent='Кіруді тексеру мүмкін болмады. Қайта тексеріңіз.';
+    document.querySelector('[data-member-retry]').hidden=false;
+   }
+  }
+  document.querySelector('[data-member-login]').href=memberLogin.href;
+  document.querySelector('[data-member-retry]').addEventListener('click',verifyLabMember);
+  window.addEventListener('storage',event=>{if(event.key===null||['chem_supabase_session_v1','chem_server_session_v1'].includes(event.key))verifyLabMember();});
+  verifyLabMember();
+  </script>
+
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   
   
@@ -70,6 +103,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif}
   
  </head>
  <body class="h-full overflow-hidden" style="background:linear-gradient(135deg,#EEF4FF 0%,#E0EAFF 40%,#F0E6FF 100%)">
+  <section id="member-auth-status" role="status" aria-live="polite"><h1>Жүйеге кіру тексерілуде</h1><p>Виртуалды зертхана тіркелген қатысушыларға қолжетімді.</p><a data-member-login href="./login?next=%2Fvirtual-lab.html">Жүйеге кіру</a><button data-member-retry type="button" hidden>Қайта тексеру</button><noscript><p>Зертхананы ашу үшін браузерде JavaScript қосулы болуы керек.</p></noscript></section>
   <div id="app" class="h-full flex flex-col overflow-hidden"><!-- HEADER -->
    <header class="glass-strong px-4 py-3 flex items-center justify-between z-30 relative" style="border-radius:0 0 16px 16px;box-shadow:0 4px 24px rgba(59,130,246,0.08)">
     <div class="flex items-center gap-3">
