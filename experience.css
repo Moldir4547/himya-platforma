@@ -694,3 +694,91 @@ body::before { background: radial-gradient(circle at 8% 15%, #e3f6f2, transparen
 @media (max-width: 760px) {
   .document-hub .resource-list, .resource-list { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Soft slate palette: a slightly deeper background with clear reading surfaces. */
+:root {
+  --paper: #d7e2ed !important;
+  --sheet: #edf2f7 !important;
+  --ink: #172e49 !important;
+  --muted: #4b5e76 !important;
+  --accent: #096c78;
+  --accent-soft: #d6e9ea;
+  --warm: #d7e2ed;
+  --edge: #bdcddd;
+  --line: #bdcddd;
+}
+body { background: var(--paper) !important; }
+body::before {
+  background: radial-gradient(circle at 8% 15%, #c7e2e0, transparent 40%),
+    radial-gradient(circle at 92% 75%, #ced6ec, transparent 40%), var(--paper);
+}
+.topbar { border-bottom-color: var(--edge) !important; }
+.brand strong > span, .learning-footer, .author-project,
+.material-category, .material-copy p, .material-details { color: var(--muted); }
+.topbar nav a[aria-current="page"], .topbar nav a:hover,
+.topbar nav button:hover, .menu-toggle { background: var(--accent-soft); color: #075967; }
+.topbar nav .nav-pill, .primary-button {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #fff !important;
+}
+.topbar nav .nav-pill:hover, .primary-button:hover {
+  background: #075763 !important; border-color: #075763 !important; color: #fff !important;
+}
+.learn-home {
+  background: radial-gradient(at 15% 0%, #d1e7e6 0%, transparent 65%), var(--sheet);
+  border-color: var(--edge);
+}
+.learn-home p, .bridge-overview header p, .bridge-grid p,
+.author-university { color: var(--muted); }
+.learn-kicker { background: #dceceb; border-color: #afcfce; color: #075967; }
+.learn-home h1 span, .bridge-eyebrow, .bridge-number,
+.bridge-summary-hint, .author-qualification, .eyebrow { color: #096c78; }
+.learn-steps a, .learn-steps a:last-child, .learn-panel,
+.author-section, .bridge-grid .bridge-card,
+.lesson-sidebar, .lesson-main, .legacy-materials,
+.activity-panel, .knowledge-map-dashboard, .detail-sheet,
+.lesson-body, .empty-library {
+  background: var(--sheet); border-color: var(--edge);
+}
+.bridge-grid .bridge-card:nth-child(2) { background: #e7e4f1; border-color: #c9c2de; }
+.bridge-flow, .bridge-card-content, .learning-footer { border-color: var(--edge); }
+.bridge-grid p.bridge-feedback { background: #dfe8f1; }
+.learn-steps span, .bridge-statuses > span,
+.bridge-statuses button, .material-actions .material-open,
+.resource-card > .material-actions button[data-open-resource] {
+  background: #d6e9e9; border-color: #abcfd0; color: #075967;
+}
+.bridge-statuses button[aria-pressed="true"] {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.lms-course-head, .document-hub-head, .profile-hero, .page-head {
+  background: linear-gradient(135deg, #e8eef6, #d3e8e4) !important;
+  border-color: var(--edge); color: var(--ink);
+}
+.lms-course-head.university, .page-head.university { background: linear-gradient(135deg, #e8eef6, #dce0f0) !important; }
+.lms-course-head.bridge, .page-head.bridge { background: linear-gradient(135deg, #e8eef6, #cfe8e0) !important; }
+.lms-course-head.diagnostic, .page-head.diagnostic { background: linear-gradient(135deg, #e8eef6, #d4e4f3) !important; }
+.lms-unit-card, .lesson-nav-item, .topic-card, .map-topic-card, .activity-list a {
+  background: #e2eaf3; border-color: var(--edge); color: var(--ink);
+}
+.lms-unit-card:hover, .lesson-nav-item:hover, .lesson-nav-item.active,
+.topic-card:hover, .map-topic-card:hover, .activity-list a:hover {
+  background: #d4e8e6; border-color: #a3c7c5; color: var(--ink);
+}
+.topic-links > a { background: #d9eae7; border-color: #b4d3cd; }
+.topic-links > a:nth-child(2) { background: #e2ddf0; border-color: #c8bcdf; }
+.topic-links > a:nth-child(3) { background: #f0e2d1; border-color: #dbc5a9; }
+.topic-links > a:nth-child(4) { background: #dce6f5; border-color: #b9cbe6; }
+.topic-links > a:hover { background: var(--sheet); }
+.auth-layout { background: transparent; box-shadow: none; }
+.auth-card {
+  color: var(--ink); border-color: var(--edge) !important;
+  box-shadow: 0 14px 38px #203b5817 !important;
+}
+.auth-tabs { background: #dce5ef; border-color: #c5d2e0; }
+.auth-card input, .auth-card select { background: #f7fafc !important; border-color: #aebfd2; }
+.auth-card a, .account-links button, .rich-content a { color: #075967; }
+.auth-card .eye-button { color: #4b5e76; }
+.resource-card > .material-actions button { background: #f4f7fa; border-color: var(--edge); }
+@media (max-width: 1100px) { .topbar nav { background: var(--sheet); border-color: var(--edge); } }
