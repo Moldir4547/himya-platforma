@@ -86,18 +86,42 @@ test('a late admin boot cannot restore hidden data after a guest boot',async()=>
  const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  const bootSource=source.slice(source.indexOf('let bootGeneration=0;'),source.indexOf("window.addEventListener('storage'"));
  assert.ok(bootSource.startsWith('let bootGeneration=0;'));
- const blocked=pending(),started=pending();let actor='admin',authReads=0,renders=0;
+ const blocked=pending(),started=pending();let actor='admin',authReads=0,renders=0,contentReads=0,resourceReads=0;
  const state={loading:true,settings:{}};
  const store={mode:'supabase',currentUser:async()=>{authReads++;return actor==='admin'?{id:'admin',role:'admin'}:null;},
-  listContent:async admin=>{if(admin){started.resolve();await blocked.promise;return [{id:'hidden'}];}return [{id:'public'}];},
-  listAllResources:async()=>[{id:actor==='admin'?'private-file':'public-file',item_id:actor==='admin'?'hidden':'public'}],
+  listContent:async admin=>{contentReads++;if(admin){started.resolve();await blocked.promise;return [{id:'hidden'}];}return [{id:'public'}];},
+  listAllResources:async()=>{resourceReads++;return [{id:actor==='admin'?'private-file':'public-file',item_id:actor==='admin'?'hidden':'public'}];},
   listUsers:async()=>[{id:'private-user'}],getProgress:async()=>[],getSettings:async()=>({interface_version:2})};
  const context={state,store,window:{__CHEM_CONFIG__:{schemaVersion:1}},DEFAULT_THEME:{},normalizeItems:items=>items,
   errorMessage:error=>error.message,showToast(){},applyTheme(){},render(){renders++;},hydrateRoute(){}};
  vm.runInNewContext(bootSource+'\nglobalThis.runBoot=boot;',context);
  const oldBoot=context.runBoot();await started.promise;actor='guest';await context.runBoot();
  blocked.resolve();await oldBoot;
- assert.equal(state.user,null);assert.equal(state.items[0].id,'public');
- assert.equal(state.allResources[0].id,'public-file');assert.equal(state.users.length,0);
- assert.equal(state.bootError,null);assert.equal(renders,1);assert.equal(authReads,2);
+ // Guests receive no lesson bodies or file catalog after the session changes.
+ assert.equal(state.user,null);assert.equal(state.items.length,0);
+ assert.equal(state.allResources.length,0);assert.equal(state.users.length,0);
+ assert.equal(contentReads,1);assert.equal(resourceReads,1);
+ assert.equal(state.bootError,null);assert.equal(renders,2);assert.equal(authReads,2);
+});
+
+function memberRouteContext(){
+ const source=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const helpers=source.slice(source.indexOf('// Learning pages are shown only'),source.indexOf('const learning=createLearning'));
+ const route=source.match(/^function route\(\).*$/m)?.[0];assert.ok(helpers.startsWith('// Learning pages'));assert.ok(route);
+ const saved=new Map(),calls={materials:0},state={user:null,loading:false};
+ const context={state,calls,BASE_PATH:'/himya-platforma',URL,URLSearchParams,location:{origin:'https://moldir4547.github.io',search:'',hash:''},sessionStorage:{getItem:k=>saved.get(k)??null,setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)},pagePath:'/universitet',routePath:()=>context.pagePath,shell:html=>html,PISA_PATH:'/mektep/interaktivti-zhane-innovaciyalyk-tapsyrmalar',lifeMaterialRoute:p=>{calls.materials++;return p.startsWith('/mektep/zhalpy-zhane-beyin')?'LESSON':null;},learning:{route:()=>null},homePage:()=> 'PUBLIC HOME',authPage:mode=>mode,byPath:()=>({id:'university-root'}),modulePage:()=> 'MODULE'};
+ vm.runInNewContext(helpers+'\n'+route+'\nthis.memberApi={route,safeMemberNext};',context);return context;
+}
+test('learning pages require a verified member before lesson renderers run',()=>{
+ const context=memberRouteContext();
+ for(const route of ['/universitet','/mektep','/materials','/topics','/sabaktastyk-kopiri/himiyalyk-bailanys','/sabaktastyk-kopiri/ekvivalent-ugymy','/mektep/zhalpy-zhane-beyin','/mektep/zhalpy-zhane-beyin/eritindi','/games/redox','/virtual-lab.html']){
+  context.pagePath=route;assert.match(context.memberApi.route(),/Материалдарды оқу үшін тіркеліңіз/);assert.equal(context.calls.materials,0);
+ }
+ context.pagePath='/';assert.equal(context.memberApi.route(),'PUBLIC HOME');context.pagePath='/login';assert.equal(context.memberApi.route(),'login');
+ context.pagePath='/mektep/zhalpy-zhane-beyin/eritindi';context.state.user={id:'verified-learner',role:'student'};assert.equal(context.memberApi.route(),'LESSON');context.state.loading=true;assert.match(context.memberApi.route(),/Материалдарды оқу үшін тіркеліңіз/);
+});
+test('member return links preserve the lesson and reject external or recursive auth URLs',()=>{
+ const api=memberRouteContext().memberApi;
+ assert.equal(api.safeMemberNext('/himya-platforma/mektep/zhalpy-zhane-beyin/eritindi?level=school#life-review'),'/mektep/zhalpy-zhane-beyin/eritindi?level=school#life-review');
+ for(const value of ['https://evil.example/x','//evil.example/x','/\\evil.example/x','/%5Cevil.example/x','/login','/register','/himya-platforma/login'])assert.equal(api.safeMemberNext(value),null);
 });
