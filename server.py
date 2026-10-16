@@ -245,6 +245,7 @@ def init_database():
         if "item_type" not in columns: connection.execute("alter table content_items add column item_type text not null default 'lesson'")
         if "content_mode" not in columns: connection.execute("alter table content_items add column content_mode text not null default 'curriculum'")
         progress_columns = {row["name"] for row in connection.execute("pragma table_info(progress)")}
+        if "bond_practice" not in progress_columns: connection.execute("alter table progress add column bond_practice text not null default '{}'")
         if "quiz_answers" not in progress_columns: connection.execute("alter table progress add column quiz_answers text not null default '[]'")
         if "attempt_count" not in progress_columns: connection.execute("alter table progress add column attempt_count integer not null default 0")
         if "tested_at" not in progress_columns: connection.execute("alter table progress add column tested_at text")
@@ -520,6 +521,35 @@ class SpaHandler(SimpleHTTPRequestHandler):
             user = self.user(True)
             with db() as connection: rows = connection.execute("select * from progress where user_id=? order by updated_at desc", (user["id"],)).fetchall()
             return self.json_response([self.progress_row(row) for row in rows])
+        if method == "POST" and path == "/api/bond-practice":
+            user = self.user(True)
+            if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
+            data = self.read_json()
+            item_id, attempt_id, answers = data.get("item_id"), data.get("attempt_id"), data.get("answers")
+            try: uuid.UUID(str(attempt_id))
+            except (ValueError, TypeError, AttributeError): raise ApiError(400, "Талпыныс идентификаторы қате")
+            if not isinstance(answers, list) or len(answers) != 8 or any(type(a) is not int or a < 0 or a >= 3 for a in answers):
+                raise ApiError(400, "Барлық 8 тапсырмаға жауап беріңіз")
+            self.require_content(item_id)
+            with db() as connection:
+                connection.execute("begin immediate")
+                item = connection.execute("select path from content_items where id=?", (item_id,)).fetchone()
+                if not item or item["path"] != "/sabaktastyk-kopiri/himiyalyk-bailanys": raise ApiError(403, "Бұл сабаққа тапсырма қарастырылмаған")
+                old = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"], item_id)).fetchone()
+                previous = json.loads(old["bond_practice"] or "{}") if old else {}
+                if previous.get("attempt_id") != attempt_id:
+                    key = [1, 0, 2, 1, 2, 0, 1, 2]
+                    score = sum(a == b for a, b in zip(answers, key))
+                    result = {"version":1, "attempt_id":attempt_id, "answers":answers, "score":score, "max_score":8,
+                              "best_score":max(score, previous.get("best_score", 0)),
+                              "attempt_count":previous.get("attempt_count", 0)+1, "tested_at":now()}
+                    connection.execute("""insert into progress(user_id,item_id,bond_practice,updated_at)
+                        values(?,?,?,?) on conflict(user_id,item_id) do update set
+                        bond_practice=excluded.bond_practice,updated_at=excluded.updated_at""",
+                        (user["id"], item_id, json.dumps(result), now()))
+                row = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"], item_id)).fetchone()
+            return self.json_response(self.progress_row(row))
+
         if method == "POST" and path == "/api/progress":
             user = self.user(True)
             if user["role"] == "admin": raise ApiError(400, "Әкімші прогресі сақталмайды")
@@ -586,6 +616,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
         data = dict(row)
         try: data["quiz_answers"] = json.loads(data.get("quiz_answers") or "[]")
         except json.JSONDecodeError: data["quiz_answers"] = []
+        data["bond_practice"] = json.loads(data.get("bond_practice") or "{}")
         data["completed"] = bool(data.get("completed"))
         return data
 
@@ -636,7 +667,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             config = {"supabaseUrl":os.environ.get("SUPABASE_URL", ""),"supabaseAnonKey":os.environ.get("SUPABASE_ANON_KEY", "")}
             payload = f"window.__CHEM_CONFIG__ = {json.dumps(config)};".encode("utf-8")
             self.send_response(200); self.send_header("Content-Type","application/javascript; charset=utf-8"); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(payload))); self.end_headers(); self.wfile.write(payload); return
-        public_assets={'/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
+        public_assets={'/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
         target = ROOT / path.lstrip("/")
         if path != "/" and path not in public_assets and (target.exists() or any(part.startswith('.') for part in path.split('/') if part) or '.' in target.name):
             self.send_error(404);return
@@ -659,3 +690,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "4173"))
     print(f"Chemistry platform: http://{host}:{port}", flush=True)
     ThreadingHTTPServer((host, port), SpaHandler).serve_forever()
+
