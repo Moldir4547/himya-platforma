@@ -51,12 +51,7 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   await page.getByRole('heading',{name:'Өзіңізге қажет бөлімді таңдаңыз'}).waitFor();
   assert.equal(await page.locator('.direction-card').count(),3);
   assert.equal(await page.locator('.empty-library').count(),0,'guests should see the sign-in explanation, not an empty catalogue');
-  assert.equal(await page.locator('.continuity-details').getAttribute('open'),null);
-  await page.locator('.continuity-details > summary').click();
-  await page.locator('.continuity-details .bridge-card > summary').first().click();
-  await page.getByRole('button',{name:'Байланыс бар',exact:true}).waitFor({state:'visible'});
-  assert.equal(await page.getByRole('button',{name:'Байланыс бар',exact:true}).isVisible(),true);
-  await page.locator('.continuity-details > summary').click();
+  assert.equal(await page.locator('.continuity-details').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'home overflow at '+width);
   await page.getByRole('link',{name:'Көпірден бастау',exact:false}).click();
   await page.getByRole('heading',{name:'Қош келдіңіз'}).waitFor();
