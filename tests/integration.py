@@ -1,3 +1,4 @@
+import sys
 import json
 import os
 import subprocess
@@ -30,7 +31,7 @@ class PlatformIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         env = {**os.environ, "INITIAL_ADMIN_PASSWORD":"Admin123!", "CHEM_DATA_DIR": cls.temp.name, "PORT": str(PORT)}
-        cls.server = subprocess.Popen(["python3", "server.py"], cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cls.server = subprocess.Popen([sys.executable, "server.py"], cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(40):
             try:
                 urlopen(BASE + "/api/content", timeout=0.2)
@@ -45,6 +46,68 @@ class PlatformIntegrationTests(unittest.TestCase):
         cls.server.terminate()
         cls.server.wait(timeout=5)
         cls.temp.cleanup()
+
+    def test_registration_categories_and_admin_only_reporting(self):
+        from urllib.error import HTTPError
+        admin = request('POST','/api/login',{'email':'admin@chem.local','password':'Admin123!'})['token']
+        ids=[]
+        for category in ('school_student','university_student','teacher'):
+            result=request('POST','/api/register',{'displayName':category,'email':category+'@example.test','password':'Student123!','role':'student','participantType':category})
+            ids.append(result['user']['id'])
+            self.assertEqual(result['user']['participant_type'],category)
+            self.assertNotEqual(result['user']['role'],'admin')
+            with self.assertRaises(HTTPError) as denied: request('GET','/api/users',token=result['token'])
+            self.assertEqual(denied.exception.code,403)
+        members=[u for u in request('GET','/api/users',token=admin) if u['id'] in ids]
+        self.assertEqual({u['participant_type'] for u in members},{'school_student','university_student','teacher'})
+        analytics=request('GET','/api/analytics',token=admin)
+        self.assertEqual(len([u for u in analytics['users'] if u['id'] in ids]),3)
+        request('PATCH','/api/users/'+ids[0],{'participant_type':'teacher'},admin)
+        self.assertEqual(next(u for u in request('GET','/api/users',token=admin) if u['id']==ids[0])['participant_type'],'teacher')
+        with self.assertRaises(HTTPError) as invalid: request('POST','/api/register',{'displayName':'Bad','email':'badcat@example.test','password':'Student123!','role':'student','participantType':'admin'})
+        self.assertEqual(invalid.exception.code,400)
+
+    def test_bond_practice_is_separate_idempotent_and_server_graded(self):
+        from urllib.error import HTTPError
+        import uuid
+        admin = request("POST", "/api/login", {"email":"admin@chem.local", "password":"Admin123!"})["token"]
+        previous = next(row for row in request("GET", "/api/content?admin=1",token=admin) if row["path"]=="/sabaktastyk-kopiri/himiyalyk-bailanys")
+        item = request("PATCH", f"/api/content/{previous['id']}", {
+            "parent_id":None, "area":"bridge", "item_type":"lesson", "title":"Bond practice test",
+            "path":"/sabaktastyk-kopiri/himiyalyk-bailanys", "body":"<p>Teacher content</p>",
+            "quiz_data":{"questions":[{"question":"Teacher quiz", "options":["A","B"], "correct_index":1}]},
+            "sort_order":100, "is_published":True,
+        }, admin)
+        learner = request("POST", "/api/register", {"displayName":"Practice", "email":"practice@test.local", "password":"Student123!", "role":"student"})["token"]
+        original = request("POST", "/api/progress", {"item_id":item["id"], "progress":63, "score":1, "max_score":1, "quiz_answers":[1]}, learner)
+        attempt = {"item_id":item["id"], "attempt_id":str(uuid.uuid4()), "answers":[1,0,2,1,2,0,1,2], "score":999}
+        result = request("POST", "/api/bond-practice", attempt, learner)
+        self.assertEqual(result["bond_practice"]["score"], 8)
+        self.assertEqual(result["bond_practice"]["attempt_count"], 1)
+        repeated = request("POST", "/api/bond-practice", attempt, learner)
+        self.assertEqual(repeated["bond_practice"]["attempt_count"], 1)
+        attempt.update(attempt_id=str(uuid.uuid4()), answers=[2,1,0,2,0,1,2,0])
+        result = request("POST", "/api/bond-practice", attempt, learner)
+        self.assertEqual(result["bond_practice"]["score"], 0)
+        self.assertEqual(result["bond_practice"]["best_score"], 8)
+        self.assertEqual(result["bond_practice"]["attempt_count"], 2)
+        for key in ("score", "max_score", "quiz_answers", "attempt_count", "progress", "completed"):
+            self.assertEqual(result[key], original[key], key)
+        result = request("POST", "/api/progress", {"item_id":item["id"], "progress":70}, learner)
+        self.assertEqual(result["bond_practice"]["score"], 0)
+        self.assertEqual(next(p for p in request("GET","/api/progress",token=learner) if p["item_id"]==item["id"])["bond_practice"]["best_score"],8)
+        for answers in ([], [True]*8, [1.5]*8, [3]*8, ["1"]*8):
+            with self.assertRaises(HTTPError) as error:
+                request("POST","/api/bond-practice",{**attempt,"answers":answers},learner)
+            self.assertEqual(error.exception.code,400)
+        with self.assertRaises(HTTPError) as error:
+            request("POST","/api/bond-practice",attempt,admin)
+        self.assertEqual(error.exception.code,403)
+        request("PATCH",f"/api/content/{item['id']}",{**item,"is_published":False},admin)
+        with self.assertRaises(HTTPError) as error:
+            request("POST","/api/bond-practice",attempt,learner)
+        self.assertEqual(error.exception.code,403)
+        request("PATCH",f"/api/content/{item['id']}",previous,admin)
 
     def test_auth_content_upload_progress_and_analytics(self):
         admin = request("POST", "/api/login", {"email":"admin@chem.local", "password":"Admin123!", "role":"admin"})
@@ -127,3 +190,4 @@ class PlatformIntegrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -105,3 +105,7 @@ input:disabled,select:disabled,textarea:disabled{opacity:.7;cursor:not-allowed;b
 .file-viewer>.viewer-canvas{width:100%;min-width:0}
 .file-viewer .file-frame{display:block;width:100%;min-width:0;max-width:100%}
 .file-viewer .viewer-close{flex-shrink:0}
+
+
+/* Registration reports */
+.registration-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:20px 0}.registration-summary article{padding:18px;border:1px solid #cbdde5;border-radius:16px;background:var(--surface,#fff);display:flex;flex-direction:column;gap:6px}.registration-summary strong{font-size:28px}.registration-summary p{grid-column:1/-1;font-size:14px}.registration-filter{display:block;max-width:330px;margin:16px 0}.registration-filter select,.auth-card select{width:100%;min-height:46px;margin-top:6px;padding:10px;border:1px solid #9bb5c3;border-radius:10px;background:var(--surface,#fff);color:var(--text,#172e49);font:inherit}.registration-meta{display:block;margin-top:8px;font-size:13px}.registration-export{margin-bottom:16px}.participant-field{display:block;margin-bottom:16px}

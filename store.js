@@ -1,4 +1,5 @@
 import { errorMessage, uploadRequest, validateFile } from "./platform-utils.js";
+import { validateParticipantType } from "./registration.js";
 const KEYS = { localToken:"chem_server_session_v1", supabase:"chem_supabase_session_v1" };
 const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 function normalizeEmail(email) { return String(email || "").trim().toLowerCase(); }
@@ -27,6 +28,7 @@ export class LocalApiStore {
   async reorderContent(ids) { return this.request("/content/reorder",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids})}); }
   async deleteContent(id) { return this.request(`/content/${encodeURIComponent(id)}`,{method:"DELETE"}); }
   async listUsers() { return this.request("/users"); }
+  async updateParticipantType(id,participant_type){validateParticipantType(participant_type);return this.request(`/users/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({participant_type})});}
   async updateUserRole(id,role) { return this.request(`/users/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({role})}); }
   async listResources(itemId) { return this.request(`/resources?item_id=${encodeURIComponent(itemId)}`); }
   async uploadResource(itemId,file,onProgress) { return uploadRequest("/api/resources",this.headers({"X-Item-Id":itemId,"X-Filename":encodeURIComponent(file.name),"Content-Type":file.type||"application/octet-stream"}),file,onProgress); }
@@ -38,6 +40,7 @@ export class LocalApiStore {
   async getProgress() { return this.request("/progress"); }
   async saveProgress(itemId,patch) { return this.request("/progress",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({item_id:itemId,...patch})}); }
   async submitQuiz(itemId,answers) { return this.saveProgress(itemId,{progress:100,completed:true,score:0,max_score:answers.length,quiz_answers:answers}); }
+  async submitBondPractice(itemId,attemptId,answers) { return this.request("/bond-practice",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({item_id:itemId,attempt_id:attemptId,answers})}); }
   async recordView(itemId) { return this.saveProgress(itemId,{view:true}); }
   async getAnalytics() { return this.request("/analytics"); }
 }
@@ -76,19 +79,20 @@ export class SupabaseStore {
   async currentUser(){
     const session=await this.validSession();if(!session)return null;
     let user;try{user=await this.request('/auth/v1/user',{headers:this.headers(session.access_token)});}catch(error){if([401,403].includes(error.status)){if(this.session()?.access_token===session.access_token)this.saveSession(null);return null;}throw error;}
-    const rows=await this.request(`/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=id,display_name,email,role`,{headers:this.headers(session.access_token)});
+    const rows=await this.request(`/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=id,display_name,email,role,participant_type,created_at`,{headers:this.headers(session.access_token)});
     if(!rows?.[0])throw new Error('Профиль табылмады. Әкімшіге хабарласыңыз');
     if(this.session()?.access_token!==session.access_token)return null;
     return {...rows[0],email:user.email||rows[0].email};
   }
-  async register({displayName,email,password,username,role='student'}){
+  async register({displayName,email,password,username,role='student',participantType}){
+    if(participantType!==undefined){validateParticipantType(participantType);role=participantType==='university_student'?'university_student':'student';}
     if(!['student','university_student'].includes(role))throw new Error('Бұл рөлмен тіркелуге болмайды');
     if(!String(displayName||'').trim())throw new Error('Атыңызды енгізіңіз');
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeEmail(email)))throw new Error('Email мекенжайын дұрыс енгізіңіз');
     if(typeof password!=='string'||password.length<8)throw new Error('Пароль кемінде 8 таңбадан тұруы керек');
     if(username&&!/^[a-z0-9_]{3,32}$/i.test(username.trim()))throw new Error('Логин 3–32 латын әрпі, сан немесе _ таңбасынан тұруы керек');
     const version=++this.authVersion;
-    const session=await this.request('/auth/v1/signup?redirect_to='+encodeURIComponent(typeof document==='undefined'?'':new URL('./',document.baseURI).href),{method:'POST',headers:this.headers(null),body:JSON.stringify({email:normalizeEmail(email),password,data:{display_name:displayName.trim(),username:username?.trim().toLowerCase(),role}})});
+    const session=await this.request('/auth/v1/signup?redirect_to='+encodeURIComponent(typeof document==='undefined'?'':new URL('./',document.baseURI).href),{method:'POST',headers:this.headers(null),body:JSON.stringify({email:normalizeEmail(email),password,data:{display_name:displayName.trim(),username:username?.trim().toLowerCase(),role,...(participantType?{participant_type:participantType}:{})}})});
     if(version!==this.authVersion)throw new Error('Кіру әрекеті тоқтатылды');
     if(!session?.access_token)return {confirmationRequired:true};
     this.saveSession(session);return this.currentUser();
@@ -121,7 +125,8 @@ export class SupabaseStore {
     const resources=await this.listAllResources();for(const resource of resources)if(ids.has(resource.item_id))await this.deleteResource(resource.id);
     await this.request(`/rest/v1/content_items?id=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:this.headers(session?.access_token)});
   }
-  async listUsers(){const session=await this.validSession();return this.request("/rest/v1/profiles?select=id,display_name,email,role,created_at&order=created_at.desc",{headers:this.headers(session?.access_token)});}
+  async listUsers(){const session=await this.validSession(),all=[];for(let offset=0;;offset+=1000){const rows=await this.request("/rest/v1/rpc/admin_registration_report",{method:"POST",headers:this.headers(session?.access_token),body:JSON.stringify({p_offset:offset,p_limit:1000})})||[];all.push(...rows);if(rows.length<1000)return all;}}
+  async updateParticipantType(id,category){validateParticipantType(category);const session=await this.validSession();return this.request("/rest/v1/rpc/admin_set_participant_type",{method:"POST",headers:this.headers(session?.access_token),body:JSON.stringify({target_user:id,category})});}
   async updateUserRole(id,role){const session=await this.validSession();await this.request("/rest/v1/rpc/admin_set_user_role",{method:"POST",headers:this.headers(session?.access_token),body:JSON.stringify({target_user:id,new_role:role})});}
   async listResources(itemId){
     const session=await this.validSession();
@@ -161,8 +166,10 @@ export class SupabaseStore {
   async getProgress(){const session=await this.validSession();if(!session)return[];return this.request(`/rest/v1/user_progress?user_id=eq.${session.user.id}&select=*&order=updated_at.desc`,{headers:this.headers(session.access_token)});}
   async saveProgress(itemId,patch){const session=await this.validSession();if(!session)throw new Error('Алдымен жүйеге кіріңіз');const old=(await this.request(`/rest/v1/user_progress?user_id=eq.${session.user.id}&item_id=eq.${encodeURIComponent(itemId)}&select=*`,{headers:this.headers(session.access_token)}))?.[0]||{},isTest=patch.score!==undefined&&patch.max_score!==undefined,stamp=new Date().toISOString();const record={user_id:session.user.id,item_id:itemId,progress:patch.progress??old.progress??0,completed:patch.completed??old.completed??false,score:patch.score??old.score??null,max_score:patch.max_score??old.max_score??null,quiz_answers:patch.quiz_answers??old.quiz_answers??[],attempt_count:(old.attempt_count||0)+(isTest?1:0),tested_at:isTest?stamp:old.tested_at,view_count:(old.view_count||0)+(patch.view?1:0),last_opened:patch.view?stamp:old.last_opened};const rows=await this.request("/rest/v1/user_progress?on_conflict=user_id,item_id",{method:"POST",headers:this.headers(session.access_token,{Prefer:"resolution=merge-duplicates,return=representation"}),body:JSON.stringify(record)});return rows?.[0];}
   async submitQuiz(itemId,answers){const session=await this.validSession();const rows=await this.request("/rest/v1/rpc/submit_quiz_attempt",{method:"POST",headers:this.headers(session.access_token),body:JSON.stringify({p_item_id:itemId,p_answers:answers})});return rows?.[0]||rows;}
+  async submitBondPractice(itemId,attemptId,answers){const session=await this.validSession();if(!session)throw new Error("Алдымен жүйеге кіріңіз");const rows=await this.request("/rest/v1/rpc/submit_bond_practice",{method:"POST",headers:this.headers(session.access_token),body:JSON.stringify({p_item_id:itemId,p_attempt_id:attemptId,p_answers:answers})});if(!rows?.[0])throw new Error("Нәтиже сақталмады");return rows[0];}
   async recordView(itemId){return this.saveProgress(itemId,{view:true});}
   async getAnalytics(){const session=await this.validSession();const [users,details,content]=await Promise.all([this.listUsers(),this.request("/rest/v1/user_progress?select=*&order=updated_at.desc",{headers:this.headers(session.access_token)}),this.listContent(true)]);const contentMap=Object.fromEntries(content.map((item)=>[item.id,item.title]));const detailRows=(details||[]).map((row)=>({...row,title:contentMap[row.item_id],...users.find((user)=>user.id===row.user_id)}));const summaries=users.filter((user)=>user.role!=="admin").map((user)=>{const rows=detailRows.filter((row)=>row.user_id===user.id);const average=(values)=>values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):0;return{...user,average_progress:average(rows.map((row)=>row.progress||0)),completed_count:rows.filter((row)=>row.completed).length,average_score:average(rows.filter((row)=>row.max_score).map((row)=>row.score*100/row.max_score)),last_active:rows.map((row)=>row.last_opened).filter(Boolean).sort().at(-1)||null};});return{users:summaries,details:detailRows};}
 }
 
 export function createStore(){const config=window.__CHEM_CONFIG__||{};return config.supabaseUrl&&config.supabaseAnonKey?new SupabaseStore(config.supabaseUrl,config.supabaseAnonKey):new LocalApiStore();}
+

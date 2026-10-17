@@ -14,6 +14,7 @@ export function errorMessage(error) {
   if (/email not confirmed/i.test(raw)) return 'Email мекенжайыңызды хаттағы сілтеме арқылы растаңыз';
   if (/Database error saving new user/i.test(raw)) return 'Тіркелу орындалмады. Басқа логинді қолданып көріңіз немесе әкімшіге хабарласыңыз';
   if (/already registered|already been registered/i.test(raw)) return 'Бұл email бұрын тіркелген. Кіру бетін ашыңыз';
+  if (/email.*rate.*limit|over_email_send_rate_limit/i.test(raw)) return 'Растау хатын жіберу шегі аяқталды. Қайта-қайта тіркелмеңіз; әкімшіге хабарласыңыз';
   if (/rate limit|too many requests/i.test(raw)) return 'Әрекет саны шектелді. Біраздан кейін қайталаңыз';
   if (/row-level security|permission denied|forbidden|JWT/i.test(raw)) return 'Бұл әрекетке рұқсатыңыз жоқ. Қайта кіріп көріңіз';
   if (/bucket not found/i.test(raw)) return 'Файл қоймасы бапталмаған. Әкімшіге хабарласыңыз';

@@ -1,3 +1,4 @@
+import sys
 import json,os,secrets,subprocess,tempfile,time,unittest
 from pathlib import Path
 from urllib.request import Request,urlopen
@@ -7,7 +8,7 @@ class SecurityTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
   cls.temp=tempfile.TemporaryDirectory();cls.base='http://127.0.0.1:4176';cls.password=secrets.token_urlsafe(24)
-  cls.server=subprocess.Popen(['python3','server.py'],cwd=ROOT,env={**os.environ,'PORT':'4176','CHEM_DATA_DIR':cls.temp.name,'INITIAL_ADMIN_PASSWORD':cls.password},stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+  cls.server=subprocess.Popen([sys.executable,'server.py'],cwd=ROOT,env={**os.environ,'PORT':'4176','CHEM_DATA_DIR':cls.temp.name,'INITIAL_ADMIN_PASSWORD':cls.password},stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
   for _ in range(60):
    try:urlopen(cls.base+'/api/session',timeout=.2);break
    except Exception:time.sleep(.1)

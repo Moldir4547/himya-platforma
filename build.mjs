@@ -11,6 +11,9 @@ const files = [
   "catalog.js",
   "platform-utils.js",
   "learning.js",
+  "registration.js",
+  "bond-practice.js",
+  "bond-practice.css",
   "learning-api.js",
   "redox-data.js",
   "styles.css",
@@ -46,3 +49,4 @@ for (const file of files) {
   await writeFile(`dist/${file}`, text);
 }
 console.log(`Built ${files.length} public assets in dist/`);
+
