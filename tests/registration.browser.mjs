@@ -77,6 +77,14 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   assert.equal(await page.locator('.direction-group').count(),3);
   assert.equal(await page.locator('.direction-group').getByRole('heading',{name:'Мектеп',exact:true}).count(),1);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'member directions overflow at '+width);
+  await page.goto(base+'/himya-platforma/sabaktastyk-kopiri/himiyalyk-bailanys');
+  await page.locator('[data-bridge-tab]').first().waitFor();
+  assert.equal(await page.getByRole('tab').count(),5);
+  assert.equal(await page.locator('[data-bridge-syllabus]').evaluate(d=>d.open),width>=1100);
+  for(let i=0;i<5;i++){await page.locator('#bridge-tab-'+i).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'full lesson overflow '+width+' / '+i);}
+  await page.goto(base+'/himya-platforma/kabinet');
+  await page.getByRole('heading',{name:'Сабақтастық көпірі: Химиялық байланыс'}).waitFor();
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'cabinet overflow '+width);
   assert.deepEqual(errors,[]);await context.close();
  }}finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
 });
