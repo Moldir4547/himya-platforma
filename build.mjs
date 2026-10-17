@@ -13,6 +13,8 @@ const files = [
   "learning.js",
   "registration.js",
   "bond-practice.js",
+  "bridge-path.js",
+  "bridge-path.css",
   "bond-practice.css",
   "learning-api.js",
   "redox-data.js",

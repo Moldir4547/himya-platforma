@@ -246,6 +246,7 @@ def init_database():
         if "item_type" not in columns: connection.execute("alter table content_items add column item_type text not null default 'lesson'")
         if "content_mode" not in columns: connection.execute("alter table content_items add column content_mode text not null default 'curriculum'")
         progress_columns = {row["name"] for row in connection.execute("pragma table_info(progress)")}
+        if "bridge_learning" not in progress_columns: connection.execute("alter table progress add column bridge_learning text not null default '{}'")
         if "bond_practice" not in progress_columns: connection.execute("alter table progress add column bond_practice text not null default '{}'")
         if "quiz_answers" not in progress_columns: connection.execute("alter table progress add column quiz_answers text not null default '[]'")
         if "attempt_count" not in progress_columns: connection.execute("alter table progress add column attempt_count integer not null default 0")
@@ -525,6 +526,33 @@ class SpaHandler(SimpleHTTPRequestHandler):
             user = self.user(True)
             with db() as connection: rows = connection.execute("select * from progress where user_id=? order by updated_at desc", (user["id"],)).fetchall()
             return self.json_response([self.progress_row(row) for row in rows])
+        if method == "POST" and path == "/api/bridge-activity":
+            user = self.user(True)
+            if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
+            data = self.read_json()
+            item_id, mode, attempt, answers = data.get("item_id"), data.get("mode"), data.get("attempt_id"), data.get("answers")
+            try: uuid.UUID(str(attempt))
+            except (ValueError, TypeError, AttributeError): raise ApiError(400, "Талпыныс идентификаторы қате")
+            if mode not in ("theory", "context", "simulation") or not isinstance(answers, list): raise ApiError(400, "Тапсырма қате")
+            if len(answers) != (0 if mode == "theory" else 4) or any(type(a) not in (int, float) or not -1000 <= a <= 1000 for a in answers): raise ApiError(400, "Жауаптар қате")
+            if mode == "context" and any(type(a) is not int or abs(a)>100 for a in answers): raise ApiError(400, "Бүтін сан енгізіңіз")
+            self.require_content(item_id)
+            with db() as connection:
+                connection.execute("begin immediate")
+                item = connection.execute("select path from content_items where id=?", (item_id,)).fetchone()
+                if not item or item["path"] != "/sabaktastyk-kopiri/himiyalyk-bailanys": raise ApiError(403, "Сабақ қолжетімсіз")
+                old = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"], item_id)).fetchone()
+                modes = json.loads(old["bridge_learning"] or "{}") if old else {}
+                previous = modes.get(mode, {})
+                if previous.get("attempt_id") != attempt:
+                    activity_key=[1,1,2,6] if mode == "context" else [180,104.5,8,4]
+                    score = sum(abs(a-b)<0.1 if mode=="simulation" and i<2 else a==b for i,(a,b) in enumerate(zip(answers,activity_key)))
+                    modes[mode] = {"version":1,"completed":True,"attempt_id":attempt,"answers":answers,"score":score,"max_score":0 if mode=="theory" else 4,"best_score":max(score,previous.get("best_score",0)),"attempt_count":previous.get("attempt_count",0)+1,"tested_at":now()}
+                    connection.execute("""insert into progress(user_id,item_id,bridge_learning,updated_at) values(?,?,?,?)
+                        on conflict(user_id,item_id) do update set bridge_learning=excluded.bridge_learning,updated_at=excluded.updated_at""", (user["id"],item_id,json.dumps(modes),now()))
+                row = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"], item_id)).fetchone()
+            return self.json_response(self.progress_row(row))
+
         if method == "POST" and path == "/api/bond-practice":
             user = self.user(True)
             if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
@@ -625,6 +653,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
         data = dict(row)
         try: data["quiz_answers"] = json.loads(data.get("quiz_answers") or "[]")
         except json.JSONDecodeError: data["quiz_answers"] = []
+        data["bridge_learning"] = json.loads(data.get("bridge_learning") or "{}")
         data["bond_practice"] = json.loads(data.get("bond_practice") or "{}")
         data["completed"] = bool(data.get("completed"))
         return data
@@ -676,7 +705,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             config = {"supabaseUrl":os.environ.get("SUPABASE_URL", ""),"supabaseAnonKey":os.environ.get("SUPABASE_ANON_KEY", "")}
             payload = f"window.__CHEM_CONFIG__ = {json.dumps(config)};".encode("utf-8")
             self.send_response(200); self.send_header("Content-Type","application/javascript; charset=utf-8"); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(payload))); self.end_headers(); self.wfile.write(payload); return
-        public_assets={'/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
+        public_assets={'/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
         target = ROOT / path.lstrip("/")
         if path != "/" and path not in public_assets and (target.exists() or any(part.startswith('.') for part in path.split('/') if part) or '.' in target.name):
             self.send_error(404);return
