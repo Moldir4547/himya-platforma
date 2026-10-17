@@ -1,3 +1,4 @@
+import sys
 import json
 import os
 import subprocess
@@ -30,7 +31,7 @@ class PlatformIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         env = {**os.environ, "INITIAL_ADMIN_PASSWORD":"Admin123!", "CHEM_DATA_DIR": cls.temp.name, "PORT": str(PORT)}
-        cls.server = subprocess.Popen(["python3", "server.py"], cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cls.server = subprocess.Popen([sys.executable, "server.py"], cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         for _ in range(40):
             try:
                 urlopen(BASE + "/api/content", timeout=0.2)
@@ -45,6 +46,26 @@ class PlatformIntegrationTests(unittest.TestCase):
         cls.server.terminate()
         cls.server.wait(timeout=5)
         cls.temp.cleanup()
+
+    def test_registration_categories_and_admin_only_reporting(self):
+        from urllib.error import HTTPError
+        admin = request('POST','/api/login',{'email':'admin@chem.local','password':'Admin123!'})['token']
+        ids=[]
+        for category in ('school_student','university_student','teacher'):
+            result=request('POST','/api/register',{'displayName':category,'email':category+'@example.test','password':'Student123!','role':'student','participantType':category})
+            ids.append(result['user']['id'])
+            self.assertEqual(result['user']['participant_type'],category)
+            self.assertNotEqual(result['user']['role'],'admin')
+            with self.assertRaises(HTTPError) as denied: request('GET','/api/users',token=result['token'])
+            self.assertEqual(denied.exception.code,403)
+        members=[u for u in request('GET','/api/users',token=admin) if u['id'] in ids]
+        self.assertEqual({u['participant_type'] for u in members},{'school_student','university_student','teacher'})
+        analytics=request('GET','/api/analytics',token=admin)
+        self.assertEqual(len([u for u in analytics['users'] if u['id'] in ids]),3)
+        request('PATCH','/api/users/'+ids[0],{'participant_type':'teacher'},admin)
+        self.assertEqual(next(u for u in request('GET','/api/users',token=admin) if u['id']==ids[0])['participant_type'],'teacher')
+        with self.assertRaises(HTTPError) as invalid: request('POST','/api/register',{'displayName':'Bad','email':'badcat@example.test','password':'Student123!','role':'student','participantType':'admin'})
+        self.assertEqual(invalid.exception.code,400)
 
     def test_bond_practice_is_separate_idempotent_and_server_graded(self):
         from urllib.error import HTTPError
