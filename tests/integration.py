@@ -96,6 +96,29 @@ class PlatformIntegrationTests(unittest.TestCase):
         result = request("POST", "/api/progress", {"item_id":item["id"], "progress":70}, learner)
         self.assertEqual(result["bond_practice"]["score"], 0)
         self.assertEqual(next(p for p in request("GET","/api/progress",token=learner) if p["item_id"]==item["id"])["bond_practice"]["best_score"],8)
+        # New modes preserve teacher scores and existing practice; score claims are ignored.
+        for mode, answers, expected in [('theory',[],0),('context',[1,1,2,6],4),('simulation',[180,104.5,8,4],4)]:
+            activity={'item_id':item['id'],'mode':mode,'attempt_id':str(uuid.uuid4()),'answers':answers,'score':999}
+            saved=request('POST','/api/bridge-activity',activity,learner)
+            self.assertEqual(saved['bridge_learning'][mode]['score'],expected)
+            self.assertEqual(request('POST','/api/bridge-activity',activity,learner)['bridge_learning'][mode]['attempt_count'],1)
+            self.assertEqual(saved['bond_practice']['best_score'],8)
+            self.assertEqual(saved['quiz_answers'],original['quiz_answers'])
+        activity.update(mode='context',answers=[0,0,0,0],attempt_id=str(uuid.uuid4()))
+        saved=request('POST','/api/bridge-activity',activity,learner)
+        self.assertEqual(saved['bridge_learning']['context']['score'],0)
+        self.assertEqual(saved['bridge_learning']['context']['best_score'],4)
+        self.assertEqual(saved['bridge_learning']['context']['attempt_count'],2)
+        report=request('GET','/api/analytics',token=admin)
+        self.assertEqual(next(r for r in report['details'] if r['user_id']==saved['user_id'] and r['item_id']==item['id'])['bridge_learning']['context']['score'],0)
+        for patch in ({'answers':[True]*4},{'answers':[float('inf')]*4},{'mode':'admin'},{'answers':[]}):
+            with self.assertRaises(HTTPError) as denied: request('POST','/api/bridge-activity',{**activity,**patch},learner)
+            self.assertEqual(denied.exception.code,400)
+        with self.assertRaises(HTTPError) as denied: request('POST','/api/bridge-activity',activity,admin)
+        self.assertEqual(denied.exception.code,403)
+        with self.assertRaises(HTTPError) as denied: request('POST','/api/bridge-activity',activity)
+        self.assertEqual(denied.exception.code,401)
+
         for answers in ([], [True]*8, [1.5]*8, [3]*8, ["1"]*8):
             with self.assertRaises(HTTPError) as error:
                 request("POST","/api/bond-practice",{**attempt,"answers":answers},learner)
