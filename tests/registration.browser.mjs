@@ -53,6 +53,8 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   assert.equal(await page.locator('.empty-library').count(),0,'guests should see the sign-in explanation, not an empty catalogue');
   assert.equal(await page.locator('.continuity-details').getAttribute('open'),null);
   await page.locator('.continuity-details > summary').click();
+  await page.locator('.continuity-details .bridge-card > summary').first().click();
+  await page.getByRole('button',{name:'Байланыс бар',exact:true}).waitFor({state:'visible'});
   assert.equal(await page.getByRole('button',{name:'Байланыс бар',exact:true}).isVisible(),true);
   await page.locator('.continuity-details > summary').click();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'home overflow at '+width);
