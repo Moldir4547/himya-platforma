@@ -822,3 +822,6 @@ body::before {
 @media (min-width:1101px) { .topbar nav { gap: 3px; } .topbar nav a, .topbar nav button { padding-left: 9px; padding-right: 9px; font-size: 13px; } }
 @media (max-width:900px) { .direction-cards, .practice-entry-grid { grid-template-columns: 1fr; } .start-guide { grid-template-columns: 1fr; gap: 20px; } .direction-card { padding: 24px; } }
 @media (max-width:560px) { .orientation-panel, .direction-group { padding: 20px; } .continue-learning { flex-direction: column; align-items: stretch; padding: 20px; } .continue-learning .primary-button { text-align: center; white-space: normal; } .continuity-details { padding: 0 18px; } }
+
+/* Keep navigation targets steady under pointer and keyboard focus. */
+.topbar nav a:hover, .topbar nav button:hover, .topbar nav a:focus-visible, .topbar nav button:focus-visible { transform: none; }
