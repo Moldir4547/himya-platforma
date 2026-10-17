@@ -18,7 +18,7 @@ test('actual registration form: required category, pending confirmation, phone l
   try{res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html; charset=utf-8');res.end(readFileSync(new URL(name,root)));}catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
- const browser=await chromium.launch({headless:true});
+ const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
  try{for(const width of [1440,390,320]){const context=await browser.newContext({viewport:{width,height:900}});const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:'+server.address().port+'/register');await page.getByLabel('Мен кіммін?').waitFor();await page.getByLabel('Аты-жөні').fill('QA Participant');await page.locator('input[name="username"]').fill('qa_participant');await page.getByLabel('Email',{exact:true}).fill('qa@example.test');await page.getByLabel('Пароль',{exact:true}).fill('Test12345!');const before=signups.length;await page.getByRole('button',{name:'Тіркелу',exact:true}).click();assert.equal(signups.length,before);
  for(const category of ['school_student','university_student','teacher']){await page.getByLabel('Мен кіммін?').selectOption(category);const response=page.waitForResponse(r=>r.url().includes('/auth/v1/signup'));await page.getByRole('button',{name:'Тіркелу',exact:true}).click();await response;await page.waitForFunction(()=>document.querySelector('#auth-error')?.textContent.includes('Тіркелу сәтті'));assert.equal(signups.at(-1).data.participant_type,category);assert.notEqual(signups.at(-1).data.role,'admin');assert.equal(await page.getByRole('button',{name:'Тіркелу',exact:true}).isEnabled(),true);}
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await context.close();}}
@@ -42,7 +42,7 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   try{res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html; charset=utf-8');res.end(readFileSync(new URL(name,root)));}catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
- const browser=await chromium.launch({headless:true});
+ const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
  try{for(const width of [1440,1101,390,320]){
   const context=await browser.newContext({viewport:{width,height:900},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));

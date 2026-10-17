@@ -22,7 +22,9 @@ test('server answer keys match the reviewed task version',()=>{
 });
 test('both lesson renderers append practice independently of teacher body and quiz',()=>{
  const source=read('app.js');
- assert.equal(source.split('item.path===BOND_PATH?bondPracticeView():""').length-1,2);
+ assert.ok(source.includes('test:bondPracticeView()+quizBlock(item)'));
+ assert.ok(source.includes('if(item.path===BOND_PATH)return bondLearningPage(item)'));
+ assert.ok(source.includes('item.path===BOND_PATH?bondLearningPage(item)'));
  assert.ok(source.includes('bondPractice.bind(app,byPath(routePath()))'));
  assert.ok(source.includes('item.body?'));
  // Original theory and review are retained, including diagrams and section destinations.
