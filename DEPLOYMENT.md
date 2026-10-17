@@ -49,3 +49,13 @@ PR #1 және #2 негізгі тармаққа біріктірілді, GitH
 Chrome автоматтандыруының файл таңдау рұқсаты болмағандықтан жаңа файлды форма арқылы жүктеу толық қабылдау тексеруінен өткен жоқ. Браузер download оқиғасын да растай алмады. Файлдар қауіпсіз сақтау мен signed URL арқылы ашылуға бейімделген; бұл шектеулерді толық орындалды деп белгілемеу керек.
 
 **CDN шектеуі (нақты тексерілді):** 62/62 жаңа signed URL файлды берді; cache-busting параметрі бар 62/62 ескі public URL origin тарапынан HTTP 400 алды. Бірақ параметрсіз бұрынғы 62 URL CDN кэшінен әлі HTTP 206 береді. Қойманы private ету бұрын ашық көшірмелерді дереу қайтарып алмайды. Supabase cache purge API Pro не жоғары жоспарды және серверлік құпия кілтті талап етеді: https://supabase.com/docs/guides/storage/cdn/purge-cdn-cache. Жоспар ақылыға ауыстырылған жоқ.
+
+
+
+## Registration categories and production email
+
+Apply `supabase/migrations/202610170001_registration_audience.sql` before deploying this frontend. Registration now records school_student, university_student or teacher separately from access permissions. Historical unclassified accounts remain unclassified; administrators can correct categories without changing permissions. The protected registration report includes pending and confirmed email accounts, registration timestamps, and pagination. Administrators are excluded from participant totals. CSV exports contain personal data and are available only in the administrator view.
+
+Keep Confirm email enabled. Configure a custom SMTP provider and verified sending domain in Supabase Authentication → Emails → SMTP Settings; the built-in mailer is not suitable for a class registration session. Enter the SMTP password in the dashboard, never in this repository or config.js. Set the sending quota to the expected class size within the provider allowance and test delivery, confirmation, resend and password recovery with real addresses before announcing access. Shared classroom networks also share IP-based Auth limits; measure a registration session before adjusting limits.
+
+The username-login Edge Function requires the existing public-login gateway configuration from supabase/config.toml and an ALLOWED_ORIGINS value containing the actual site origin. It validates passwords with Supabase Auth and rate-limits usernames server-side.

@@ -240,6 +240,7 @@ def init_database():
             if field not in resource_columns: connection.execute(f"alter table resources add column {field} text not null default ''")
         if 'is_published' not in resource_columns: connection.execute("alter table resources add column is_published integer not null default 1")
         user_columns = {row["name"] for row in connection.execute("pragma table_info(users)")}
+        if "participant_type" not in user_columns: connection.execute("alter table users add column participant_type text check(participant_type in ('school_student','university_student','teacher'))")
         if "username" not in user_columns: connection.execute("alter table users add column username text")
         connection.execute("create unique index if not exists users_username_unique on users(lower(username)) where username is not null")
         if "item_type" not in columns: connection.execute("alter table content_items add column item_type text not null default 'lesson'")
@@ -322,7 +323,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             if required: raise ApiError(401, "Кіру қажет")
             return None
         with db() as connection:
-            row = connection.execute("""select users.id,users.display_name,users.email,users.role
+            row = connection.execute("""select users.id,users.display_name,users.email,users.role,users.participant_type,users.created_at
               from sessions join users on users.id=sessions.user_id where sessions.token=? and datetime(sessions.created_at)>datetime('now','-7 days')""", (token,)).fetchone()
         if not row and required: raise ApiError(401, "Сессия аяқталды")
         return dict(row) if row else None
@@ -352,7 +353,10 @@ class SpaHandler(SimpleHTTPRequestHandler):
         if method == "GET" and path == "/api/session":
             return self.json_response({"user": self.user(False)})
         if method == "POST" and path == "/api/register":
-            data = self.read_json(); role = data.get("role")
+            data = self.read_json(); role = data.get("role"); participant = data.get("participantType")
+            if participant is not None:
+                if participant not in ("school_student","university_student","teacher"): raise ApiError(400,"Қатысушы санатын таңдаңыз")
+                role = "university_student" if participant == "university_student" else "student"
             if role not in ("student", "university_student"): raise ApiError(400, "Бұл рөлмен тіркелуге болмайды")
             if len(data.get("password", "")) < 8: raise ApiError(400, "Құпиясөз кемінде 8 таңба болуы керек")
             email = data.get("email", "").strip().lower(); name = data.get("displayName", "").strip()
@@ -363,10 +367,10 @@ class SpaHandler(SimpleHTTPRequestHandler):
             try:
                 with db() as connection:
                     connection.execute("insert into users(id,display_name,email,role,password_hash,created_at) values (?,?,?,?,?,?)", (user_id,name,email,role,password_hash(data["password"]),now()))
-                    connection.execute("update users set username=? where id=?",(username,user_id))
+                    connection.execute("update users set username=?,participant_type=? where id=?",(username,participant,user_id))
                     connection.execute("insert into sessions values (?,?,?)", (token,user_id,now()))
             except sqlite3.IntegrityError: raise ApiError(409, "Бұл email бұрын тіркелген")
-            return self.json_response({"token":token,"user":{"id":user_id,"display_name":name,"email":email,"role":role}}, 201)
+            return self.json_response({"token":token,"user":{"id":user_id,"display_name":name,"email":email,"role":role,"participant_type":participant}}, 201)
         if method == "POST" and path == "/api/login":
             data = self.read_json(); email = data.get("email", "").strip().lower()
             with db() as connection:
@@ -374,7 +378,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
                 if not row or not password_ok(data.get("password", ""), row["password_hash"]): raise ApiError(401, "Email немесе құпиясөз қате")
                 token = secrets.token_urlsafe(32)
                 connection.execute("insert into sessions values (?,?,?)", (token,row["id"],now()))
-            return self.json_response({"token":token,"user":{key:row[key] for key in ("id","display_name","email","role")}})
+            return self.json_response({"token":token,"user":{key:row[key] for key in ("id","display_name","email","role","participant_type","created_at")}})
         if method == "POST" and path == "/api/logout":
             auth = self.headers.get("Authorization", "")
             cookie=SimpleCookie(self.headers.get('Cookie',''))
@@ -580,21 +584,26 @@ class SpaHandler(SimpleHTTPRequestHandler):
         if method == "GET" and path == "/api/analytics":
             self.admin()
             with db() as connection:
-                users = connection.execute("""select users.id,users.display_name,users.email,users.role,
+                users = connection.execute("""select users.id,users.display_name,users.email,users.role,users.participant_type,users.created_at,
                   coalesce(round(avg(progress.progress)),0) average_progress,
                   coalesce(sum(progress.completed),0) completed_count,
                   coalesce(round(avg(case when progress.max_score>0 then progress.score*100.0/progress.max_score end)),0) average_score,
                   max(progress.last_opened) last_active
                   from users left join progress on progress.user_id=users.id where users.role!='admin' group by users.id order by users.created_at desc""").fetchall()
-                details = connection.execute("""select progress.*,users.display_name,users.email,users.role,content_items.title
+                details = connection.execute("""select progress.*,users.display_name,users.email,users.role,users.participant_type,content_items.title
                   from progress join users on users.id=progress.user_id join content_items on content_items.id=progress.item_id order by progress.updated_at desc""").fetchall()
             return self.json_response({"users":[dict(row) for row in users],"details":[self.progress_row(row) for row in details]})
         if method == "GET" and path == "/api/users":
             self.admin()
-            with db() as connection: rows = connection.execute("select id,display_name,email,role,created_at from users order by created_at desc").fetchall()
+            with db() as connection: rows = connection.execute("select id,display_name,email,role,participant_type,created_at from users order by created_at desc").fetchall()
             return self.json_response([dict(row) for row in rows])
         if method == "PATCH" and path.startswith("/api/users/"):
-            admin = self.admin(); user_id = unquote(path.rsplit("/",1)[1]); role = self.read_json().get("role")
+            admin = self.admin(); user_id = unquote(path.rsplit("/",1)[1]); patch = self.read_json(); role = patch.get("role")
+            if "participant_type" in patch:
+                category = patch["participant_type"]
+                if category not in ("school_student","university_student","teacher"): raise ApiError(400,"Санат қате")
+                with db() as connection: connection.execute("update users set participant_type=? where id=? and role!='admin'",(category,user_id))
+                return self.json_response({"ok":True})
             if role not in ("student","university_student","admin"): raise ApiError(400, "Рөл қате")
             if user_id == admin["id"] and role != "admin": raise ApiError(400, "Өз рөліңізді өзгертуге болмайды")
             with db() as connection: connection.execute("update users set role=? where id=?", (role,user_id))
