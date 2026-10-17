@@ -28,7 +28,7 @@ test('actual registration form: required category, pending confirmation, phone l
 
 test('learner navigation: three paths, guest return route, menu and mobile layout',async()=>{
  const server=http.createServer(async(req,res)=>{
-  const path=new URL(req.url,'http://localhost').pathname;
+  const path=new URL(req.url,'http://localhost').pathname.replace(/^\/himya-platforma(?=\/|$)/,'')||'/';
   res.setHeader('Cache-Control','no-store');
   if(path==='/config.js'){res.setHeader('Content-Type','text/javascript');res.end('window.__CHEM_CONFIG__={};');return;}
   if(path==='/api/session'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({user:req.headers.cookie?.includes('fixture=member')?{id:'learner',role:'student',display_name:'QA Learner'}:null}));return;}
