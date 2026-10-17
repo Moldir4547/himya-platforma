@@ -43,7 +43,7 @@ export function cards(rows, admin = false) {
 
 export function catalogView(rows, filters = {}, admin = false) {
   const visible = filterMaterials(rows, filters);
-  return `<section class="catalog-head"><div><span class="eyebrow">${admin ? 'Материалдарды басқару' : 'Оқу кітапханасы'}</span><h1>Материалдар</h1><p>${admin ? 'Файл қосыңыз, мәліметін өңдеңіз және жариялануын басқарыңыз.' : 'Қажетті материалды тауып, онлайн ашыңыз немесе жүктеп алыңыз.'}</p></div>${admin ? '<a href="/admin/material/new" class="primary-button">+ Материал қосу</a>' : ''}</section>
+  return `<section class="catalog-head"><div><span class="eyebrow">${admin ? 'Материалдарды басқару' : 'Оқу кітапханасы'}</span><h1>${admin ? 'Материалдар' : 'Оқу кітапханасы'}</h1><p>${admin ? 'Файл қосыңыз, мәліметін өңдеңіз және жариялануын басқарыңыз.' : 'Қажетті материалды тауып, онлайн ашыңыз немесе жүктеп алыңыз.'}</p></div>${admin ? '<a href="/admin/material/new" class="primary-button">+ Материал қосу</a>' : ''}</section>
   <form id="catalog-filters" class="catalog-filters" role="search" aria-label="Материалдарды іздеу және сүзу">
     <label class="search-field">Материал іздеу<input name="query" type="search" value="${e(filters.query)}" placeholder="Мысалы, химиялық байланыс" autocomplete="off" aria-controls="catalog-results"/></label>
     <label>Категория<select name="category">${options([...CATEGORIES, ...rows.map(row => row.category)], filters.category)}</select></label>
@@ -75,7 +75,8 @@ export function materialEditor(item, parents, resources = []) {
 }
 
 export function homeView(rows, topics, user, popular = []) {
+  if (!user) return "";
   return `  <section class="home-section"><header><h2>Соңғы қосылған материалдар</h2><a href="/materials">Барлығын көру <span aria-hidden="true">→</span></a></header><div class="materials-grid">${cards(rows.slice(0, 3)) || '<div class="empty-library"><h3>Оқу кітапханасы дайындалуда</h3><p>Материалдар жарияланғаннан кейін осы жерде пайда болады.</p></div>'}</div></section>
-  <section class="home-section"><header><h2>Негізгі тақырыптар</h2><a href="/topics">Барлық тақырыптар <span aria-hidden="true">→</span></a></header><div class="topic-links">${topics.map((topic, index) => `<a href="${e(topic.path)}"><span>${String(index + 1).padStart(2, '0')}</span><strong>${e(topic.title)}</strong><b aria-hidden="true">↗</b></a>`).join('')}</div></section>
+  <section class="home-section"><header><h2>Барлық оқу бөлімдері</h2><a href="/topics">Барлық тақырыптар <span aria-hidden="true">→</span></a></header><div class="topic-links">${topics.map((topic, index) => `<a href="${e(topic.path)}"><span>${String(index + 1).padStart(2, '0')}</span><strong>${e(topic.title)}</strong><b aria-hidden="true">↗</b></a>`).join('')}</div></section>
   ${popular.length ? `<section class="home-section"><header><h2>Танымал материалдар</h2><span class="section-note">Ең көп қаралған</span></header><div class="materials-grid">${cards(popular)}</div></section>` : ''}`;
 }

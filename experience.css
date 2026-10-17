@@ -782,3 +782,46 @@ body::before {
 .auth-card .eye-button { color: #4b5e76; }
 .resource-card > .material-actions button { background: #f4f7fa; border-color: var(--edge); }
 @media (max-width: 1100px) { .topbar nav { background: var(--sheet); border-color: var(--edge); } }
+
+/* Clear entry points for learners. */
+.home-directions { margin: 32px 0; }
+.home-directions > header { margin-bottom: 20px; }
+.home-directions h2, .orientation-panel h2 { margin: 8px 0 20px; font-size: clamp(22px, 3vw, 30px); line-height: 1.35; }
+.direction-cards, .practice-entry-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+.direction-card { display: flex; flex-direction: column; position: relative; padding: 28px; border: 1px solid #afc9cc; border-radius: 22px; background: #edf5f4; min-width: 0; }
+.direction-card.university { background: #edecf7; border-color: #c8c3de; }
+.direction-card.bridge { background: #f5eddf; border-color: #d9c7aa; }
+.direction-number { color: #536b7b; font-size: 13px; letter-spacing: .12em; }
+.direction-card h3 { font-size: 24px; line-height: 1.3; margin: 18px 0 12px; }
+.direction-card p { color: #4b5e76; line-height: 1.7; margin: 0 0 24px; }
+.direction-card a { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; color: #075967; font-weight: 700; border-top: 1px solid #b7cdd1; padding-top: 14px; }
+.orientation-panel { background: #edf2f7; border: 1px solid #bdcddd; border-radius: 22px; padding: 28px; margin: 28px 0; }
+.start-guide { list-style: decimal-leading-zero; padding-left: 28px; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 32px; }
+.start-guide li { padding-left: 4px; min-width: 0; }
+.start-guide li::marker { color: #096c78; font-weight: 700; }
+.start-guide strong, .start-guide span { display: block; line-height: 1.6; }
+.start-guide span { color: #4b5e76; margin-top: 8px; font-size: 14px; }
+.orientation-note { margin: 24px 0 0; border-top: 1px solid #bdcddd; padding-top: 18px; line-height: 1.7; }
+.orientation-note a, .orientation-next { color: #075967; text-decoration: underline; text-underline-offset: 4px; }
+.practice-entry-grid > a { display: flex; flex-direction: column; gap: 12px; background: #fff; padding: 22px; border: 1px solid #bdcddd; border-radius: 16px; min-width: 0; }
+.practice-entry-grid strong { font-size: 18px; }
+.practice-entry-grid span { color: #4b5e76; font-size: 14px; line-height: 1.7; }
+.practice-entry-grid b { color: #075967; margin-top: auto; padding-top: 12px; font-size: 14px; }
+.orientation-next { display: inline-flex; align-items: center; min-height: 48px; margin-top: 18px; line-height: 1.6; }
+.continuity-details { margin-top: 28px; border: 1px solid #bdcddd; border-radius: 18px; background: #edf2f7; padding: 0 24px; }
+.continuity-details > summary { padding: 22px 0; cursor: pointer; font-weight: 650; line-height: 1.6; }
+.continuity-details .bridge-overview { margin-top: 0; }
+.continue-learning { display: flex; justify-content: space-between; align-items: center; gap: 24px; background: #e1f1ed; border: 1px solid #9fc6bd; border-radius: 18px; padding: 24px; margin: 24px 0; }
+.continue-learning span, .continue-learning strong { display: block; line-height: 1.6; }
+.continue-learning span { color: #4b5e76; font-size: 14px; margin-bottom: 4px; }
+.direction-group { margin: 24px 0; border: 1px solid #bdcddd; background: #edf2f7; padding: 26px; border-radius: 20px; }
+.direction-group header p { color: #4b5e76; line-height: 1.7; }
+.direction-group header > a { display: inline-flex; align-items: center; min-height: 48px; color: #075967; font-weight: 650; }
+.direction-group .topic-links { margin-top: 18px; }
+.direction-card a:focus-visible, .practice-entry-grid a:focus-visible, .continuity-details > summary:focus-visible { outline: 3px solid #096c78; outline-offset: 5px; }
+@media (min-width:1101px) { .topbar nav { gap: 3px; } .topbar nav a, .topbar nav button { padding-left: 9px; padding-right: 9px; font-size: 13px; } }
+@media (max-width:900px) { .direction-cards, .practice-entry-grid { grid-template-columns: 1fr; } .start-guide { grid-template-columns: 1fr; gap: 20px; } .direction-card { padding: 24px; } }
+@media (max-width:560px) { .orientation-panel, .direction-group { padding: 20px; } .continue-learning { flex-direction: column; align-items: stretch; padding: 20px; } .continue-learning .primary-button { text-align: center; white-space: normal; } .continuity-details { padding: 0 18px; } }
+
+/* Keep navigation targets steady under pointer and keyboard focus. */
+.topbar nav a:hover, .topbar nav button:hover, .topbar nav a:focus-visible, .topbar nav button:focus-visible { transform: none; }
