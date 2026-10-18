@@ -1,6 +1,6 @@
 // Built-in practice is kept separate from teacher-authored quiz_data.
 export const BOND_PATH = "/sabaktastyk-kopiri/himiyalyk-bailanys";
-export const BOND_VERSION = 1;
+export const BOND_VERSION = 2;
 export const BOND_QUESTIONS = [
   {
     "level": "Мектеп",
@@ -122,22 +122,22 @@ export const BOND_QUESTIONS = [
     ]
   },
   {
-    "level": "Университет",
-    "question": "[Fe(CN)₆]⁴⁻ ионындағы Fe тотығу дәрежесі мен координациялық саны қандай?",
-    "options": [
-      "+6 және 4",
-      "+4 және 6",
-      "+2 және 6"
-    ],
-    "answer": 2,
-    "section": "bond-complex",
-    "explanation": "x + 6(−1) = −4, сондықтан x = +2. Алты монодентатты CN⁻ лиганды Fe-мен байланысқан: координациялық саны 6.",
-    "why": [
-      "Лиганд саны тотығу дәрежесіне тең емес; кешеннің толық заряды −4.",
-      "Кешеннің −4 заряды орталық Fe заряды емес.",
-      ""
-    ]
-  }
+  "level": "Университет",
+  "question": "МО әдісі бойынша O₂ молекуласының парамагнитті болу себебі қандай?",
+  "options": [
+    "Байланыстырушы МО-дағы барлық электрондар дара болғандықтан",
+    "O₂-де электрондар жоқ болғандықтан",
+    "Екі бірдей энергиялы π* орбитальда бір-бірден дара электрон болғандықтан"
+  ],
+  "answer": 2,
+  "section": "bm-mo",
+  "explanation": "O₂ негізгі күйінде екі π* орбитальға Хунд ережесі бойынша бір-бірден электрон орналасады. Екі дара электрон парамагниттік қасиетті түсіндіреді; байланыс реті (8 − 4)/2 = 2.",
+  "why": [
+    "Байланыстырушы валенттік МО-дағы электрондар бұл модельде жұптасқан. Дара электрондар — π* орбитальдарында.",
+    "O₂-де 16 электрон бар; оның 12-сі валенттік МО сызбасында көрсетіледі.",
+    ""
+  ]
+}
 ];
 const esc = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 export function gradeBond(answers) {
@@ -187,7 +187,7 @@ export function createBondPractice({store,state}) {
         host.querySelector("[data-bp-summary]").textContent=`Орындалды: ${count} / 8 · Ұпай: ${score} / 8`;
         const saved=state.progress.find(row=>row.item_id===item.id)?.bond_practice;
         host.querySelector("[data-bp-saved]").textContent=saved?.version===BOND_VERSION
-          ? `Сақталған нәтиже: ${saved.score}/8 · Үздік нәтиже: ${saved.best_score}/8 · Талпыныс: ${saved.attempt_count}` : "";
+          ? `Сақталған нәтиже: ${saved.score}/8 · Үздік нәтиже: ${saved.best_score}/8 · Талпыныс: ${saved.attempt_count}` : saved?.max_score?`Алдыңғы тест нұсқасы: ${saved.score}/8. Жаңартылған тестті орындаңыз.`:"";
         save.disabled=count!==8||active.saving||active.saved||!userId||state.user?.role==="admin";
         reset.disabled=active.saving;
         status.textContent=active.message||(!userId?"Нәтижені сақтау үшін жүйеге кіріңіз.":state.user?.role==="admin"?"Әкімшіге арналған алдын ала қарау: нәтиже сақталмайды.":"");

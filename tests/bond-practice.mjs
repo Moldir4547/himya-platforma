@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {BOND_QUESTIONS,gradeBond,bondPracticeView} from '../bond-practice.js';
+import {bondModelsView} from '../bond-models.js';
 import {LocalApiStore,SupabaseStore} from '../store.js';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 test('eight tasks span three levels and every answer has scientific feedback',()=>{
@@ -32,7 +33,7 @@ test('both lesson renderers append practice independently of teacher body and qu
  const context={};vm.runInNewContext(theory+';this.html=chemicalBondBridgeTheory();',context);
  assert.ok((context.html.match(/<svg/g)||[]).length>=10);
  assert.ok(context.html.includes('data-bond-quiz'));
- for(const q of BOND_QUESTIONS)assert.ok(context.html.includes('id="'+q.section+'"'));
+ for(const q of BOND_QUESTIONS)assert.ok((context.html+bondModelsView()).includes('id="'+q.section+'"'));
  assert.equal((bondPracticeView().match(/data-bp-question=/g)||[]).length,8);
 });
 test('public asset lists and build include practice assets',()=>{
@@ -41,14 +42,14 @@ test('public asset lists and build include practice assets',()=>{
 });
 test('local adapter sends answers and stable attempt id without a client score',async()=>{
  const store=new LocalApiStore();
- store.request=async(path,options)=>{assert.equal(path,'/bond-practice');assert.deepEqual(JSON.parse(options.body),{item_id:'lesson',attempt_id:'attempt',answers:[1]});return {item_id:'lesson'};};
+ store.request=async(path,options)=>{assert.equal(path,'/bond-practice-v2');assert.deepEqual(JSON.parse(options.body),{item_id:'lesson',attempt_id:'attempt',answers:[1]});return {item_id:'lesson'};};
  assert.equal((await store.submitBondPractice('lesson','attempt',[1])).item_id,'lesson');
 });
 test('Supabase adapter authenticates and calls the dedicated grading RPC',async()=>{
  const store=new SupabaseStore('https://example.test','key');
  store.validSession=async()=>null;await assert.rejects(store.submitBondPractice('lesson','attempt',[]),/жүйеге кіріңіз/);
  store.validSession=async()=>({access_token:'verified'});
- store.request=async(path,options)=>{assert.equal(path,'/rest/v1/rpc/submit_bond_practice');assert.equal(options.headers.Authorization,'Bearer verified');assert.deepEqual(JSON.parse(options.body),{p_item_id:'lesson',p_attempt_id:'attempt',p_answers:[0]});return[{item_id:'lesson'}];};
+ store.request=async(path,options)=>{assert.equal(path,'/rest/v1/rpc/submit_bond_practice_v2');assert.equal(options.headers.Authorization,'Bearer verified');assert.deepEqual(JSON.parse(options.body),{p_item_id:'lesson',p_attempt_id:'attempt',p_answers:[0]});return[{item_id:'lesson'}];};
  assert.equal((await store.submitBondPractice('lesson','attempt',[0])).item_id,'lesson');
  store.request=async()=>[];await assert.rejects(store.submitBondPractice('lesson','attempt',[]),/сақталмады/);
 });
