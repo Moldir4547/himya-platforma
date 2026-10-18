@@ -24,7 +24,7 @@ const store={async submitBondPractice(id,attempt,answers){
  if(fail){fail=false;throw Error('offline');}
  const prior=state.progress[0]?.bond_practice||{};
  const score=answers.reduce((n,a,i)=>n+Number(a===[1,0,2,1,2,0,1,2][i]),0);
- const row={item_id:id,bond_practice:{version:1,score,best_score:Math.max(score,prior.best_score||0),attempt_count:(prior.attempt_count||0)+1,attempt_id:attempt}};
+ const row={item_id:id,bond_practice:{version:2,score,best_score:Math.max(score,prior.best_score||0),attempt_count:(prior.attempt_count||0)+1,attempt_id:attempt}};
  localStorage.setItem('progress',JSON.stringify([row]));return row;
 }};
 const practice=createBondPractice({store,state});

@@ -126,6 +126,31 @@ class PlatformIntegrationTests(unittest.TestCase):
         with self.assertRaises(HTTPError) as error:
             request("POST","/api/bond-practice",attempt,admin)
         self.assertEqual(error.exception.code,403)
+        # V2 uses bonding models, preserves v1 scores, and rejects stale-client downgrades.
+        modern={"item_id":item["id"],"attempt_id":str(uuid.uuid4()),"answers":[1,0,2,1,2,0,1,2]}
+        upgraded=request("POST","/api/bond-practice-v2",modern,learner)
+        self.assertEqual(upgraded["bond_practice"]["version"],2)
+        self.assertEqual(upgraded["bond_practice"]["attempt_count"],1)
+        self.assertEqual(upgraded["bridge_learning"]["test_v1"]["best_score"],8)
+        self.assertEqual(request("POST","/api/bond-practice-v2",modern,learner)["bond_practice"]["attempt_count"],1)
+        with self.assertRaises(HTTPError) as stale: request("POST","/api/bond-practice",{**modern,"attempt_id":str(uuid.uuid4())},learner)
+        self.assertEqual(stale.exception.code,409)
+        modern.update(mode="context",answers=[1,1,3,2],attempt_id=str(uuid.uuid4()))
+        upgraded=request("POST","/api/bridge-activity-v2",modern,learner)
+        self.assertEqual(upgraded["bridge_learning"]["context"]["version"],2)
+        self.assertEqual(upgraded["bridge_learning"]["context"]["score"],4)
+        self.assertEqual(upgraded["bridge_learning"]["context"]["attempt_count"],1)
+        self.assertEqual(upgraded["bridge_learning"]["context_v1"]["best_score"],4)
+        with self.assertRaises(HTTPError) as stale: request("POST","/api/bridge-activity",{**modern,"attempt_id":str(uuid.uuid4())},learner)
+        self.assertEqual(stale.exception.code,409)
+        self.assertEqual(request("GET","/api/progress",token=learner)[-1]["bond_practice"]["version"],2)
+        for endpoint in ("/api/bridge-activity-v2","/api/bond-practice-v2"):
+            with self.assertRaises(HTTPError) as denied: request("POST",endpoint,modern,admin)
+            self.assertEqual(denied.exception.code,403)
+        # Ordinary teacher progress updates must preserve both new assessments.
+        preserved=request("POST","/api/progress",{"item_id":item["id"],"progress":80},learner)
+        self.assertEqual(preserved["bridge_learning"]["context"]["score"],4)
+        self.assertEqual(preserved["bond_practice"]["version"],2)
         request("PATCH",f"/api/content/{item['id']}",{**item,"is_published":False},admin)
         with self.assertRaises(HTTPError) as error:
             request("POST","/api/bond-practice",attempt,learner)
