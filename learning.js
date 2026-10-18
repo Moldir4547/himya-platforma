@@ -8,6 +8,16 @@ const esc = (s = "") =>
         c
       ],
   );
+// Topic entry points live with the matching school curriculum, not on the homepage.
+export function schoolPracticeView(item){
+ const grade8=item?.path==='/mektep/teoriya/8-synyp',grade9=item?.path==='/mektep/teoriya/9-synyp';
+ if(!grade8&&!grade9)return '';
+ const activities=grade8?[
+  ['Химиялық байланыс түрлері','Коваленттік, иондық және металдық байланыстар. Теория, орбиталь модельдері және тапсырмалар.','/sabaktastyk-kopiri/himiyalyk-bailanys','Химиялық байланысты ашу'],
+  ['Қышқылдар, негіздер және индикаторлар','Виртуалды зертхана: индикатор түсін, pH және бейтараптануды модельде бақылаңыз.',new URL('virtual-lab.html',document.baseURI).href,'Виртуалды зертхананы ашу']
+ ]:[['Тотығу-тотықсыздану реакциялары','Redox ойыны: тотығу дәрежесі, электрон алмасу және электрондық баланс.','/learn/redox','Redox сабағы мен ойынын ашу']];
+ return '<section class="orientation-panel school-topic-practice" aria-labelledby="school-practice-title"><h2 id="school-practice-title">Тақырып бойынша тәжірибе · '+(grade8?'8':'9')+'-сынып</h2><p>Тиісті тақырыптың материалын оқып, білімді интерактивті жұмыспен бекітіңіз.</p><div class="practice-entry-grid">'+activities.map(([title,copy,href,action])=>'<a href="'+esc(href)+'"><strong>'+title+'</strong><span>'+copy+'</span><b>'+action+' →</b></a>').join('')+'</div></section>';
+}
 export function createLearning({ store, state, navigate, render, shell }) {
   const api = learningApi(store);
   let game = null,
@@ -34,7 +44,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
   const login = () =>
     `<section class="learn-panel"><h1>Нәтижеңіз өзіңізбен бірге</h1><p>Жеке деректерді көру және сақтау үшін аккаунтыңызға кіріңіз.</p><a class="primary-button" href="/login">Жүйеге кіру</a></section>`;
   const intro = () =>
-    `${steps("/learn/redox")}<section class="learn-hero"><div><span class="learn-kicker">Виртуалды зертхана · 8 минут</span><h1>Бір элемент.<br>Үш түрлі өзгеріс.</h1><p>Перманганаттың түсі неге өзгереді? Ортаны салыстырып, электрондардың қозғалысын түсініңіз.</p><a class="primary-button" href="/games/redox">Білімімді тексеру →</a></div>${tubes()}</section><section class="learn-grid">${[
+    `<a class="back-link" href="/mektep/teoriya/9-synyp">← 9-сынып · Тотығу-тотықсыздану реакциялары</a>${steps("/learn/redox")}<section class="learn-hero"><div><span class="learn-kicker">Виртуалды зертхана · 8 минут</span><h1>Бір элемент.<br>Үш түрлі өзгеріс.</h1><p>Перманганаттың түсі неге өзгереді? Ортаны салыстырып, электрондардың қозғалысын түсініңіз.</p><a class="primary-button" href="/games/redox">Білімімді тексеру →</a></div>${tubes()}</section><section class="learn-grid">${[
       [
         "Қышқыл орта",
         "Mn²⁺ · +2",
@@ -319,7 +329,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
       ['school','01','Мектеп','7–11-сыныптар бойынша химияны меңгеру.','Сыныпты таңдау','/mektep'],
       ['university','02','Университет','ЖОО пәндері бойынша химиялық білімді тереңдету.','Пәнді таңдау','/universitet'],
       ['bridge','03','Сабақтастық көпірі','Мектептік білімнен университеттік тапсырмаларға біртіндеп өту.','Көпірден бастау','/sabaktastyk-kopiri']
-    ].map(([tone,n,title,copy,action,href])=>`<article class="direction-card ${tone}"><span class="direction-number" aria-hidden="true">${n}</span><h3>${title}</h3><p>${copy}</p><a href="${href}">${action} <span aria-hidden="true">→</span></a></article>`).join('')}</div></section><section class="orientation-panel" aria-labelledby="start-guide-title"><h2 id="start-guide-title">Неден бастаймын?</h2><ol class="start-guide"><li><strong>Бағытыңызды таңдаңыз</strong><span>Мектеп, университет немесе сабақтастық көпірі.</span></li><li><strong>Сабақты меңгеріңіз</strong><span>Теорияны оқып, сызбалар мен материалдарды қараңыз.</span></li><li><strong>Біліміңізді тексеріңіз</strong><span>Тапсырманы орындап, түсіндірмені оқыңыз. Нәтиже сабақта және жеке кабинетте көрінеді.</span></li></ol>${state.user ? '' : '<p class="orientation-note">Сабақтарды ашу және нәтижені сақтау үшін <a href="/login">аккаунтыңызға кіріңіз</a> немесе <a href="/register">тіркеліңіз</a>.</p>'}</section><section class="orientation-panel" aria-labelledby="practice-entry-title"><h2 id="practice-entry-title">Білімді тәжірибемен бекітіңіз</h2><div class="practice-entry-grid"><a href="/sabaktastyk-kopiri/himiyalyk-bailanys"><strong>Химиялық байланыс</strong><span>Теория және түсіндірмесі бар 8 тапсырма</span><b>Сабақты ашу →</b></a><a href="/learn/redox"><strong>Redox ойыны</strong><span>Қысқа сабақ, үш деңгей және жауап түсіндірмелері</span><b>Сабақтан бастау →</b></a><a href="${new URL("virtual-lab.html",document.baseURI).href}"><strong>Виртуалды зертхана</strong><span>Химиялық құбылыстарды модель арқылы зерттеу</span><b>Зертхананы ашу →</b></a></div><a class="orientation-next" href="/korytyndy-diagnostika">Тақырыптарды аяқтаған соң: қорытынды диагностика →</a></section>`;
+    ].map(([tone,n,title,copy,action,href])=>`<article class="direction-card ${tone}"><span class="direction-number" aria-hidden="true">${n}</span><h3>${title}</h3><p>${copy}</p><a href="${href}">${action} <span aria-hidden="true">→</span></a></article>`).join('')}</div></section><section class="orientation-panel" aria-labelledby="start-guide-title"><h2 id="start-guide-title">Неден бастаймын?</h2><ol class="start-guide"><li><strong>Бағытыңызды таңдаңыз</strong><span>Мектеп, университет немесе сабақтастық көпірі.</span></li><li><strong>Сабақты меңгеріңіз</strong><span>Теорияны оқып, сызбалар мен материалдарды қараңыз.</span></li><li><strong>Біліміңізді тексеріңіз</strong><span>Тапсырманы орындап, түсіндірмені оқыңыз. Нәтиже сабақта және жеке кабинетте көрінеді.</span></li></ol>${state.user ? '' : '<p class="orientation-note">Сабақтарды ашу және нәтижені сақтау үшін <a href="/login">аккаунтыңызға кіріңіз</a> немесе <a href="/register">тіркеліңіз</a>.</p>'}</section>`;
   }
   return {
     callback: api.callback,
