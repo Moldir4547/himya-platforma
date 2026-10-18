@@ -1,0 +1,13 @@
+# School learning paths
+
+71 learning units for grades 7–11 group the inorganic/general chemistry sections of eight uploaded textbooks. Each unit identifies its book, paragraphs and page range. Original textbook PDFs are not republished. school-curriculum.js is the authored source; school.js defines the activity structure. Regenerate assessment keys with node scripts/generate-school-specs.mjs after editing questions.
+
+Each lesson has understanding, virtual lab, worksheet, Bloom tasks, critical thinking, author-created PISA-style tasks, results, and supplementary teacher material. Existing grade-level slides, body, video and teacher quizzes remain accessible. Redox and the advanced bonding lesson remain linked from their corresponding units.
+
+Lab scope: qualitative observation models and explicit idealized calculations, not exact instrument replicas. Variable controls cover separation, phase, atomic composition, hybrid geometry, pH, gas amount, closed/open mass balance, limiting reactants, solution composition, rate, titration, electrolysis, buffer ratio and ore recovery. Other families use reaction/condition comparisons. Conditional datasets and model assumptions are labelled. These are learning activities, not a claim to reproduce every laboratory procedure in the books.
+
+Objective answers are graded on the server. Open Bloom/critical/PISA answers require teacher review using a 0–3 rubric. Automatic points and teacher assessment remain separate. A submission counts as an attempted activity, not proof of correct understanding. Best objective scores are retained across retries. Attempt receipts prevent duplicate retries, including replay after a later attempt. Review rejects stale attempt IDs. Authenticated direct writes to school_learning are blocked; ownership and existing progress RLS remain active.
+
+Deployment: apply supabase/migrations/202610180003_school_learning.sql before deploying assets. Existing content/resources/progress are not deleted. It adds one JSON column, a private grading key table and private attempt receipts, two grading/review RPCs and a write guard. tests/school.sql runs a rolled-back QA transaction using an ephemeral account; production verification returned school_qa_passed with 71 units. Existing students' results were not used for the test.
+
+Validation: 63 Node tests, 4 existing Python integration tests, 2 existing security tests, 3 new school integration tests, and 7 browser tests passed. Browser coverage includes 1440, 1101, 390 and 320 px (school-specific tests at 1440/390/320), immediate feedback, theory links, stable retry IDs, account separation, old lessons/auth, teacher materials, keyboard tabs and overflow. Build and JS/Python/SQL assessment-key parity checks pass.

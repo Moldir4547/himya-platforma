@@ -1,0 +1,4029 @@
+{
+  "safety-mixtures": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 100
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 100
+        },
+        {
+          "key": 6
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 100
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 5
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "states-changes": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 50
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 50
+        },
+        {
+          "key": 40
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 50
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 10
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "atoms-substances": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 23
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 23
+        },
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 23
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 14
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "structure-isotopes": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 23
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 23
+        },
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 23
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 14
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "air-combustion": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 21
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 21
+        },
+        {
+          "key": 42
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 21
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "acids-indicators": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "periodic-table": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 7
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 7
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 7
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 7
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "formulas-masses": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 18
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 18
+        },
+        {
+          "key": 6
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 18
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 3
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "body-elements": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 7
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "minerals-kazakhstan": {
+    "grade": 7,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 40
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 40
+        },
+        {
+          "key": 25
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 40
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 87.5
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "electrons-ions": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 23
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 23
+        },
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 23
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 14
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "equations-conservation": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 20
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 20
+        },
+        {
+          "key": 96
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 20
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 4
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "metals-corrosion": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "mole-avogadro": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        },
+        {
+          "key": 22
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "stoichiometry-gases": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 11.2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 11.2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 11.2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 16.8
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "reaction-energy": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2100
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2100
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2100
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 3
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "hydrogen": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 30
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "oxygen-ozone": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 30
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "periodicity": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 8
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 8
+        },
+        {
+          "key": 3
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 8
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 7
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "bonding": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 109.5
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 109.5
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 109.5
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 60
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "solutions": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 10
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 10
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 10
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 15
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "oxides": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 8
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "acids-bases": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.01
+        },
+        {
+          "key": 3
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "salts-genetic": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.01
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 2
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "carbon": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 7
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "water-hardness": {
+    "grade": 8,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.02
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 6
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "electrolytes": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 10
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "ionic-reactions": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.01
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 2
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "salt-hydrolysis": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "qualitative-analysis": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 2
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "limiting-mixtures": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "reaction-rate": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.02
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 60
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "equilibrium": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 4
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 4
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 4
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 15
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "redox": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.05
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "metals-alloys": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "alkali-calcium-aluminium": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 8
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "halogens-hcl": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "sulfur": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.03
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.03
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.03
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.6
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "nitrogen-ammonia": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 80
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "phosphorus-fertilizers": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 20
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 20
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 20
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 3
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "silicon": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 10
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "elements-environment": {
+    "grade": 9,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 75
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 75
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 75
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 35
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "atomic-orbitals": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 23
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 23
+        },
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 23
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 14
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "periodic-properties": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 8
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 8
+        },
+        {
+          "key": 3
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 8
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 7
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "bonding-geometry": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 109.5
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 109.5
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 109.5
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 60
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "stoichiometry": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "enthalpy": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2100
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2100
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2100
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 3
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "entropy-gibbs": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": -10
+        }
+      ],
+      "worksheet": [
+        {
+          "key": -10
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": -10
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 200
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "kinetics": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.02
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 60
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "industrial-equilibrium": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 4
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 4
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 4
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 15
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "redox-balance": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.05
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "galvanic-cells": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1.1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1.1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1.1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "electrolysis": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.635
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "analytical-methods": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 100
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 100
+        },
+        {
+          "key": 6
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 100
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 5
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "halogens": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "groups-one-two": {
+    "grade": 10,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.02
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.02
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 6
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "group-fourteen": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 10
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "yield-calculations": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "nitrogen-industry": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 80
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "nitrogen-environment": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 20
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 20
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 20
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 3
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "sulfur-oxides": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.03
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.03
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.03
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.6
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "sulfuric-process": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 4
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 4
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 4
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 15
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "acid-base-ph": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 0.01
+        },
+        {
+          "key": 3
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 0.01
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "buffers": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 4.76
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 4.76
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 4.76
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.1
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "titration": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 20
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 20
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 20
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 20
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "metallurgy": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 40
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 40
+        },
+        {
+          "key": 25
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 40
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 87.5
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "electroplating": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 2
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 2
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 2
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 0.635
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "recycling": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 75
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 75
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 75
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 35
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "transition-complexes": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 4
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 4
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 4
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 2
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "nanomaterials": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 1
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 1
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 1
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 10
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  },
+  "green-chemistry": {
+    "grade": 11,
+    "modes": {
+      "understand": [],
+      "lab": [
+        {
+          "key": 0,
+          "choices": 3
+        },
+        {
+          "key": 75
+        }
+      ],
+      "worksheet": [
+        {
+          "key": 75
+        }
+      ],
+      "bloom": [
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "key": 2,
+          "choices": 3
+        },
+        {
+          "key": 75
+        },
+        {
+          "key": 1,
+          "choices": 3
+        },
+        {
+          "open": true
+        },
+        {
+          "open": true
+        }
+      ],
+      "critical": [
+        {
+          "open": true
+        }
+      ],
+      "pisa": [
+        {
+          "key": 35
+        },
+        {
+          "open": true
+        }
+      ]
+    }
+  }
+}
