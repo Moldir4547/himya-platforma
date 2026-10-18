@@ -32,7 +32,7 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   res.setHeader('Cache-Control','no-store');
   if(path==='/config.js'){res.setHeader('Content-Type','text/javascript');res.end('window.__CHEM_CONFIG__={};');return;}
   if(path==='/api/session'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({user:req.headers.cookie?.includes('fixture=member')?{id:'learner',role:'student',display_name:'QA Learner'}:null}));return;}
-  if(path==='/api/content'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(DEFAULT_CONTENT));return;}
+  if(path==='/api/content'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(DEFAULT_CONTENT.map(i=>/\/mektep\/teoriya\/[89]-synyp$/.test(i.path)?{...i,item_type:"course",content_mode:"resources"}:i)));return;}
   if(path==='/api/progress'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify([{item_id:'bridge-bond',progress:25,last_opened:'2026-10-17T00:00:00Z'},{item_id:'bridge-redox',progress:100,completed:true,last_opened:'2026-10-17T01:00:00Z'}]));return;}
   if(path==='/api/settings'){res.setHeader('Content-Type','application/json');res.end('{}');return;}
   if(path.startsWith('/api/')){res.setHeader('Content-Type','application/json');res.end('[]');return;}
@@ -50,6 +50,8 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   await page.goto(base+'/himya-platforma/');
   await page.getByRole('heading',{name:'Өзіңізге қажет бөлімді таңдаңыз'}).waitFor();
   assert.equal(await page.locator('.direction-card').count(),3);
+  assert.equal(await page.locator('#practice-entry-title').count(),0);
+  assert.equal(await page.locator('.practice-entry-grid').count(),0,'practice cards belong to school topics');
   assert.equal(await page.locator('.empty-library').count(),0,'guests should see the sign-in explanation, not an empty catalogue');
   assert.equal(await page.locator('.continuity-details').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'home overflow at '+width);
@@ -82,6 +84,21 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   assert.equal(await page.getByRole('tab').count(),5);
   assert.equal(await page.locator('[data-bridge-syllabus]').evaluate(d=>d.open),width>=1100);
   for(let i=0;i<5;i++){await page.locator('#bridge-tab-'+i).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'full lesson overflow '+width+' / '+i);}
+  await page.goto(base+'/himya-platforma/mektep/teoriya/8-synyp');
+  await page.locator('.school-topic-practice').waitFor();
+  assert.equal(await page.locator('.school-topic-practice a').count(),2);
+  assert.equal(await page.locator('.school-topic-practice a').first().getAttribute('href'),'/himya-platforma/sabaktastyk-kopiri/himiyalyk-bailanys');
+  assert.equal(await page.locator('.school-topic-practice a').last().getAttribute('href'),base+'/himya-platforma/virtual-lab.html');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'8th grade practice overflow '+width);
+  await page.goto(base+'/himya-platforma/mektep/teoriya/9-synyp');
+  await page.locator('.school-topic-practice').waitFor();
+  assert.equal(await page.locator('.school-topic-practice a').count(),1);
+  await page.locator('.school-topic-practice a').click();
+  await page.getByRole('link',{name:'← 9-сынып · Тотығу-тотықсыздану реакциялары',exact:true}).waitFor();
+  assert.equal(new URL(page.url()).pathname,'/himya-platforma/learn/redox');
+  await page.getByRole('link',{name:'← 9-сынып · Тотығу-тотықсыздану реакциялары',exact:true}).click();
+  await page.locator('.school-topic-practice').waitFor();
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'9th grade practice overflow '+width);
   await page.goto(base+'/himya-platforma/kabinet');
   await page.getByRole('heading',{name:'Сабақтастық көпірі: Химиялық байланыс'}).waitFor();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'cabinet overflow '+width);
