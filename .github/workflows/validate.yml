@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: node --test tests/platform.mjs tests/redox.mjs tests/bond-practice.mjs tests/registration.mjs tests/bridge-path.mjs tests/bond-models.mjs
+      - run: node --test tests/platform.mjs tests/redox.mjs tests/bond-practice.mjs tests/registration.mjs tests/bridge-path.mjs tests/bond-models.mjs tests/bond-lab.mjs
       - run: python3 tests/integration.py
       - run: python3 tests/security.py
       - run: node build.mjs

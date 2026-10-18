@@ -15,6 +15,7 @@ const files = [
   "bond-practice.js",
   "bridge-path.js",
   "bond-models.js",
+  "bond-lab.js",
   "bond-models.css",
   "bridge-path.css",
   "bond-practice.css",

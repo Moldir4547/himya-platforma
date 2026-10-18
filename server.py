@@ -526,8 +526,8 @@ class SpaHandler(SimpleHTTPRequestHandler):
             user = self.user(True)
             with db() as connection: rows = connection.execute("select * from progress where user_id=? order by updated_at desc", (user["id"],)).fetchall()
             return self.json_response([self.progress_row(row) for row in rows])
-        if method == "POST" and path in ("/api/bridge-activity", "/api/bridge-activity-v2"):
-            assessment_version = 2 if path.endswith("-v2") else 1
+        if method == "POST" and path in ("/api/bridge-activity", "/api/bridge-activity-v2", "/api/bridge-activity-v3"):
+            assessment_version = 3 if path.endswith("-v3") else 2 if path.endswith("-v2") else 1
             user = self.user(True)
             if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
             data = self.read_json()
@@ -545,14 +545,14 @@ class SpaHandler(SimpleHTTPRequestHandler):
                 old = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"], item_id)).fetchone()
                 modes = json.loads(old["bridge_learning"] or "{}") if old else {}
                 previous = modes.get(mode, {})
-                current_version = assessment_version if mode == "context" else 1
+                current_version = min(assessment_version,2) if mode == "context" else 2 if mode == "simulation" and assessment_version == 3 else 1
                 if previous.get("version",1) > current_version: raise ApiError(409,"Сабақ жаңартылды. Бетті қайта жүктеңіз")
-                if mode == "context" and current_version == 2 and previous.get("version",1) < 2:
-                    if previous: modes["context_v1"] = previous
+                if mode in ("context","simulation") and current_version == 2 and previous.get("version",1) < 2:
+                    if previous: modes[mode+"_v1"] = previous
                     previous = {}
                 if previous.get("attempt_id") != attempt:
-                    activity_key=([1,1,3,2] if assessment_version == 2 else [1,1,2,6]) if mode == "context" else [180,104.5,8,4]
-                    score = sum(abs(a-b)<0.1 if mode=="simulation" and i<2 else a==b for i,(a,b) in enumerate(zip(answers,activity_key)))
+                    activity_key=([1,1,3,2] if assessment_version >= 2 else [1,1,2,6]) if mode == "context" else [1,74,4,109.5] if assessment_version == 3 else [180,104.5,8,4]
+                    score = sum((abs(a-b)<=5 if i==1 else abs(a-b)<0.1 if i==3 else a==b) if mode=="simulation" and assessment_version==3 else abs(a-b)<0.1 if mode=="simulation" and i<2 else a==b for i,(a,b) in enumerate(zip(answers,activity_key)))
                     modes[mode] = {"version":current_version,"completed":True,"attempt_id":attempt,"answers":answers,"score":score,"max_score":0 if mode=="theory" else 4,"best_score":max(score,previous.get("best_score",0)),"attempt_count":previous.get("attempt_count",0)+1,"tested_at":now()}
                     connection.execute("""insert into progress(user_id,item_id,bridge_learning,updated_at) values(?,?,?,?)
                         on conflict(user_id,item_id) do update set bridge_learning=excluded.bridge_learning,updated_at=excluded.updated_at""", (user["id"],item_id,json.dumps(modes),now()))
@@ -719,7 +719,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             config = {"supabaseUrl":os.environ.get("SUPABASE_URL", ""),"supabaseAnonKey":os.environ.get("SUPABASE_ANON_KEY", "")}
             payload = f"window.__CHEM_CONFIG__ = {json.dumps(config)};".encode("utf-8")
             self.send_response(200); self.send_header("Content-Type","application/javascript; charset=utf-8"); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(payload))); self.end_headers(); self.wfile.write(payload); return
-        public_assets={'/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
+        public_assets={'/bond-lab.js','/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
         target = ROOT / path.lstrip("/")
         if path != "/" and path not in public_assets and (target.exists() or any(part.startswith('.') for part in path.split('/') if part) or '.' in target.name):
             self.send_error(404);return
