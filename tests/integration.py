@@ -67,6 +67,35 @@ class PlatformIntegrationTests(unittest.TestCase):
         with self.assertRaises(HTTPError) as invalid: request('POST','/api/register',{'displayName':'Bad','email':'badcat@example.test','password':'Student123!','role':'student','participantType':'admin'})
         self.assertEqual(invalid.exception.code,400)
 
+    def test_equivalent_server_grading_retry_and_teacher_preservation(self):
+        from urllib.error import HTTPError
+        import uuid
+        admin=request('POST','/api/login',{'email':'admin@chem.local','password':'Admin123!'})['token']
+        lesson=next(r for r in request('GET','/api/content?admin=1',token=admin) if r['path']=='/sabaktastyk-kopiri/ekvivalent-ugymy')
+        learner=request('POST','/api/register',{'displayName':'Equivalent QA','email':'equivalent@example.test','password':'Student123!','role':'student'})['token']
+        other=request('POST','/api/register',{'displayName':'Other QA','email':'equivalent-other@example.test','password':'Student123!','role':'student'})['token']
+        original=request('POST','/api/progress',{'item_id':lesson['id'],'progress':37},learner)
+        for mode,answers in [('theory',[]),('context',[0,1,2]),('simulation',[2,49,25,0.1]),('test',[1,0,2,1,0,2,1,2,0,1])]:
+            attempt={'item_id':lesson['id'],'mode':mode,'attempt_id':str(uuid.uuid4()),'answers':answers,'score':999}
+            result=request('POST','/api/equivalent-activity',attempt,learner)
+            self.assertEqual(result['bridge_learning'][mode]['score'],len(answers))
+            self.assertEqual(result['bridge_learning'][mode]['attempt_count'],1)
+            self.assertEqual(request('POST','/api/equivalent-activity',attempt,learner)['bridge_learning'][mode]['attempt_count'],1)
+        attempt.update(mode='context',answers=[2,0,0],attempt_id=str(uuid.uuid4()))
+        result=request('POST','/api/equivalent-activity',attempt,learner)
+        self.assertEqual(result['bridge_learning']['context']['score'],0)
+        self.assertEqual(result['bridge_learning']['context']['best_score'],3)
+        self.assertEqual(result['bridge_learning']['test']['score'],10)
+        self.assertEqual(result['progress'],37)
+        self.assertEqual(result['bridge_learning']['lesson'],'equivalent')
+        self.assertFalse(any(r['item_id']==lesson['id'] for r in request('GET','/api/progress',token=other)))
+        for token in (None,admin):
+            with self.assertRaises(HTTPError): request('POST','/api/equivalent-activity',attempt,token)
+        for answers in ([1], [0,1,3], [0,1,True], [0,1,float('nan')]):
+            attempt['answers']=answers
+            with self.assertRaises(HTTPError): request('POST','/api/equivalent-activity',attempt,learner)
+        self.assertEqual(next(r for r in request('GET','/api/content?admin=1',token=admin) if r['id']==lesson['id'])['body'],lesson['body'])
+
     def test_bond_practice_is_separate_idempotent_and_server_graded(self):
         from urllib.error import HTTPError
         import uuid
