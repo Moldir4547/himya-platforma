@@ -147,6 +147,25 @@ class PlatformIntegrationTests(unittest.TestCase):
         for endpoint in ("/api/bridge-activity-v2","/api/bond-practice-v2"):
             with self.assertRaises(HTTPError) as denied: request("POST",endpoint,modern,admin)
             self.assertEqual(denied.exception.code,403)
+        # Orbital lab archives old simulation, grades on the server, and rejects old saves.
+        lab={"item_id":item["id"],"mode":"simulation","attempt_id":str(uuid.uuid4()),"answers":[1,74,4,109.5],"score":999}
+        upgraded=request("POST","/api/bridge-activity-v3",lab,learner)
+        self.assertEqual(upgraded["bridge_learning"]["simulation"]["version"],2)
+        self.assertEqual(upgraded["bridge_learning"]["simulation"]["score"],4)
+        self.assertEqual(upgraded["bridge_learning"]["simulation_v1"]["answers"],[180,104.5,8,4])
+        self.assertEqual(request("POST","/api/bridge-activity-v3",lab,learner)["bridge_learning"]["simulation"]["attempt_count"],1)
+        lab.update(answers=[0,160,2,180],attempt_id=str(uuid.uuid4()))
+        wrong=request("POST","/api/bridge-activity-v3",lab,learner)
+        self.assertEqual(wrong["bridge_learning"]["simulation"]["score"],0)
+        self.assertEqual(wrong["bridge_learning"]["simulation"]["best_score"],4)
+        for endpoint in ("/api/bridge-activity","/api/bridge-activity-v2"):
+            with self.assertRaises(HTTPError) as stale: request("POST",endpoint,{**lab,"answers":[180,104.5,8,4]},learner)
+            self.assertEqual(stale.exception.code,409)
+        with self.assertRaises(HTTPError) as denied: request("POST","/api/bridge-activity-v3",lab,admin)
+        self.assertEqual(denied.exception.code,403)
+        with self.assertRaises(HTTPError) as denied: request("POST","/api/bridge-activity-v3",{**lab,"answers":[1,74,4,True]},learner)
+        self.assertEqual(denied.exception.code,400)
+
         # Ordinary teacher progress updates must preserve both new assessments.
         preserved=request("POST","/api/progress",{"item_id":item["id"],"progress":80},learner)
         self.assertEqual(preserved["bridge_learning"]["context"]["score"],4)
