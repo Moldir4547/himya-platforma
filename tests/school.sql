@@ -1,0 +1,38 @@
+begin;
+do $$
+declare learner uuid:=gen_random_uuid(); other_user uuid:=gen_random_uuid(); administrator uuid; grade_id uuid; aid uuid:=gen_random_uuid(); cid uuid:=gen_random_uuid(); r public.user_progress; denied boolean:=false;
+begin
+ select id into grade_id from public.content_items where path='/mektep/teoriya/8-synyp' and is_published;
+ if grade_id is null then raise exception 'missing_grade'; end if;
+ select id into administrator from public.profiles where role='admin' limit 1;
+ insert into auth.users(id,email,aud,role,raw_user_meta_data) values(learner,'school-qa-'||learner||'@example.invalid','authenticated','authenticated','{"display_name":"School transaction QA"}');
+ perform set_config('request.jwt.claim.sub',learner::text,true);
+ select * into r from public.submit_school_activity(grade_id,'bonding','lab',aid,'[2,109.5]');
+ if r.school_learning->'bonding'->'lab'->>'score'<>'2' then raise exception 'incorrect_score'; end if;
+ perform public.submit_school_activity(grade_id,'bonding','lab',gen_random_uuid(),'[0,0]');
+ select * into r from public.submit_school_activity(grade_id,'bonding','lab',aid,'[2,109.5]');
+ if r.school_learning->'bonding'->'lab'->>'attempt_count'<>'2' or r.school_learning->'bonding'->'lab'->>'best_score'<>'2' or r.school_learning->'bonding'->'lab'->>'score'<>'0' then raise exception 'replay_or_best_failed'; end if;
+ begin perform public.submit_school_activity(grade_id,'bonding','lab',aid,'[0,0]'); exception when others then if SQLERRM='attempt_conflict' then denied:=true; else raise; end if; end;
+ if not denied then raise exception 'receipt_not_protected'; end if;
+ perform public.submit_school_activity(grade_id,'bonding','critical',cid,'["Дерекке сүйенген ғылыми түсіндірме және бақылау жоспары."]');
+ denied:=false;
+ begin perform public.review_school_activity(learner,grade_id,'bonding','critical',cid,3,'Дәлелдері ғылыми дұрыс.'); exception when others then if SQLERRM='forbidden' then denied:=true; else raise; end if; end;
+ if not denied then raise exception 'learner_review_allowed'; end if;
+ perform set_config('request.jwt.claim.sub',administrator::text,true);
+ select * into r from public.review_school_activity(learner,grade_id,'bonding','critical',cid,3,'Дәлелдері ғылыми дұрыс.');
+ if r.school_learning->'bonding'->'critical'->'review'->>'score'<>'3' then raise exception 'review_not_saved'; end if;
+ perform set_config('request.jwt.claim.sub',learner::text,true);
+ perform public.submit_school_activity(grade_id,'bonding','critical',gen_random_uuid(),'["Жаңа жауапта ғылыми дәлел мен бақылау жоспары көрсетілген."]');
+ perform set_config('request.jwt.claim.sub',administrator::text,true);
+ denied:=false;
+ begin perform public.review_school_activity(learner,grade_id,'bonding','critical',cid,3,'Ескі талпынысқа баға.'); exception when others then if SQLERRM='stale_attempt' then denied:=true; else raise; end if; end;
+ if not denied then raise exception 'stale_review_allowed'; end if;
+ perform set_config('request.jwt.claim.sub',learner::text,true);
+ set local role authenticated;
+ denied:=false;
+ begin update public.user_progress set school_learning='{}' where user_id=learner and item_id=grade_id; exception when others then if SQLERRM='use_school_rpc' then denied:=true; else raise; end if; end;
+ if not denied then raise exception 'direct_write_allowed'; end if;
+ set local role postgres;
+end $$;
+select 'school_qa_passed' as verification,(select count(*) from public.school_assessment_keys) as units;
+rollback;
