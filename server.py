@@ -18,6 +18,7 @@ import posixpath
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent
+SCHOOL_ASSESSMENTS = json.loads((ROOT / "school-assessments.json").read_text(encoding="utf-8"))
 DATA_DIR = Path(os.environ.get("CHEM_DATA_DIR", ROOT / "data"))
 UPLOAD_DIR = DATA_DIR / "uploads"
 DB_PATH = DATA_DIR / "chemistry.db"
@@ -246,6 +247,8 @@ def init_database():
         if "item_type" not in columns: connection.execute("alter table content_items add column item_type text not null default 'lesson'")
         if "content_mode" not in columns: connection.execute("alter table content_items add column content_mode text not null default 'curriculum'")
         progress_columns = {row["name"] for row in connection.execute("pragma table_info(progress)")}
+        if "school_learning" not in progress_columns: connection.execute("alter table progress add column school_learning text not null default '{}'")
+        connection.execute("create table if not exists school_attempt_receipts(user_id text not null,item_id text not null,attempt_id text not null,slug text not null,mode text not null,answers text not null,primary key(user_id,item_id,attempt_id))")
         if "bridge_learning" not in progress_columns: connection.execute("alter table progress add column bridge_learning text not null default '{}'")
         if "bond_practice" not in progress_columns: connection.execute("alter table progress add column bond_practice text not null default '{}'")
         if "quiz_answers" not in progress_columns: connection.execute("alter table progress add column quiz_answers text not null default '[]'")
@@ -526,6 +529,67 @@ class SpaHandler(SimpleHTTPRequestHandler):
             user = self.user(True)
             with db() as connection: rows = connection.execute("select * from progress where user_id=? order by updated_at desc", (user["id"],)).fetchall()
             return self.json_response([self.progress_row(row) for row in rows])
+        if method == "POST" and path in ("/api/school-activity", "/api/school-review"):
+            user = self.user(True)
+            data = self.read_json()
+            item_id, slug, mode, attempt = (data.get(k) for k in ("item_id", "slug", "mode", "attempt_id"))
+            try: uuid.UUID(str(attempt))
+            except (ValueError, TypeError, AttributeError): raise ApiError(400, "Талпыныс идентификаторы қате")
+            spec = SCHOOL_ASSESSMENTS.get(slug, {})
+            questions = spec.get("modes", {}).get(mode)
+            if questions is None: raise ApiError(400, "Тапсырма қате")
+            if path == "/api/school-review":
+                if user["role"] != "admin": raise ApiError(403, "Қолжетім жоқ")
+                score, comment = data.get("score"), data.get("comment")
+                if type(score) is not int or not 0 <= score <= 3 or not isinstance(comment, str) or not 5 <= len(comment.strip()) <= 1500: raise ApiError(400, "Баға немесе пікір қате")
+                if not any(q.get("open") for q in questions): raise ApiError(400, "Ашық тапсырма емес")
+                owner = data.get("user_id")
+                with db() as connection:
+                    connection.execute("begin immediate")
+                    old = connection.execute("select * from progress where user_id=? and item_id=?", (owner,item_id)).fetchone()
+                    lessons = json.loads(old["school_learning"]) if old else {}
+                    activity = lessons.get(slug, {}).get(mode)
+                    if not activity or activity.get("attempt_id") != attempt: raise ApiError(409, "Жаңа талпыныс бар. Нәтижені жаңартыңыз")
+                    activity["review_pending"] = False
+                    activity["review"] = {"score":score,"comment":comment.strip(),"reviewed_at":now(),"reviewer":user["id"]}
+                    connection.execute("update progress set school_learning=?,updated_at=? where user_id=? and item_id=?", (json.dumps(lessons),now(),owner,item_id))
+                    row = connection.execute("select * from progress where user_id=? and item_id=?", (owner,item_id)).fetchone()
+                return self.json_response(self.progress_row(row))
+            if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
+            answers = data.get("answers")
+            if not isinstance(answers, list) or len(answers) != len(questions): raise ApiError(400, "Жауаптар қате")
+            score, maximum, feedback, pending = 0, 0, [], False
+            for q, a in zip(questions, answers):
+                if q.get("open"):
+                    if not isinstance(a, str) or not 15 <= len(a.strip()) <= 3000: raise ApiError(400, "Ашық жауап 15–3000 таңба болуы керек")
+                    pending = True
+                    feedback.append(None)
+                else:
+                    if type(a) not in (int,float) or not -1e9 <= a <= 1e9: raise ApiError(400, "Сандық жауап қате")
+                    if "choices" in q and (int(a) != a or not 0 <= a < q["choices"]): raise ApiError(400, "Нұсқа қате")
+                    correct = abs(a-q["key"]) <= 0.0001
+                    score += correct
+                    maximum += 1
+                    feedback.append(correct)
+            self.require_content(item_id)
+            with db() as connection:
+                connection.execute("begin immediate")
+                item = connection.execute("select path from content_items where id=?", (item_id,)).fetchone()
+                if not item or item["path"] != "/mektep/teoriya/"+str(spec["grade"])+"-synyp": raise ApiError(403, "Сынып қолжетімсіз")
+                old = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"],item_id)).fetchone()
+                lessons = json.loads(old["school_learning"]) if old else {}
+                receipt = connection.execute("select * from school_attempt_receipts where user_id=? and item_id=? and attempt_id=?", (user["id"],item_id,attempt)).fetchone()
+                if receipt:
+                    if receipt["slug"] != slug or receipt["mode"] != mode or json.loads(receipt["answers"]) != answers: raise ApiError(409, "Талпыныс қайшылығы")
+                else:
+                    previous = lessons.setdefault(slug, {}).get(mode, {})
+                    lessons[slug][mode] = {"version":1,"completed":True,"attempt_id":attempt,"answers":answers,"score":score,"max_score":maximum,"feedback":feedback,"review_pending":pending,"best_score":max(score,previous.get("best_score",0)),"attempt_count":previous.get("attempt_count",0)+1,"tested_at":now()}
+                    connection.execute("insert into school_attempt_receipts(user_id,item_id,attempt_id,slug,mode,answers) values(?,?,?,?,?,?)", (user["id"],item_id,attempt,slug,mode,json.dumps(answers)))
+                    connection.execute("""insert into progress(user_id,item_id,school_learning,updated_at) values(?,?,?,?)
+                        on conflict(user_id,item_id) do update set school_learning=excluded.school_learning,updated_at=excluded.updated_at""", (user["id"],item_id,json.dumps(lessons),now()))
+                row = connection.execute("select * from progress where user_id=? and item_id=?", (user["id"],item_id)).fetchone()
+            return self.json_response(self.progress_row(row))
+
         if method == "POST" and path == "/api/equivalent-activity":
             user = self.user(True)
             if user["role"] == "admin": raise ApiError(403, "Әкімші прогресі сақталмайды")
@@ -695,6 +759,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
         data = dict(row)
         try: data["quiz_answers"] = json.loads(data.get("quiz_answers") or "[]")
         except json.JSONDecodeError: data["quiz_answers"] = []
+        data["school_learning"] = json.loads(data.get("school_learning") or "{}")
         data["bridge_learning"] = json.loads(data.get("bridge_learning") or "{}")
         data["bond_practice"] = json.loads(data.get("bond_practice") or "{}")
         data["completed"] = bool(data.get("completed"))
@@ -747,7 +812,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             config = {"supabaseUrl":os.environ.get("SUPABASE_URL", ""),"supabaseAnonKey":os.environ.get("SUPABASE_ANON_KEY", "")}
             payload = f"window.__CHEM_CONFIG__ = {json.dumps(config)};".encode("utf-8")
             self.send_response(200); self.send_header("Content-Type","application/javascript; charset=utf-8"); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(payload))); self.end_headers(); self.wfile.write(payload); return
-        public_assets={'/equivalent-path.js','/bond-lab.js','/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
+        public_assets={'/school-labs.js','/school.js','/school-curriculum.js','/school.css','/equivalent-path.js','/bond-lab.js','/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
         target = ROOT / path.lstrip("/")
         if path != "/" and path not in public_assets and (target.exists() or any(part.startswith('.') for part in path.split('/') if part) or '.' in target.name):
             self.send_error(404);return

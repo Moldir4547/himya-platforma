@@ -11,3 +11,6 @@ public-site/
 dist/
 node_modules/
 debug.log
+
+# Local browser QA screenshots
+test-output/
