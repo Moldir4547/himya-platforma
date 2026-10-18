@@ -20,6 +20,7 @@ const assets = new Set([
   "bridge-path.js",
   "bond-models.js",
   "bond-lab.js",
+  "equivalent-path.js",
   "bond-models.css",
   "bridge-path.css",
   "bond-practice.css",
