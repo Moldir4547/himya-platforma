@@ -1,3 +1,4 @@
+from guided_lab_validation import validate_guided_record
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs, unquote, quote
 from pathlib import Path
@@ -247,6 +248,7 @@ def init_database():
         if "item_type" not in columns: connection.execute("alter table content_items add column item_type text not null default 'lesson'")
         if "content_mode" not in columns: connection.execute("alter table content_items add column content_mode text not null default 'curriculum'")
         progress_columns = {row["name"] for row in connection.execute("pragma table_info(progress)")}
+        connection.execute("create table if not exists guided_lab_attempts(user_id text not null,item_id text not null,lab_id text not null,attempt integer not null,record text not null,primary key(user_id,item_id,lab_id,attempt))")
         if "school_learning" not in progress_columns: connection.execute("alter table progress add column school_learning text not null default '{}'")
         connection.execute("create table if not exists school_attempt_receipts(user_id text not null,item_id text not null,attempt_id text not null,slug text not null,mode text not null,answers text not null,primary key(user_id,item_id,attempt_id))")
         if "bridge_learning" not in progress_columns: connection.execute("alter table progress add column bridge_learning text not null default '{}'")
@@ -529,6 +531,31 @@ class SpaHandler(SimpleHTTPRequestHandler):
             user = self.user(True)
             with db() as connection: rows = connection.execute("select * from progress where user_id=? order by updated_at desc", (user["id"],)).fetchall()
             return self.json_response([self.progress_row(row) for row in rows])
+        if method == "POST" and path == "/api/guided-lab":
+            user = self.user(True)
+            if user["role"] == "admin": raise ApiError(403,"Әкімші прогресі сақталмайды")
+            data = self.read_json()
+            item_id, lab_id, record, revision = (data.get(k) for k in ("item_id","lab_id","record","revision"))
+            try: record = validate_guided_record(lab_id,record)
+            except ValueError as e: raise ApiError(400,str(e))
+            self.require_content(item_id)
+            with db() as connection:
+                connection.execute("begin immediate")
+                item = connection.execute("select path from content_items where id=?",(item_id,)).fetchone()
+                if not item or item["path"] != "/mektep/teoriya/7-synyp": raise ApiError(403,"Сынып қолжетімсіз")
+                old = connection.execute("select * from progress where user_id=? and item_id=?",(user["id"],item_id)).fetchone()
+                lessons = json.loads(old["school_learning"]) if old else {}
+                previous = lessons.setdefault("_guided_labs",{}).get(lab_id,{})
+                if type(revision) is not int or revision != previous.get("revision",0): raise ApiError(409,"stale_journal")
+                if not previous.get("attempt",1) <= record["attempt"] <= previous.get("attempt",0)+1: raise ApiError(400,"invalid_attempt")
+                if previous and record["attempt"]>previous["attempt"]: record["previous"]={k:v for k,v in previous.items() if k!="previous"}
+                elif "previous" in previous: record["previous"]=previous["previous"]
+                record.update(revision=revision+1,saved_at=now())
+                lessons["_guided_labs"][lab_id]=record
+                connection.execute("insert into guided_lab_attempts(user_id,item_id,lab_id,attempt,record) values(?,?,?,?,?) on conflict(user_id,item_id,lab_id,attempt) do update set record=excluded.record",(user["id"],item_id,lab_id,record["attempt"],json.dumps(record)))
+                connection.execute("insert into progress(user_id,item_id,school_learning,updated_at) values(?,?,?,?) on conflict(user_id,item_id) do update set school_learning=excluded.school_learning,updated_at=excluded.updated_at",(user["id"],item_id,json.dumps(lessons),now()))
+                row=connection.execute("select * from progress where user_id=? and item_id=?",(user["id"],item_id)).fetchone()
+            return self.json_response(self.progress_row(row))
         if method == "POST" and path in ("/api/school-activity", "/api/school-review"):
             user = self.user(True)
             data = self.read_json()
@@ -812,7 +839,7 @@ class SpaHandler(SimpleHTTPRequestHandler):
             config = {"supabaseUrl":os.environ.get("SUPABASE_URL", ""),"supabaseAnonKey":os.environ.get("SUPABASE_ANON_KEY", "")}
             payload = f"window.__CHEM_CONFIG__ = {json.dumps(config)};".encode("utf-8")
             self.send_response(200); self.send_header("Content-Type","application/javascript; charset=utf-8"); self.send_header("Cache-Control","no-store"); self.send_header("Content-Length",str(len(payload))); self.end_headers(); self.wfile.write(payload); return
-        public_assets={'/school-labs.js','/school.js','/school-curriculum.js','/school.css','/equivalent-path.js','/bond-lab.js','/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
+        public_assets={'/guided-lab.js','/guided-lab-model.js','/guided-lab-data.js','/guided-lab.css','/school-labs.js','/school.js','/school-curriculum.js','/school.css','/equivalent-path.js','/bond-lab.js','/bond-models.js','/bond-models.css','/bridge-path.js','/bridge-path.css','/bond-practice.js','/bond-practice.css','/index.html','/404.html','/app.js','/store.js','/data.js','/catalog.js','/platform-utils.js','/styles.css','/components.css','/accessibility.css','/learning.css','/platform.css'}
         target = ROOT / path.lstrip("/")
         if path != "/" and path not in public_assets and (target.exists() or any(part.startswith('.') for part in path.split('/') if part) or '.' in target.name):
             self.send_error(404);return
