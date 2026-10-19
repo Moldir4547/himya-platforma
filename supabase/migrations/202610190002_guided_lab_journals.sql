@@ -1,0 +1,64 @@
+begin;
+-- Journals are self-reported observations, never automatically correct science answers.
+create table if not exists public.guided_lab_specs(id text primary key,steps integer not null,tools jsonb not null);
+create table if not exists public.guided_lab_attempts(user_id uuid not null references auth.users(id) on delete cascade,item_id uuid not null references public.content_items(id) on delete cascade,lab_id text not null,attempt integer not null,record jsonb not null,saved_at timestamptz not null default now(),primary key(user_id,item_id,lab_id,attempt));
+alter table public.guided_lab_specs enable row level security;
+alter table public.guided_lab_attempts enable row level security;
+revoke all on public.guided_lab_specs,public.guided_lab_attempts from public,anon,authenticated;
+grant select on public.guided_lab_attempts to authenticated;
+drop policy if exists guided_lab_attempts_read on public.guided_lab_attempts;
+create policy guided_lab_attempts_read on public.guided_lab_attempts for select using(user_id=auth.uid() or public.is_admin());
+insert into public.guided_lab_specs values('safety',5,'["Көзілдірік", "Тұрғы", "Қысқыш", "Сынауық", "Спиртшам қақпағы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('mixture',7,'["Fe ұнтағы", "Күкірт S", "FeS үлгісі", "Магнит", "Су", "Табақша"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('salt',7,'["Ластанған тұз", "20 мл су", "Стакан", "Шыны таяқша", "Құйғы және сүзгі", "Буландыру табақшасы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('signs',6,'["Қант", "Ас содасы", "Сірке қышқылы", "CuSO₄", "NaOH", "Сынауықтар"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('cooling',6,'["30 г салол", "Стакан", "Қыздырғыш", "Термометр", "Секундомер"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('boiling',6,'["50 мл су", "NaCl", "Екі құты", "Термометр", "Қыздырғыш"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('candle',4,'["Балауыз шам", "Тұрғы", "Құрғақ стакан", "Әк суы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('combustion',7,'["Тартпа шкаф", "O₂ бар ыдыс", "Күкірт", "Фосфор", "Темір сым", "Су және лакмус"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('indicators',5,'["HCl", "NaOH", "NaCl ерітіндісі", "Фенолфталеин", "Метилоранж", "Лакмус", "Таза сынауықтар"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('neutralization',6,'["2 мл HCl", "NaOH", "Лакмус", "Сынауық", "Тамшуыр", "Сағат шынысы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('zinc',4,'["Мырыш Zn", "2 мл сұйылтылған HCl", "Сынауық", "Сынауық тұрғысы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('hydrogen',7,'["Тұрғы", "Екі сынауық", "Газ жүретін түтік", "Мырыш Zn", "Сұйылтылған HCl", "Виртуалды шырпы"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('carbonate',7,'["Бор CaCO₃", "HCl", "Газ түтігі", "Әк суы", "NaOH және фенолфталеин", "Су және лакмус"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('food',5,'["Нәруыз ерітіндісі", "NaOH", "CuSO₄", "Күнбағыс дәні", "Сүзгі қағазы", "Картоп және йод"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+insert into public.guided_lab_specs values('breathing',4,'["Екі әк суы үлгісі", "Газ түтігі", "Виртуалды ауа ағыны", "Салқын айна"]'::jsonb) on conflict(id) do update set steps=excluded.steps,tools=excluded.tools;
+create or replace function public.save_guided_lab(p_item_id uuid,p_lab_id text,p_record jsonb,p_revision integer)
+returns setof public.user_progress language plpgsql security definer set search_path='' as $$
+declare spec public.guided_lab_specs; data jsonb; prev jsonb; rec jsonb; n integer; v_attempt integer; rev integer; finished boolean; v jsonb;
+begin
+ if auth.uid() is null or public.is_admin() then raise exception 'forbidden'; end if;
+ if not exists(select 1 from public.content_items where id=p_item_id and path='/mektep/teoriya/7-synyp' and is_published and public.content_is_visible(id)) then raise exception 'forbidden'; end if;
+ select * into spec from public.guided_lab_specs where id=p_lab_id;
+ if not found or p_record is null or jsonb_typeof(p_record)<>'object' or octet_length(p_record::text)>30000 then raise exception 'invalid_journal'; end if;
+ if jsonb_typeof(p_record->'index') is distinct from 'number' or (p_record->>'index')::numeric<>trunc((p_record->>'index')::numeric) or (p_record->>'index')::numeric not between 0 and spec.steps then raise exception 'invalid_step'; end if;
+ n:=(p_record->>'index')::integer;
+ if jsonb_typeof(p_record->'attempt') is distinct from 'number' or (p_record->>'attempt')::numeric<>trunc((p_record->>'attempt')::numeric) or (p_record->>'attempt')::numeric not between 1 and 100000 then raise exception 'invalid_attempt'; end if;
+ v_attempt:=(p_record->>'attempt')::integer;
+ if jsonb_typeof(p_record->'elapsedMs') is distinct from 'number' or (p_record->>'elapsedMs')::numeric not between 0 and 86400000 then raise exception 'invalid_time'; end if;
+ if jsonb_typeof(p_record->'notes') is distinct from 'array' then raise exception 'invalid_notes'; end if;
+ if jsonb_array_length(p_record->'notes')<>spec.steps then raise exception 'invalid_notes'; end if;
+ for v in select * from jsonb_array_elements(p_record->'notes') loop
+  if jsonb_typeof(v)<>'string' or length(v#>>'{}')>500 then raise exception 'invalid_notes'; end if;
+ end loop;
+ if jsonb_typeof(p_record->'tools') is distinct from 'array' then raise exception 'invalid_tools'; end if;
+ if jsonb_array_length(p_record->'tools')>jsonb_array_length(spec.tools) or not spec.tools @> (p_record->'tools') then raise exception 'invalid_tools'; end if;
+ if jsonb_typeof(p_record->'conclusion') is distinct from 'string' or length(p_record->>'conclusion')>1500 or jsonb_typeof(p_record->'finished') is distinct from 'boolean' then raise exception 'invalid_conclusion'; end if;
+ finished:=(p_record->>'finished')::boolean;
+ if n>0 and not (p_record->'tools') @> spec.tools then raise exception 'missing_tools'; end if;
+ if finished and (n<>spec.steps or length(btrim(p_record->>'conclusion'))<20 or exists(select 1 from jsonb_array_elements_text(p_record->'notes') x where length(btrim(x))<15)) then raise exception 'incomplete_report'; end if;
+ insert into public.user_progress(user_id,item_id) values(auth.uid(),p_item_id) on conflict(user_id,item_id) do nothing;
+ select school_learning into data from public.user_progress where user_id=auth.uid() and item_id=p_item_id for update;
+ prev:=data->'_guided_labs'->p_lab_id;rev:=coalesce((prev->>'revision')::integer,0);
+ if p_revision is null or p_revision<>rev then raise exception 'stale_journal'; end if;
+ if v_attempt<coalesce((prev->>'attempt')::integer,1) or v_attempt>coalesce((prev->>'attempt')::integer,0)+1 then raise exception 'invalid_attempt'; end if;
+ rec:=jsonb_build_object('index',n,'tools',p_record->'tools','notes',p_record->'notes','conclusion',p_record->'conclusion','elapsedMs',p_record->'elapsedMs','runningSince',null,'finished',finished,'attempt',v_attempt,'revision',rev+1,'saved_at',now());
+ if prev is not null and v_attempt>(prev->>'attempt')::integer then rec:=rec||jsonb_build_object('previous',prev-'previous');
+ elsif prev ? 'previous' then rec:=rec||jsonb_build_object('previous',prev->'previous');end if;
+ insert into public.guided_lab_attempts(user_id,item_id,lab_id,attempt,record) values(auth.uid(),p_item_id,p_lab_id,v_attempt,rec) on conflict(user_id,item_id,lab_id,attempt) do update set record=excluded.record,saved_at=now();
+ update public.user_progress set school_learning=jsonb_set(data,array['_guided_labs'],coalesce(data->'_guided_labs','{}')||jsonb_build_object(p_lab_id,rec)),updated_at=now() where user_id=auth.uid() and item_id=p_item_id;
+ return query select * from public.user_progress where user_id=auth.uid() and item_id=p_item_id;
+end;$$;
+revoke all on function public.save_guided_lab(uuid,text,jsonb,integer) from public,anon;
+grant execute on function public.save_guided_lab(uuid,text,jsonb,integer) to authenticated;
+commit;
