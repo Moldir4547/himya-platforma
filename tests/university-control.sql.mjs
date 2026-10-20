@@ -6,7 +6,7 @@ create table auth.users(id uuid primary key,admin boolean default false);
 create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
 create function public.is_admin() returns boolean language sql stable security definer as $$select coalesce((select admin from auth.users where id=auth.uid()),false)$$;
 create table content_items(id uuid primary key default gen_random_uuid(),parent_id uuid references content_items,area text,title text,path text unique,item_type text,content_mode text,body text,sort_order integer,is_published boolean);
-create function public.content_is_visible(uuid) returns boolean language sql stable as $$select is_published from content_items where id=$1$$;
+create function public.content_is_visible(uuid) returns boolean language sql stable as $$select is_published from public.content_items where id=$1$$;
 create table user_progress(user_id uuid references auth.users,item_id uuid references content_items,progress integer,completed boolean,score integer,max_score integer,quiz_answers jsonb,attempt_count integer default 0,tested_at timestamptz,updated_at timestamptz,primary key(user_id,item_id));
 alter table user_progress enable row level security;
 create policy own on user_progress for select using(user_id=auth.uid() or public.is_admin());
