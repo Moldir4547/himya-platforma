@@ -15,6 +15,8 @@ const assets = new Set([
   "catalog.js",
   "platform-utils.js",
   "learning.js",
+  "university-control.js",
+  "university-control-data.js",
   "registration.js",
   "bond-practice.js",
   "bridge-path.js",
