@@ -1,7 +1,8 @@
 // Map by the existing lesson topic/path, not the number printed in an uploaded file.
 export const UNIVERSITY_LABS = [
  {slug:'zerthanalyq-sabaq-beiorganikalyq-qosylystardyn-negizgi-klastary-oksidter-qyshqyldar-negizder-tuzdar',file:'university-lab-classes.html',title:'Қышқылдар, негіздер және тұздар',description:'Заттардың қасиеттерін тәжірибеде бақылап, реакция теңдеулерін салыстырыңыз.'},
- {slug:'zerthanalyq-sabaq-5-komirteginin-iv-oksidinin-salystyrmaly-moldik-massasyn-anyqtau',file:'university-lab-co2.html',title:'CO₂ молярлық массасын анықтау',description:'Жағдайларды тіркеп, колбаны өлшеңіз, газбен толтырыңыз және нәтижені есептеңіз.',note:'Авторлық HTML файлда №4 деп белгіленген. Платформада осы тақырып №5 зертханалық сабаққа сәйкес келеді.'}
+ {slug:'zerthanalyq-sabaq-5-komirteginin-iv-oksidinin-salystyrmaly-moldik-massasyn-anyqtau',file:'university-lab-co2.html',title:'CO₂ молярлық массасын анықтау',description:'Жағдайларды тіркеп, колбаны өлшеңіз, газбен толтырыңыз және нәтижені есептеңіз.',note:'Авторлық HTML файлда №4 деп белгіленген. Платформада осы тақырып №5 зертханалық сабаққа сәйкес келеді.'},
+ {slug:'zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau',file:'university-lab-metal.html',title:'Металдың эквиваленттік массасын анықтау',description:'Аспапты құрастырып, герметикалығын тексеріңіз. Металды өлшеп, бөлінген сутек көлемі арқылы эквиваленттік массасын есептеңіз.',note:'Авторлық HTML файлда №3 деп белгіленген. Платформада осы тақырып №4 зертханалық сабаққа сәйкес келеді.'}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
 export function labForPath(path){
