@@ -63,6 +63,7 @@ await frame.locator('#salt2-btn1').click();
 await frame.locator('#salt2-btn2').click();
 await frame.locator('#salt2-result2.show').waitFor();
 }
+assert.equal(await frame.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'experiment fits its frame');
 assert.equal(await section.locator('iframe').evaluate(el=>el.getBoundingClientRect().right<=innerWidth+1),true);
 }
 assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
