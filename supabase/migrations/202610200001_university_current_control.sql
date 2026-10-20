@@ -61,36 +61,14 @@ begin
  select * into a from public.university_control_attempts where id=p_attempt and user_id=auth.uid() for update;
  if a.id is null or not public.content_is_visible(a.item_id) then raise exception 'forbidden'; end if;
  if a.finished_at is null then
-  -- At the deadline, freeze the last answers received before the deadline.
   if stamp < a.deadline then
    if p_revision is distinct from a.revision then raise exception 'stale_attempt'; end if;
-   if p_answers is null or jsonb_typeof(p_answers)<>'array' or jsonb_array_length(p_answers)<>30 then raise exception 'invalid_answers'; end if;
+   if p_answers is null or jsonb_typeof(p_answers)<>'array' then raise exception 'invalid_answers'; end if;
+   if jsonb_array_length(p_answers)<>30 then raise exception 'invalid_answers'; end if;
    if exists(select 1 from jsonb_array_elements(p_answers) with ordinality v(value,n)
-    where case when jsonb_typeof(value)<>'number' or value::text !~ '^-?[0-9]+) then raise exception 'invalid_answer'; end if;
-   a.answers:=p_answers;
-  end if;
-  if p_finish or stamp>=a.deadline then
-   select count(*)::integer into mark from jsonb_array_elements(a.answers) with ordinality v(value,n)
-    where value::text::integer=(a.questions->(n::integer-1)->>'correct_index')::integer;
-   a.finished_at:=stamp; a.score:=mark;
-  end if;
-  update public.university_control_attempts set answers=a.answers,finished_at=a.finished_at,score=a.score,revision=revision+1 where id=a.id returning * into a;
-  if a.finished_at is not null then
-   insert into public.user_progress(user_id,item_id,progress,completed,score,max_score,quiz_answers,attempt_count,tested_at,updated_at)
-   values(auth.uid(),a.item_id,100,true,a.score,30,a.answers,1,stamp,stamp)
-   on conflict(user_id,item_id) do update set progress=100,completed=true,score=excluded.score,max_score=30,quiz_answers=excluded.quiz_answers,
-    attempt_count=public.user_progress.attempt_count+1,tested_at=excluded.tested_at,updated_at=excluded.updated_at;
-  end if;
- end if;
- select * into result from public.user_progress where user_id=auth.uid() and item_id=a.item_id;
- return jsonb_build_object('attempt',to_jsonb(a)||jsonb_build_object('server_now',clock_timestamp()),'progress',case when result.user_id is null then null else to_jsonb(result) end);
-end $$;
-revoke all on function public.start_university_control(boolean) from public,anon;
-revoke all on function public.save_university_control(uuid,jsonb,integer,boolean) from public,anon;
-grant execute on function public.start_university_control(boolean) to authenticated;
-grant execute on function public.save_university_control(uuid,jsonb,integer,boolean) to authenticated;
-commit;
- then true else value::text::numeric < -1 or value::text::numeric >= jsonb_array_length(a.questions->(n::integer-1)->'options') end) then raise exception 'invalid_answer'; end if;
+    where case when jsonb_typeof(value)<>'number' or value::text !~ '^-?[0-9]+$' then true
+    else value::text::numeric < -1 or value::text::numeric >= jsonb_array_length(a.questions->(n::integer-1)->'options') end)
+    then raise exception 'invalid_answer'; end if;
    a.answers:=p_answers;
   end if;
   if p_finish or stamp>=a.deadline then
