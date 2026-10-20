@@ -7,6 +7,7 @@ const cases=[
  ['safety-mixtures','7 сынып. Химия пәніне кіріспе слайд.pptx'],
  ['states-changes','7 сынып. Заттардың агрегаттық күйінің өзгеруі.pptx'],
  ['atoms-substances','7 сынып. Атомдар. Молекулалар. Заттар.pptx'],
+ ['structure-isotopes','7 сынып. Атомдар. Молекулалар. Заттар.pptx'],
  ['periodic-table','7 сынып. Химиялық элементтердің периодтық кестесі.pptx'],
  ['electrons-ions','Атомдағы электрондардығң қозғалысы слайд.pptx'],
  ['solutions','Ерітінділер және ерігіштік слайд.pptx'],
@@ -18,7 +19,7 @@ const cases=[
  ['kinetics','Кинетика слайд.pptx'],
  ['acid-base-ph','Қышқыл және негіз ерітінділер слайд.pptx']];
 for(const [slug,name]of cases)assert.equal(matchesTopic(name,unit(slug),'presentation'),true,name);
-assert.equal(matchesTopic(cases[3][1],unit('atoms-substances'),'presentation'),false);
+assert.equal(matchesTopic('7 сынып. Химиялық элементтердің периодтық кестесі.pptx',unit('atoms-substances'),'presentation'),false);
 assert.equal(matchesTopic('Жұмыс парағы. Атомдар мен Молекулалар Заттардың құпиясы.pdf',unit('atoms-substances'),'presentation'),false);
 assert.equal(matchesTopic('Жұмыс парағы. Атомдар мен Молекулалар Заттардың құпиясы.pdf',unit('atoms-substances'),'worksheet'),true);
 });
