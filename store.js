@@ -40,9 +40,9 @@ export class LocalApiStore {
   async getProgress() { return this.request("/progress"); }
   async saveProgress(itemId,patch) { return this.request("/progress",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({item_id:itemId,...patch})}); }
   async submitQuiz(itemId,answers) { return this.saveProgress(itemId,{progress:100,completed:true,score:0,max_score:answers.length,quiz_answers:answers}); }
-  async startCurrentControl(restart=false){return this.request('/university-control/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({restart})});}
-  async saveCurrentControl(attempt,answers,revision,finish=false){return this.request('/university-control/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({attempt,answers,revision,finish})});}
-  async listCurrentControlAttempts(){return this.request('/university-control/attempts');}
+  async startCurrentControl(){throw Error('Ағымдық бақылауды жарияланған ChemBridge сайтында орындаңыз.');}
+  async saveCurrentControl(){throw Error('Ағымдық бақылауды жарияланған ChemBridge сайтында орындаңыз.');}
+  async listCurrentControlAttempts(){throw Error('Ағымдық бақылауды жарияланған ChemBridge сайтында орындаңыз.');}
   async saveGuidedLab(itemId,labId,record,revision){return this.request('/guided-lab',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({item_id:itemId,lab_id:labId,record,revision})});}
   async submitSchoolActivity(itemId,slug,mode,attemptId,answers){return this.request('/school-activity',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({item_id:itemId,slug,mode,attempt_id:attemptId,answers})});}
   async reviewSchoolActivity(userId,itemId,slug,mode,attemptId,score,comment){return this.request('/school-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:userId,item_id:itemId,slug,mode,attempt_id:attemptId,score,comment})});}
