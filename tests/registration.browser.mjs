@@ -89,7 +89,7 @@ test('learner navigation: three paths, guest return route, menu and mobile layou
   assert.equal(await page.locator('[data-school-card]').count(),16);
   await page.locator('[data-school-card][href$="/bonding"]').click();
   await page.locator('[data-school-unit="bonding"]').waitFor();
-  assert.equal(await page.getByRole('tab').count(),8);
+  assert.equal(await page.getByRole('tab').count(),9);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'8th grade lesson overflow '+width);
   await page.goto(base+'/himya-platforma/mektep/teoriya/9-synyp');
   await page.locator('.school-cards').waitFor();
