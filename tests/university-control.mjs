@@ -1,3 +1,4 @@
+import {knowledgeCardData} from '../university-control.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -20,4 +21,14 @@ test('calculation keys are independently checked',()=>{
  const answer=n=>qs[n-1].options[qs[n-1].correct_index];
  assert.equal(answer(6),'0,50 моль');assert.equal(answer(9),'49 г/моль-экв');assert.equal(answer(10),'98 г/моль-экв');
  assert.equal(answer(11),'12 г/моль-экв');assert.equal(answer(17),'65 г/моль');assert.equal(answer(20),'2,24 л');assert.equal(answer(22),'80%');
+});
+
+test('knowledge card isolates learners, orders labs and history, excludes navigation views',()=>{
+ const state={user:{id:'admin',role:'admin'},items:[{id:'root',area:'university',path:'/universitet'},{id:'labs',area:'university',path:'/universitet/ozin-ozi-daiyndau'},{id:'10',parent_id:'labs',area:'university',title:'Зертхана 10',path:'/lab/10'},{id:'4',parent_id:'labs',area:'university',title:'Зертхана 4',path:'/lab/4'},{id:'card',area:'university',path:'/universitet/bilim-kartasy'}],analytics:{details:[{user_id:'a',item_id:'root'},{user_id:'a',item_id:'10'},{user_id:'b',item_id:'4',score:99},{user_id:'a',item_id:'4',updated_at:'2026-10-18'},{user_id:'a',item_id:'4',updated_at:'2026-10-20',progress:50},{user_id:'a',item_id:'card'}]}};
+ const history=[{id:'old',user_id:'a',started_at:'2026-10-19',finished_at:'yes',score:12},{id:'other',user_id:'b',started_at:'2026-10-20',finished_at:'yes',score:30},{id:'new',user_id:'a',started_at:'2026-10-20',finished_at:'yes',score:24}];
+ const d=knowledgeCardData(state,history,'a');
+ assert.deepEqual(d.groups.labs.map(r=>r.item_id),['4','10']);assert.equal(d.groups.labs[0].progress,50);
+ assert.equal(d.latest.score,24);assert.equal(d.best,24);assert.deepEqual(d.attempts.map(a=>a.id),['new','old']);assert.equal(d.groups.materials.length,0);
+ state.user={id:'a',role:'university_student'};state.progress=state.analytics.details;
+ assert.deepEqual(knowledgeCardData(state,history).groups.labs.map(r=>r.item_id),['4','10']);
 });
