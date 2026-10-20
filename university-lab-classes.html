@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>№2 Зертханалық жұмыс — Виртуалды нұсқа</title>
+<style>
+  :root{
+    --paper:#FAF6EC;
+    --ink:#2A2620;
+    --ink-soft:#5B564C;
+    --line:#DDD5C2;
+    --acid:#C1573A;
+    --acid-bg:#F7E7E1;
+    --base:#0F6E56;
+    --base-bg:#E1F0EA;
+    --salt:#B5790C;
+    --salt-bg:#F6ECD8;
+    --panel:#FFFEFB;
+    --shadow:0 1px 3px rgba(42,38,32,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.55;
+  }
+  h1,h2,h3{font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;font-weight:700;margin:0;}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 60px;}
+  header.top{margin-bottom:22px;}
+  header.top h1{font-size:26px;color:var(--ink);}
+  header.top p{margin:8px 0 0;color:var(--ink-soft);font-size:15px;max-width:640px;}
+  nav.tabs{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    border-bottom:2px solid var(--line);
+    margin-bottom:24px;
+  }
+  nav.tabs button{
+    font-family:Georgia,serif;
+    font-size:14.5px;
+    font-weight:700;
+    padding:10px 16px;
+    background:transparent;
+    border:none;
+    border-bottom:3px solid transparent;
+    color:var(--ink-soft);
+    cursor:pointer;
+    border-radius:6px 6px 0 0;
+  }
+  nav.tabs button:hover{background:rgba(0,0,0,0.03);}
+  nav.tabs button.active{color:var(--ink);border-bottom-color:var(--tab-c,#999);background:var(--panel);}
+  nav.tabs button[data-tab="intro"]{--tab-c:#7A7461;}
+  nav.tabs button[data-tab="acids"]{--tab-c:var(--acid);}
+  nav.tabs button[data-tab="bases"]{--tab-c:var(--base);}
+  nav.tabs button[data-tab="salts"]{--tab-c:var(--salt);}
+  nav.tabs button[data-tab="summary"]{--tab-c:#7A7461;}
+
+  section.panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:26px 30px;box-shadow:var(--shadow);}
+  section.panel.active{display:block;}
+
+  .grouptitle{font-size:20px;margin-bottom:6px;}
+  .grouptitle.acids{color:var(--acid);}
+  .grouptitle.bases{color:var(--base);}
+  .grouptitle.salts{color:var(--salt);}
+
+  .exp{border-top:1px solid var(--line);padding:20px 0;}
+  .exp:first-of-type{border-top:none;padding-top:8px;}
+  .exp h3{font-size:17px;margin-bottom:8px;}
+  .exp h3.acids{color:var(--acid);}
+  .exp h3.bases{color:var(--base);}
+  .exp h3.salts{color:var(--salt);}
+  .exp p.steps{color:var(--ink-soft);font-size:14.5px;margin:0 0 14px;}
+
+  .lab-row{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;}
+  .vial-box{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:72px;}
+  .vial{width:46px;height:80px;border:2px solid var(--ink);border-radius:0 0 18px 18px;position:relative;background:#F5F3EC;overflow:hidden;}
+  .vial .fill{position:absolute;bottom:0;left:0;right:0;height:10%;background:#E8E4D6;transition:height 1s ease, background 1s ease;}
+  .vial .precip{position:absolute;bottom:0;left:0;right:0;height:0%;background:#fff;opacity:0.9;transition:height 0.8s ease 0.6s;}
+  .vial-label{font-size:12px;color:var(--ink-soft);text-align:center;}
+
+  button.act{
+    font-family:-apple-system,sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    padding:9px 14px;
+    border-radius:6px;
+    border:1.5px solid var(--c,#888);
+    color:var(--c,#888);
+    background:transparent;
+    cursor:pointer;
+  }
+  button.act:hover{background:var(--c-bg,#f2f2f2);}
+  button.act:disabled{opacity:0.45;cursor:default;}
+  button.act.acids{--c:var(--acid);--c-bg:var(--acid-bg);}
+  button.act.bases{--c:var(--base);--c-bg:var(--base-bg);}
+  button.act.salts{--c:var(--salt);--c-bg:var(--salt-bg);}
+
+  .result{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:6px;
+    font-size:14px;
+    display:none;
+    opacity:0;
+    transform:translateY(-4px);
+    transition:opacity 0.4s ease, transform 0.4s ease;
+  }
+  .result.show{display:block;opacity:1;transform:translateY(0);}
+  .result.acids{background:var(--acid-bg);color:#7A3524;}
+  .result.bases{background:var(--base-bg);color:#0A4C3B;}
+  .result.salts{background:var(--salt-bg);color:#7C5308;}
+  .eq{font-style:italic;font-family:Georgia,serif;margin-top:6px;display:block;}
+
+  .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-top:6px;}
+  .cell{border:1px solid var(--line);border-radius:6px;padding:14px;text-align:center;background:#FDFCF8;}
+  .cell .salttag{font-weight:700;font-size:14px;margin-bottom:8px;}
+
+  .choice-q{margin-top:4px;}
+  .choice-opt{
+    display:block;width:100%;text-align:left;
+    padding:9px 12px;margin-bottom:8px;
+    border:1.5px solid var(--line);border-radius:6px;
+    background:#fff;cursor:pointer;font-size:14px;color:var(--ink);
+  }
+  .choice-opt:hover{border-color:var(--salt);}
+  .choice-opt.correct{border-color:var(--base);background:var(--base-bg);color:#0A4C3B;}
+  .choice-opt.wrong{border-color:var(--acid);background:var(--acid-bg);color:#7A3524;}
+  .choice-opt:disabled{cursor:default;}
+
+  .stagebtns{display:flex;gap:10px;flex-wrap:wrap;}
+
+  textarea.reflect{
+    width:100%;min-height:64px;margin-top:6px;
+    border:1px solid var(--line);border-radius:6px;padding:10px;
+    font-family:inherit;font-size:14px;resize:vertical;background:#FDFCF8;color:var(--ink);
+  }
+  .reflectlabel{font-size:13px;color:var(--ink-soft);margin-top:16px;display:block;}
+  ul.reagents{columns:2;font-size:14px;color:var(--ink-soft);padding-left:18px;}
+  ul.reagents li{margin-bottom:4px;break-inside:avoid;}
+  .safety{background:var(--acid-bg);color:#7A3524;border-radius:6px;padding:12px 14px;font-size:14px;margin-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>№2 Зертханалық жұмыс — виртуалды нұсқа</h1>
+    <p>Қышқылдар, негіздер және тұздардың қасиеттері. Әр тәжірибені виртуалды түрде «орында», нәтижесін бақыла және реакция теңдеуімен тексер. Нақты зертханаға кіру алдында осы нұсқа арқылы дайындығыңды тексер.</p>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="intro" class="active">Кіріспе</button>
+    <button data-tab="acids" class="">1. Қышқылдар</button>
+    <button data-tab="bases" class="">2. Негіздер</button>
+    <button data-tab="salts" class="">3. Тұздар</button>
+    <button data-tab="summary" class="">Қорытынды</button>
+  </nav>
+
+  <section class="panel active" id="intro">
+    <h2 class="grouptitle">Жұмыстың мақсаты</h2>
+    <p>Бейорганикалық қосылыстардың негізгі кластарын (қышқыл, негіз, тұз) алу жолдарын және химиялық қасиеттерін зерттеу.</p>
+    <h3 style="margin-top:18px;font-size:15px;">Қажетті реактивтер мен аспаптар</h3>
+    <ul class="reagents">
+      <li>Қызыл фосфор</li>
+      <li>Шыны таяқша</li>
+      <li>200 мл шыны банка</li>
+      <li>Фосфор жағуға арналған темір қалақша</li>
+      <li>Лакмус қағазы, индикатор қағазы</li>
+      <li>Дистилденген су</li>
+      <li>CH₃COONa, H₂SO₄, NaOH</li>
+      <li>CaO, CaCl₂</li>
+      <li>AlCl₃, FeCl₃, ZnSO₄, CuSO₄</li>
+      <li>Кипп аппараты (CO₂ үшін)</li>
+      <li>Ba(OH)₂ (барий суы)</li>
+      <li>Pb(CH₃COO)₂, қорғасын оксиді</li>
+      <li>Фенолфталеин</li>
+    </ul>
+    <div class="safety">Назар аударыңыз: концентрлі/сұйытылған күкірт қышқылымен және фосфорды жағумен жұмыс тек оқытушының қадағалауымен, тартпа шкафта жүргізіледі. Виртуалды нұсқа — нақты тәжірибенің орнын толық баспайды, тек дайындыққа арналған.</div>
+  </section>
+
+  <section class="panel" id="acids">
+    <h2 class="grouptitle acids">1. Қышқылдарды алу</h2>
+
+    <div class="exp">
+      <h3 class="acids">а) Оксидтің сумен қосылуы</h3>
+      <p class="steps">Шыны таяқшамен аз мөлшерде қызыл фосфорды алып, қыздырып жаң. Түзілген P₂O₅ түтінін банкадағы дистилденген суға сіңіріп, ерітіндіге лакмус қағазын сал.</p>
+      <div class="lab-row">
+        <div class="vial-box">
+          <div class="vial"><div class="fill" id="acid1-fill"></div></div>
+          <div class="vial-label" id="acid1-label">дистилденген су</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <button class="act acids" id="acid1-btn" onclick="runAcid1()">Фосфорды жағып, суға араластыру</button>
+          <div class="result acids" id="acid1-result">
+            Лакмус қағазы <b>көктен қызылға</b> боялды — ерітінді қышқылдық қасиет көрсетті.
+            <span class="eq">4P + 5O₂ → 2P₂O₅    P₂O₅ + 3H₂O → 2H₃PO₄</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp">
+      <h3 class="acids">ә) Тұздың қышқылмен әрекеттесуі</h3>
+      <p class="steps">Сынауыққа аз мөлшерде құрғақ натрий ацетатын сал, оған сұйытылған күкірт қышқылын құй. Сынауықтың аузына индикатор қағазын ұста.</p>
+      <div class="lab-row">
+        <div class="vial-box">
+          <div class="vial"><div class="fill" id="acid2-fill" style="height:25%;background:#EDEAE0;"></div></div>
+          <div class="vial-label" id="acid2-label">CH₃COONa (қатты)</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <button class="act acids" id="acid2-btn" onclick="runAcid2()">Күкірт қышқылын құю</button>
+          <div class="result acids" id="acid2-result">
+            Сірке қышқылына тән <b>өткір иіс</b> сезілді, индикатор қағазы қызғылт түске боялды.
+            <span class="eq">2CH₃COONa + H₂SO₄ → 2CH₃COOH + Na₂SO₄</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <label class="reflectlabel">Өз бақылауыңды жаз: неге екі тәжірибеде де қышқыл түзілгенін лакмус/индикатор арқылы білуге болады?</label>
+    <textarea class="reflect" placeholder="Жауабыңды осында жаз..."></textarea>
+  </section>
+
+  <section class="panel" id="bases">
+    <h2 class="grouptitle bases">2. Негіздерді алу</h2>
+
+    <div class="exp">
+      <h3 class="bases">а) Ерімейтін негіздерді алу (тұз + сілті)</h3>
+      <p class="steps">Төрт сынауыққа CuSO₄, AlCl₃, ZnSO₄, FeCl₃ ерітінділерін құй, әрқайсысына шамалы NaOH ерітіндісін тамыз. Түзілген тұнбаны бақыла.</p>
+      <div class="grid4" id="base-grid"></div>
+    </div>
+
+    <div class="exp">
+      <h3 class="bases">ә) Еритін негіздерді алу</h3>
+      <p class="steps">Екі сынауыққа фенолфталеин тамызып, әрқайсысында түрлі жолмен негіз алынады.</p>
+      <div class="lab-row" style="margin-bottom:18px;">
+        <div class="vial-box">
+          <div class="vial"><div class="fill" id="base2a-fill" style="height:30%;background:#EDEAE0;"></div></div>
+          <div class="vial-label">CaO + су</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <button class="act bases" id="base2a-btn" onclick="runBase2a()">Суды құю + фенолфталеин</button>
+          <div class="result bases" id="base2a-result">
+            Ерітінді фенолфталеинмен <b>қызғылт-күлгін</b> түске боялды — орта негіздік.
+            <span class="eq">CaO + H₂O → Ca(OH)₂</span>
+          </div>
+        </div>
+      </div>
+      <div class="lab-row">
+        <div class="vial-box">
+          <div class="vial"><div class="fill" id="base2b-fill" style="height:35%;background:#EAF3FB;"></div></div>
+          <div class="vial-label">CaCl₂ ерітіндісі</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <button class="act bases" id="base2b-btn" onclick="runBase2b()">NaOH + фенолфталеин қосу</button>
+          <div class="result bases" id="base2b-result">
+            Аздаған <b>ақ тұнба</b> түзіліп, ерітінді қызғылт түске боялды.
+            <span class="eq">CaCl₂ + 2NaOH → Ca(OH)₂↓ + 2NaCl</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <label class="reflectlabel">Неліктен «а» тәжірибесінде тұнба, ал «ә» тәжірибесінде ерітінді (немесе аз тұнба) түзілетінін негізде.</label>
+    <textarea class="reflect" placeholder="Жауабыңды осында жаз..."></textarea>
+  </section>
+
+  <section class="panel" id="salts">
+    <h2 class="grouptitle salts">3. Тұздарды алу</h2>
+
+    <div class="exp">
+      <h3 class="salts">а) Орта тұз алу</h3>
+      <p class="steps">Ерітіндіде тек мырыш сульфаты түзілетіндей, реакция бір бағытта ғана жүретін реагенттер жұбын таңда:</p>
+      <div class="choice-q" id="salt-choice"></div>
+      <div class="result salts" id="salt-choice-result"></div>
+    </div>
+
+    <div class="exp">
+      <h3 class="salts">ә) Қышқыл тұз алу</h3>
+      <p class="steps">Барий суына (Ba(OH)₂) көмірқышқыл газын (CO₂) Кипп аппаратынан үздіксіз жібер.</p>
+      <div class="lab-row">
+        <div class="vial-box">
+          <div class="vial">
+<div class="fill" id="salt2-fill" style="height:40%;background:#F2F5EE;"></div>
+<div class="precip" id="salt2-precip"></div>
+</div>
+          <div class="vial-label">Ba(OH)₂</div>
+        </div>
+        <div style="flex:1;min-width:220px;">
+          <div class="stagebtns">
+            <button class="act salts" id="salt2-btn1" onclick="runSalt2Stage1()">CO₂ жіберу (аз мөлшерде)</button>
+            <button class="act salts" id="salt2-btn2" onclick="runSalt2Stage2()" disabled>CO₂ жалғастыра жіберу (артық)</button>
+          </div>
+          <div class="result salts" id="salt2-result1"></div>
+          <div class="result salts" id="salt2-result2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp">
+      <h3 class="salts">б) Негіздік тұз алу</h3>
+      <p class="steps">Қорғасын (II) ацетаты бар сынауыққа қорғасын (II) оксидін қосып қыздыр.</p>
+      <div class="lab-row">
+        <div class="vial-box">
+          <div class="vial">
+<div class="fill" id="salt3-fill" style="height:35%;background:#F5F3EC;"></div>
+<div class="precip" id="salt3-precip"></div>
+</div>
+          <div class="vial-label">Pb(CH₃COO)₂ + PbO</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <button class="act salts" id="salt3-btn" onclick="runSalt3()">Қыздыру</button>
+          <div class="result salts" id="salt3-result">
+            Ерітінді лайланып, <b>ақ түсті негіздік тұздың тұнбасы</b> түзілді.
+            <span class="eq">Pb(CH₃COO)₂ + PbO + H₂O → Pb(OH)(CH₃COO)·Pb(CH₃COO)(OH) (негіздік тұз)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <label class="reflectlabel">«Орта», «қышқыл» және «негіздік» тұздардың құрамындағы айырмашылықты өз сөзіңмен түсіндір.</label>
+    <textarea class="reflect" placeholder="Жауабыңды осында жаз..."></textarea>
+  </section>
+
+  <section class="panel" id="summary">
+    <h2 class="grouptitle">Қорытынды</h2>
+    <p>Барлық тәжірибелерді өткеннен кейін жұмыс дәптеріңе мыналарды жаз:</p>
+    <ul class="reagents" style="columns:1;">
+      <li>Әр тәжірибенің күні, тақырыбы, барысы (қысқаша сызбанұсқа)</li>
+      <li>Байқалған құбылыстар (түс өзгеруі, тұнба, иіс)</li>
+      <li>Реакция теңдеулері (қажет жерде молекулалық-иондық түрде)</li>
+      <li>Әр кластың (қышқыл, негіз, тұз) алу жолдары бойынша қорытынды</li>
+    </ul>
+    <label class="reflectlabel">Жалпы қорытынды: осы жұмыстан не үйрендің?</label>
+    <textarea class="reflect" placeholder="Жауабыңды осында жаз..." style="min-height:100px;"></textarea>
+  </section>
+
+</div>
+
+<script>
+function showTab(name){
+  document.querySelectorAll('nav.tabs button').forEach(function(b){b.classList.toggle('active', b.dataset.tab===name);});
+  document.querySelectorAll('section.panel').forEach(function(s){s.classList.toggle('active', s.id===name);});
+}
+document.querySelectorAll('nav.tabs button').forEach(function(b){
+  b.addEventListener('click', function(){ showTab(b.dataset.tab); });
+});
+
+function runAcid1(){
+  var btn=document.getElementById('acid1-btn');
+  btn.disabled=true;
+  document.getElementById('acid1-fill').style.height='55%';
+  document.getElementById('acid1-fill').style.background='#F3E3DC';
+  document.getElementById('acid1-label').textContent='H₃PO₄ ерітіндісі (қышқыл)';
+  setTimeout(function(){
+    document.getElementById('acid1-result').classList.add('show');
+  },900);
+}
+function runAcid2(){
+  var btn=document.getElementById('acid2-btn');
+  btn.disabled=true;
+  document.getElementById('acid2-fill').style.height='60%';
+  document.getElementById('acid2-fill').style.background='#F0E6D6';
+  document.getElementById('acid2-label').textContent='CH₃COOH бөлінуде';
+  setTimeout(function(){
+    document.getElementById('acid2-result').classList.add('show');
+  },900);
+}
+
+var baseData=[
+  {salt:'CuSO₄',color:'#3B7DD8',name:'көк тұнба',eq:'CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄'},
+  {salt:'AlCl₃',color:'#E7E9EA',name:'ақ, түйіршікті тұнба',eq:'AlCl₃ + 3NaOH → Al(OH)₃↓ + 3NaCl'},
+  {salt:'ZnSO₄',color:'#F1F2EE',name:'ақ тұнба',eq:'ZnSO₄ + 2NaOH → Zn(OH)₂↓ + Na₂SO₄'},
+  {salt:'FeCl₃',color:'#B5541E',name:'қызыл-қоңыр тұнба',eq:'FeCl₃ + 3NaOH → Fe(OH)₃↓ + 3NaCl'}
+];
+var grid=document.getElementById('base-grid');
+baseData.forEach(function(d,i){
+  var cell=document.createElement('div');
+  cell.className='cell';
+  cell.innerHTML =
+    '<div class="salttag">'+d.salt+' + NaOH</div>'+
+    '<div class="vial-box" style="margin:0 auto 10px;">'+
+      '<div class="vial" style="width:38px;height:64px;"><div class="fill" id="bv-fill-'+i+'" style="height:30%;background:#EFF0EC;"></div><div class="precip" id="bv-precip-'+i+'"></div></div>'+
+    '</div>'+
+    '<button class="act bases" style="width:100%;" id="bv-btn-'+i+'" onclick="runBaseGrid('+i+')">NaOH тамызу</button>'+
+    '<div class="result bases" id="bv-result-'+i+'" style="text-align:left;"></div>';
+  grid.appendChild(cell);
+});
+function runBaseGrid(i){
+  var d=baseData[i];
+  document.getElementById('bv-btn-'+i).disabled=true;
+  var precip=document.getElementById('bv-precip-'+i);
+  precip.style.background=d.color;
+  precip.style.height='45%';
+  setTimeout(function(){
+    var r=document.getElementById('bv-result-'+i);
+    r.innerHTML='Түзілді: <b>'+d.name+'</b><span class="eq">'+d.eq+'</span>';
+    r.classList.add('show');
+  },700);
+}
+
+function runBase2a(){
+  document.getElementById('base2a-btn').disabled=true;
+  document.getElementById('base2a-fill').style.height='55%';
+  document.getElementById('base2a-fill').style.background='#F6D6E8';
+  setTimeout(function(){document.getElementById('base2a-result').classList.add('show');},900);
+}
+function runBase2b(){
+  document.getElementById('base2b-btn').disabled=true;
+  document.getElementById('base2b-fill').style.height='55%';
+  document.getElementById('base2b-fill').style.background='#F6D6E8';
+  var p=document.createElement('div');
+  setTimeout(function(){document.getElementById('base2b-result').classList.add('show');},900);
+}
+
+var saltChoiceOptions=[
+  {text:'ZnCl₂ ерітіндісі + Na₂SO₄ ерітіндісі',correct:false},
+  {text:'ZnO (қатты) + сұйытылған H₂SO₄',correct:true},
+  {text:'Zn(OH)₂ тұнбасын жай қыздыру',correct:false}
+];
+var choiceWrap=document.getElementById('salt-choice');
+saltChoiceOptions.forEach(function(opt,i){
+  var b=document.createElement('button');
+  b.className='choice-opt';
+  b.textContent=opt.text;
+  b.onclick=function(){
+    document.querySelectorAll('#salt-choice .choice-opt').forEach(function(x){x.disabled=true;});
+    b.classList.add(opt.correct?'correct':'wrong');
+    var r=document.getElementById('salt-choice-result');
+    if(opt.correct){
+      r.innerHTML='Дұрыс! Оксид пен қышқылдың әрекеттесуі әрқашан соңына дейін, бір бағытта жүреді.<span class="eq">ZnO + H₂SO₄ → ZnSO₄ + H₂O</span>';
+    } else {
+      document.querySelectorAll('#salt-choice .choice-opt').forEach(function(x,j){if(saltChoiceOptions[j].correct)x.classList.add('correct');});
+      r.innerHTML='Бұл жұп үшін реакция тепе-теңдікте болуы мүмкін немесе бағыты айқын емес. Дұрыс жауап: ZnO + сұйытылған H₂SO₄.<span class="eq">ZnO + H₂SO₄ → ZnSO₄ + H₂O</span>';
+    }
+    r.classList.add('show');
+  };
+  choiceWrap.appendChild(b);
+});
+
+var co2Stage=0;
+function runSalt2Stage1(){
+  co2Stage=1;
+  document.getElementById('salt2-btn1').disabled=true;
+  document.getElementById('salt2-precip').style.background='#E9E7DE';
+  document.getElementById('salt2-precip').style.height='40%';
+  setTimeout(function(){
+    var r=document.getElementById('salt2-result1');
+    r.innerHTML='Ерітінді лайланып, <b>ақ тұнба (BaCO₃)</b> түзілді.<span class="eq">Ba(OH)₂ + CO₂ → BaCO₃↓ + H₂O</span>';
+    r.classList.add('show');
+    document.getElementById('salt2-btn2').disabled=false;
+  },800);
+}
+function runSalt2Stage2(){
+  document.getElementById('salt2-btn2').disabled=true;
+  document.getElementById('salt2-precip').style.height='0%';
+  document.getElementById('salt2-fill').style.background='#EEF3ED';
+  setTimeout(function(){
+    var r=document.getElementById('salt2-result2');
+    r.innerHTML='Тұнба бірте-бірте еріп, ерітінді тағы да <b>мөлдір</b> болды — қышқыл тұз түзілді.<span class="eq">BaCO₃ + CO₂ + H₂O → Ba(HCO₃)₂</span>';
+    r.classList.add('show');
+  },800);
+}
+
+function runSalt3(){
+  document.getElementById('salt3-btn').disabled=true;
+  document.getElementById('salt3-precip').style.background='#F3F1E9';
+  document.getElementById('salt3-precip').style.height='40%';
+  setTimeout(function(){document.getElementById('salt3-result').classList.add('show');},900);
+}
+</script>
+
+
+</body>
+</html>
