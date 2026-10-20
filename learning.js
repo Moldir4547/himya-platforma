@@ -1,3 +1,4 @@
+import {bindUniversityLabs} from './university-labs.js';
 import {createUniversityControl} from './university-control.js';
 import { LEVELS, questionsFor, grade } from "./redox-data.js";
 import { learningApi } from "./learning-api.js";
@@ -166,6 +167,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
   }
   function bind(root) {
     universityControl.bind(root);
+    bindUniversityLabs(root);
     root.querySelectorAll("[data-bridge-option]").forEach((button) => {
       button.addEventListener("click", () => {
         const card = button.closest("[data-bridge-evaluation]");
