@@ -46,3 +46,20 @@ export function filterMaterials(rows, {query = '', category = '', subject = '', 
   const term = query.trim().toLocaleLowerCase('kk');
   return rows.filter(row => (!term || `${row.title} ${row.filename}`.toLocaleLowerCase('kk').includes(term)) && (!category || row.category === category) && (!subject || row.subject === subject) && (!type || row.type === type));
 }
+
+// Sort numbered lecture files numerically without moving other materials.
+export function sortLectureResources(resources = []) {
+  const lectureNumber = resource => {
+    const pattern = /(?:^|[\s._-])(?:дәріс|лекция|lecture)\s*(?:№|#)?\s*(\d+)(?=$|[\s.,:;_-])/iu;
+    for (const text of [resource.filename, resource.title]) {
+      const match = String(text || '').match(pattern);
+      if (match) return Number(match[1]);
+    }
+    return null;
+  };
+  const numbered = resources.map(resource => ({resource, number: lectureNumber(resource)}))
+    .filter(entry => entry.number !== null)
+    .sort((a, b) => a.number - b.number);
+  let index = 0;
+  return resources.map(resource => lectureNumber(resource) === null ? resource : numbered[index++].resource);
+}

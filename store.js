@@ -1,4 +1,4 @@
-import { errorMessage, uploadRequest, validateFile } from "./platform-utils.js";
+import { errorMessage, uploadRequest, validateFile, sortLectureResources } from "./platform-utils.js";
 import { validateParticipantType } from "./registration.js";
 const KEYS = { localToken:"chem_server_session_v1", supabase:"chem_supabase_session_v1" };
 const uid = () => crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -30,7 +30,7 @@ export class LocalApiStore {
   async listUsers() { return this.request("/users"); }
   async updateParticipantType(id,participant_type){validateParticipantType(participant_type);return this.request(`/users/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({participant_type})});}
   async updateUserRole(id,role) { return this.request(`/users/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({role})}); }
-  async listResources(itemId) { return this.request(`/resources?item_id=${encodeURIComponent(itemId)}`); }
+  async listResources(itemId) { return sortLectureResources(await this.request(`/resources?item_id=${encodeURIComponent(itemId)}`)); }
   async uploadResource(itemId,file,onProgress) { return uploadRequest("/api/resources",this.headers({"X-Item-Id":itemId,"X-Filename":encodeURIComponent(file.name),"Content-Type":file.type||"application/octet-stream"}),file,onProgress); }
   async listPopularity(){return this.request("/popularity");}
   async listAllResources(){ return this.request("/resources"); }
@@ -135,7 +135,7 @@ export class SupabaseStore {
   async updateUserRole(id,role){const session=await this.validSession();await this.request("/rest/v1/rpc/admin_set_user_role",{method:"POST",headers:this.headers(session?.access_token),body:JSON.stringify({target_user:id,new_role:role})});}
   async listResources(itemId){
     const session=await this.validSession();
-    return await this.request(`/rest/v1/content_resources?item_id=eq.${encodeURIComponent(itemId)}&select=*&order=created_at.asc`,{headers:this.headers(session?.access_token)})||[];
+    return sortLectureResources(await this.request(`/rest/v1/content_resources?item_id=eq.${encodeURIComponent(itemId)}&select=*&order=created_at.asc`,{headers:this.headers(session?.access_token)})||[]);
   }
   async listAllResources(){const session=await this.validSession(),all=[];for(let offset=0;;offset+=1000){const rows=await this.request(`/rest/v1/content_resources?select=*&order=created_at.desc,id.asc&limit=1000&offset=${offset}`,{headers:this.headers(session?.access_token)})||[];all.push(...rows);if(rows.length<1000)return all;}}
   async listPopularity(){const session=await this.validSession();return this.request("/rest/v1/rpc/material_popularity",{method:"POST",headers:this.headers(session?.access_token),body:"{}"});}
