@@ -1,0 +1,116 @@
+begin;
+insert into public.content_items(parent_id,area,title,path,item_type,content_mode,body,sort_order,is_published)
+select id,'university','Ағымдық бақылау','/universitet/agymdyk-bakylau','course','curriculum','<p>Дәрістер мен зертханалық сабақтар бойынша білімді тексеру.</p>',35,true from public.content_items where path='/universitet'
+on conflict(path) do nothing;
+insert into public.content_items(parent_id,area,title,path,item_type,content_mode,body,sort_order,is_published)
+select id,'university',v.title,v.path,'lesson','curriculum',v.body,v.sort_order,true from public.content_items cross join (values
+('1-ағымдық бақылау','/universitet/agymdyk-bakylau/1','<p>30 сұрақ · 30 минут. Нәтиже студенттің білім картасында сақталады.</p>',1),
+('2-ағымдық бақылау','/universitet/agymdyk-bakylau/2','<p>Дайындалуда. Тақырыптар мен тапсырмалар кейін қосылады.</p>',2)
+) as v(title,path,body,sort_order) where content_items.path='/universitet/agymdyk-bakylau' on conflict(path) do nothing;
+create table if not exists public.university_control_catalog (
+  control integer primary key check(control=1), questions jsonb not null check(jsonb_array_length(questions)=30)
+);
+insert into public.university_control_catalog values(1,$bank$[{"id":"uc1-1","topic":"classes","question":"Қай жұпта екі амфотерлі қосылыс берілген?","options":["Na₂O және KOH","Al₂O₃ және Zn(OH)₂","SO₃ және H₂SO₄","CaO және Ca(OH)₂"],"correct_index":1,"explanation":"Al₂O₃ пен Zn(OH)₂ қышқылдармен де, күшті сілтілермен де әрекеттеседі. Бұл — амфотерліліктің белгісі.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-2","topic":"classes","question":"CuO + 2HCl → CuCl₂ + H₂O реакциясы қандай қасиетті көрсетеді?","options":["CuO — қышқылдық оксид","HCl — негіз","CuO — негіздік оксид","CuCl₂ — жай зат"],"correct_index":2,"explanation":"Негіздік CuO қышқылмен әрекеттесіп, тұз және су түзеді. Cu тотығу дәрежесі +2 күйінде қалады.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-3","topic":"classes","question":"Зертханада Na₂SO₄ ерітіндісіне BaCl₂ қосқанда қандай бақылау күтіледі?","options":["Ақ BaSO₄ тұнбасы түзіледі","Сутек бөлінеді","Ерітінді міндетті түрде көк түске боялады","Барлық зат газға айналады"],"correct_index":0,"explanation":"Ba²⁺ + SO₄²⁻ → BaSO₄↓. Барий сульфатының нашар ерігіштігі ақ тұнбаның түзілуін түсіндіреді.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-4","topic":"classes","question":"Қай түрлену қатары кальцийдің генетикалық байланысын дұрыс көрсетеді?","options":["Ca → CaCl₂ → CaO → Ca","Ca → CaO → Ca(OH)₂ → CaCO₃","Ca → CO₂ → H₂CO₃ → Na₂CO₃","CaO → HCl → Ca → O₂"],"correct_index":1,"explanation":"Кальций оттекте оксид түзеді; CaO су қосып гидроксидке өтеді; Ca(OH)₂-ге аз мөлшерде CO₂ жібергенде CaCO₃ тұнбасы түзіледі.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-5","topic":"concepts","question":"Авогадро заңының дұрыс тұжырымы қайсы?","options":["Барлық газдың тығыздығы бірдей","Кез келген газдың 1 молі кез келген жағдайда 22,4 л алады","Бірдей T және p кезінде газдардың бірдей көлемдерінде молекулалар саны бірдей","Барлық газ молекулаларының массалары бірдей"],"correct_index":2,"explanation":"Бірдей температура мен қысымда V ∝ n. 22,4 л/моль мәні тек көрсетілген қалыпты жағдайға жуық қолданылады.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-6","topic":"concepts","question":"Массасы 9,0 г судың зат мөлшері қандай? M(H₂O)=18 г/моль.","options":["0,50 моль","2,0 моль","9,0 моль","162 моль"],"correct_index":0,"explanation":"n = m/M = 9,0/18 = 0,50 моль. Граммды г/мольге бөлгенде моль алынады.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-7","topic":"concepts","question":"0,25 моль O₂ үлгісіндегі оттек атомдарының саны қанша? Nₐ=6,02·10²³ моль⁻¹.","options":["1,505·10²³","6,02·10²³","1,204·10²⁴","3,01·10²³"],"correct_index":3,"explanation":"Әр O₂ молекуласында 2 атом бар. N(атом) = 2 × 0,25 × Nₐ = 3,01·10²³.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-8","topic":"concepts","question":"Оқшауланған жүйедегі химиялық реакцияда қай шама сақталады?","options":["Әр заттың массасы","Жүйенің жалпы массасы","Молекулалардың жалпы саны","Әр газдың көлемі"],"correct_index":1,"explanation":"Реакция кезінде атомдар қайта топтасады: реагенттер мен өнімдердің жалпы массалары тең. Молекула саны мен көлем өзгеруі мүмкін.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-9","topic":"equivalent","question":"H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O реакциясында H₂SO₄-тің эквиваленттік молярлық массасы қандай? M=98 г/моль.","options":["98 г/моль-экв","196 г/моль-экв","49 г/моль-экв","24,5 г/моль-экв"],"correct_index":2,"explanation":"Толық бейтараптануда бір H₂SO₄ молекуласы екі H⁺ береді: z=2, Mэкв=M/z=98/2=49 г/моль-экв.","reference":"Дәріс №3; металл эквивалентін анықтау зертханасы"},{"id":"uc1-10","topic":"equivalent","question":"H₃PO₄ + NaOH → NaH₂PO₄ + H₂O реакциясында H₃PO₄-тің эквиваленттік молярлық массасы қандай? M=98 г/моль.","options":["98 г/моль-экв","49 г/моль-экв","32,7 г/моль-экв","294 г/моль-экв"],"correct_index":0,"explanation":"Осы нақты реакцияда тек бір протон алмасады, сондықтан z=1. Эквиваленттік масса реакцияға тәуелді, оны әрқашан M/3 деп алуға болмайды.","reference":"Дәріс №3; металл эквивалентін анықтау зертханасы"},{"id":"uc1-11","topic":"equivalent","question":"Белгісіз металдың 0,60 г үлгісі қышқылдан 0,050 г H₂ ығыстырды. Mэкв(H)=1,0 г/моль-экв деп алып, металдың Mэкв мәнін табыңыз.","options":["24 г/моль-экв","0,083 г/моль-экв","6 г/моль-экв","12 г/моль-экв"],"correct_index":3,"explanation":"Эквиваленттер заңы: m(Me)/Mэкв(Me)=m(H₂)/1,0. Сондықтан Mэкв(Me)=0,60×1,0/0,050=12 г/моль-экв. H₂ үшін электрон алмасу саны 2, M(H₂)/2=1.","reference":"Дәріс №3; металл эквивалентін анықтау зертханасы"},{"id":"uc1-12","topic":"equivalent","question":"Металл оксидіндегі 1,60 г оттекпен 2,40 г металл байланысқан. Металдың эквиваленттік массасы қандай? Mэкв(O)=8,0 г/моль-экв.","options":["6 г/моль-экв","12 г/моль-экв","24 г/моль-экв","32 г/моль-экв"],"correct_index":1,"explanation":"m(Me)/Mэкв(Me)=m(O)/8. Mэкв(Me)=2,40×8/1,60=12 г/моль-экв.","reference":"Дәріс №3; металл эквивалентін анықтау зертханасы"},{"id":"uc1-13","topic":"equivalent","question":"Mg + 2HCl → MgCl₂ + H₂ тәжірибесінде газ жинау түтігіндегі ауа толық ығыстырылмай, көлем H₂ көлемі деп алынды. Есептелген Mэкв(Mg) қалай өзгереді?","options":["Артады","Өзгермейді","Кемиді","Әрқашан нөл болады"],"correct_index":2,"explanation":"Артық ауа өлшенген газ көлемін үлкейтеді. n(H₂) артық есептеліп, Mэкв(Me)=m(Me)/(2n(H₂)) кем шығады. Бұл — жүйелік тәжірибелік қате.","reference":"Дәріс №3; металл эквивалентін анықтау зертханасы"},{"id":"uc1-14","topic":"masses","question":"Салыстырмалы атомдық масса Aᵣ дұрыс қалай анықталады?","options":["Атом массасының ¹²C атомы массасының 1/12 бөлігіне қатынасы","Атомның массасы, граммен","Ядродағы нейтрон саны","Мольдік көлемнің массаға қатынасы"],"correct_index":0,"explanation":"Aᵣ — екі массаның қатынасы, сондықтан өлшемсіз шама. Молярлық массаның бірлігі г/моль, бұл екі ұғым бірдей емес.","reference":"Практикум: PDF 28–31-беттер; CO₂ молярлық массасын анықтау зертханасы"},{"id":"uc1-15","topic":"masses","question":"Газдың сутек бойынша салыстырмалы тығыздығы D(H₂)=22. M(H₂)=2 г/моль болса, газдың Mᵣ мәні қандай?","options":["11","22","88","44"],"correct_index":3,"explanation":"Бірдей T және p кезінде D(H₂)=M(газ)/M(H₂). M(газ)=22×2=44 г/моль; Mᵣ=44 (өлшемсіз).","reference":"Практикум: PDF 28–31-беттер; CO₂ молярлық массасын анықтау зертханасы"},{"id":"uc1-16","topic":"masses","question":"Қалыпты жағдайда (0 °C, 1 атм) 0,224 л құрғақ газдың массасы 0,440 г. Vₘ=22,4 л/моль. Газдың молярлық массасы қандай?","options":["22 г/моль","44 г/моль","4,4 г/моль","98,6 г/моль"],"correct_index":1,"explanation":"n=0,224/22,4=0,0100 моль. M=m/n=0,440/0,0100=44 г/моль. Көлем қалыпты жағдайға келтірілген және газ құрғақ болуы тиіс.","reference":"Практикум: PDF 28–31-беттер; CO₂ молярлық массасын анықтау зертханасы"},{"id":"uc1-17","topic":"masses","question":"Дюлонг–Пти жуықтауында Cₘ≈26 Дж/(моль·К) деп алыңыз. Қатты металдың c=0,40 Дж/(г·К) болса, оның молярлық массасы шамамен қанша?","options":["10,4 г/моль","26 г/моль","65 г/моль","0,0154 г/моль"],"correct_index":2,"explanation":"Cₘ=cM, сондықтан M≈26/0,40=65 г/моль. Бұл жуық әдіс: классикалық шек 3R≈24,94 Дж/(моль·К), ал есепте берілген 26 мәні қолданылды; әсіресе төмен температурада ауытқу болуы мүмкін.","reference":"Практикум: PDF 28–31-беттер; CO₂ молярлық массасын анықтау зертханасы"},{"id":"uc1-18","topic":"masses","question":"Газ су үстінде жиналды. Жалпы қысым p, су буының қысымы p(H₂O) болса, газдың молярлық массасын есептеуде қандай қысым қолданылады?","options":["p(газ)=p−p(H₂O)","p(газ)=p+p(H₂O)","p(газ)=p(H₂O)","p(газ)=2p"],"correct_index":0,"explanation":"Дальтон заңы: p=p(құрғақ газ)+p(H₂O). Су буына түзету жасамаса, құрғақ газдың зат мөлшері артық және молярлық массасы кем есептеледі.","reference":"Практикум: PDF 28–31-беттер; CO₂ молярлық массасын анықтау зертханасы"},{"id":"uc1-19","topic":"calculations","question":"Құрамында 70,0% Fe және 30,0% O бар қосылыстың қарапайым формуласы қандай? Aᵣ(Fe)=56, Aᵣ(O)=16.","options":["FeO","FeO₂","Fe₃O₄","Fe₂O₃"],"correct_index":3,"explanation":"100 г үлгі үшін n(Fe):n(O)=70/56:30/16=1,25:1,875=2:3. Ең қарапайым бүтін қатынас Fe₂O₃ формуласын береді.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-20","topic":"calculations","question":"CaCO₃ → CaO + CO₂ реакциясында 10,0 г таза CaCO₃ толық ыдырады. M(CaCO₃)=100 г/моль, Vₘ=22,4 л/моль. Қалыпты жағдайдағы CO₂ көлемі қандай?","options":["22,4 л","2,24 л","0,224 л","4,48 л"],"correct_index":1,"explanation":"n(CaCO₃)=10,0/100=0,100 моль. Теңдеудегі қатынас 1:1, n(CO₂)=0,100 моль; V=0,100×22,4=2,24 л.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-21","topic":"calculations","question":"2H₂ + O₂ → 2H₂O реакциясы үшін 3,0 моль H₂ және 1,0 моль O₂ алынды. Ең көбі қанша моль су түзіледі?","options":["1,0 моль","3,0 моль","2,0 моль","4,0 моль"],"correct_index":2,"explanation":"1,0 моль O₂ үшін 2,0 моль H₂ қажет. O₂ — шектеуші реагент, сондықтан 2,0 моль H₂O түзіледі және 1,0 моль H₂ артық қалады.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-22","topic":"calculations","question":"Теориялық CO₂ массасы 4,40 г, тәжірибеде 3,52 г алынды. Өнім шығымы қандай?","options":["80%","125%","20%","8%"],"correct_index":0,"explanation":"η=m(тәжірибелік)/m(теориялық)×100%=3,52/4,40×100%=80%. Шығымды салыстырмалы қателікпен шатастырмаңыз.","reference":"Дәрістер №1–2; бейорганикалық қосылыстар кластары зертханасы"},{"id":"uc1-23","topic":"periodic","question":"Қазіргі периодтық заң бойынша элемент қасиеттері қай шамаға периодты тәуелді?","options":["Атомдық массасына ғана","Нейтрондар санына","Изотоптық үлесіне","Атом ядросының зарядына (Z)"],"correct_index":3,"explanation":"Элементтер Z, яғни протон саны бойынша реттеледі. Электрондық құрылымның қайталануы химиялық қасиеттердің периодтылығын түсіндіреді.","reference":"Дәріс №6"},{"id":"uc1-24","topic":"periodic","question":"Бейтарап атомның негізгі күйдегі конфигурациясы [Ne]3s²3p⁵. Оның периоды мен тобы қандай?","options":["2-период, 7-топ","3-период, 17-топ","3-период, 15-топ","4-период, 17-топ"],"correct_index":1,"explanation":"Ең үлкен бас квант саны n=3 — 3-период. Сыртқы қабаттағы s²p⁵ конфигурациясы негізгі топ элементтері үшін 17-топқа сәйкес.","reference":"Дәріс №6"},{"id":"uc1-25","topic":"periodic","question":"3-периодта Na-дан Cl-ға қарай атом радиусының жалпы өзгерісі қандай?","options":["Бірқалыпты артады","Өзгермейді","Жалпы кемиді","Әр элементте дәл екі есе артады"],"correct_index":2,"explanation":"Электрондар бір негізгі қабатқа қосылғанда ядро заряды артады. Тиімді ядролық тартылыс күшейіп, атом радиусы жалпы кемиді.","reference":"Дәріс №6"},{"id":"uc1-26","topic":"periodic","question":"Бір топтағы Li, Na, K элементтерінің ұқсас химиялық қасиеттерін не түсіндіреді?","options":["Сыртқы қабатында бір s-электронның болуы","Массаларының бірдей болуы","Нейтрон санының бірдей болуы","Барлық электрондарының саны бірдей болуы"],"correct_index":0,"explanation":"Li:2s¹, Na:3s¹, K:4s¹. Сыртқы қабаттың ns¹ құрылысы ұқсас, сондықтан олардың +1 ион түзуі сияқты қасиеттері ортақ.","reference":"Дәріс №6"},{"id":"uc1-27","topic":"atom","question":"³⁵₁₇Cl атомында протон, нейтрон және электрон саны қанша?","options":["17, 17, 18","18, 17, 17","35, 17, 35","17, 18, 17"],"correct_index":3,"explanation":"Z=17 — протон саны; бейтарап атомда электрон да 17. Нейтрон N=A−Z=35−17=18.","reference":"Дәрістер №4–5"},{"id":"uc1-28","topic":"atom","question":"²⁷₁₃Al³⁺ ионында неше электрон бар?","options":["13","10","16","27"],"correct_index":1,"explanation":"Бейтарап Al атомында 13 электрон бар. +3 заряд үш электрон жоғалғанын білдіреді: 13−3=10.","reference":"Дәрістер №4–5"},{"id":"uc1-29","topic":"atom","question":"Бас квант саны n=3 болатын қабатқа ең көбі қанша электрон сыяды?","options":["6","8","18","32"],"correct_index":2,"explanation":"Қабаттың сыйымдылығы 2n²=2×3²=18 электрон. Бұл 3s, 3p, 3d орбитальдарының толық сыйымдылығы; нақты толу реті энергияға тәуелді.","reference":"Дәрістер №4–5"},{"id":"uc1-30","topic":"atom","question":"Фосфордың (Z=15) негізгі күйдегі электрондық конфигурациясы қайсы?","options":["1s²2s²2p⁶3s²3p³","1s²2s²2p⁶3s²3p⁵","1s²2s²2p⁶3s¹","1s²2s²2p⁶3s²3d³"],"correct_index":0,"explanation":"Электрон саны 2+2+6+2+3=15. 3p-де үш электрон Хунд ережесіне сәйкес алдымен үш орбитальға жеке-жеке орналасады.","reference":"Дәрістер №4–5"}]$bank$::jsonb) on conflict(control) do nothing;
+revoke all on public.university_control_catalog from public,anon,authenticated;
+create table if not exists public.university_control_attempts(
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  item_id uuid not null references public.content_items(id) on delete cascade,
+  started_at timestamptz not null default clock_timestamp(),
+  deadline timestamptz not null default (clock_timestamp()+interval '30 minutes'),
+  questions jsonb not null,
+  answers jsonb not null default '[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]'::jsonb,
+  finished_at timestamptz,
+  score integer check(score between 0 and 30),
+  max_score integer not null default 30,
+  revision integer not null default 0,
+  check(jsonb_array_length(answers)=30)
+);
+create unique index if not exists university_control_one_active on public.university_control_attempts(user_id,item_id) where finished_at is null;
+alter table public.university_control_attempts enable row level security;
+drop policy if exists university_control_read on public.university_control_attempts;
+create policy university_control_read on public.university_control_attempts for select using(user_id=auth.uid() or public.is_admin());
+revoke all on public.university_control_attempts from public,anon,authenticated;
+grant select on public.university_control_attempts to authenticated;
+
+create or replace function public.start_university_control(p_restart boolean default false)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare a public.university_control_attempts; target uuid; bank jsonb;
+begin
+ if auth.uid() is null or public.is_admin() then raise exception 'forbidden'; end if;
+ select id into target from public.content_items where path='/universitet/agymdyk-bakylau/1' and public.content_is_visible(id);
+ if target is null then raise exception 'forbidden'; end if;
+ perform pg_advisory_xact_lock(hashtext(auth.uid()::text || ':university-control-1'));
+ select * into a from public.university_control_attempts where user_id=auth.uid() and item_id=target and finished_at is null for update;
+ if a.id is null and not p_restart then
+  select * into a from public.university_control_attempts where user_id=auth.uid() and item_id=target order by started_at desc limit 1;
+ end if;
+ if a.id is null then
+  select questions into bank from public.university_control_catalog where control=1;
+  if bank is null then raise exception 'assessment_not_ready'; end if;
+  insert into public.university_control_attempts(user_id,item_id,questions) values(auth.uid(),target,bank) returning * into a;
+ end if;
+ return to_jsonb(a)||jsonb_build_object('server_now',clock_timestamp());
+end $$;
+
+create or replace function public.save_university_control(p_attempt uuid,p_answers jsonb,p_revision integer,p_finish boolean default false)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare a public.university_control_attempts; result public.user_progress; mark integer; stamp timestamptz:=clock_timestamp();
+begin
+ if auth.uid() is null or public.is_admin() then raise exception 'forbidden'; end if;
+ select * into a from public.university_control_attempts where id=p_attempt and user_id=auth.uid() for update;
+ if a.id is null or not public.content_is_visible(a.item_id) then raise exception 'forbidden'; end if;
+ if a.finished_at is null then
+  -- At the deadline, freeze the last answers received before the deadline.
+  if stamp < a.deadline then
+   if p_revision is distinct from a.revision then raise exception 'stale_attempt'; end if;
+   if p_answers is null or jsonb_typeof(p_answers)<>'array' or jsonb_array_length(p_answers)<>30 then raise exception 'invalid_answers'; end if;
+   if exists(select 1 from jsonb_array_elements(p_answers) with ordinality v(value,n)
+    where case when jsonb_typeof(value)<>'number' or value::text !~ '^-?[0-9]+) then raise exception 'invalid_answer'; end if;
+   a.answers:=p_answers;
+  end if;
+  if p_finish or stamp>=a.deadline then
+   select count(*)::integer into mark from jsonb_array_elements(a.answers) with ordinality v(value,n)
+    where value::text::integer=(a.questions->(n::integer-1)->>'correct_index')::integer;
+   a.finished_at:=stamp; a.score:=mark;
+  end if;
+  update public.university_control_attempts set answers=a.answers,finished_at=a.finished_at,score=a.score,revision=revision+1 where id=a.id returning * into a;
+  if a.finished_at is not null then
+   insert into public.user_progress(user_id,item_id,progress,completed,score,max_score,quiz_answers,attempt_count,tested_at,updated_at)
+   values(auth.uid(),a.item_id,100,true,a.score,30,a.answers,1,stamp,stamp)
+   on conflict(user_id,item_id) do update set progress=100,completed=true,score=excluded.score,max_score=30,quiz_answers=excluded.quiz_answers,
+    attempt_count=public.user_progress.attempt_count+1,tested_at=excluded.tested_at,updated_at=excluded.updated_at;
+  end if;
+ end if;
+ select * into result from public.user_progress where user_id=auth.uid() and item_id=a.item_id;
+ return jsonb_build_object('attempt',to_jsonb(a)||jsonb_build_object('server_now',clock_timestamp()),'progress',case when result.user_id is null then null else to_jsonb(result) end);
+end $$;
+revoke all on function public.start_university_control(boolean) from public,anon;
+revoke all on function public.save_university_control(uuid,jsonb,integer,boolean) from public,anon;
+grant execute on function public.start_university_control(boolean) to authenticated;
+grant execute on function public.save_university_control(uuid,jsonb,integer,boolean) to authenticated;
+commit;
+ then true else value::text::numeric < -1 or value::text::numeric >= jsonb_array_length(a.questions->(n::integer-1)->'options') end) then raise exception 'invalid_answer'; end if;
+   a.answers:=p_answers;
+  end if;
+  if p_finish or stamp>=a.deadline then
+   select count(*)::integer into mark from jsonb_array_elements(a.answers) with ordinality v(value,n)
+    where value::text::integer=(a.questions->(n::integer-1)->>'correct_index')::integer;
+   a.finished_at:=stamp; a.score:=mark;
+  end if;
+  update public.university_control_attempts set answers=a.answers,finished_at=a.finished_at,score=a.score,revision=revision+1 where id=a.id returning * into a;
+  if a.finished_at is not null then
+   insert into public.user_progress(user_id,item_id,progress,completed,score,max_score,quiz_answers,attempt_count,tested_at,updated_at)
+   values(auth.uid(),a.item_id,100,true,a.score,30,a.answers,1,stamp,stamp)
+   on conflict(user_id,item_id) do update set progress=100,completed=true,score=excluded.score,max_score=30,quiz_answers=excluded.quiz_answers,
+    attempt_count=public.user_progress.attempt_count+1,tested_at=excluded.tested_at,updated_at=excluded.updated_at;
+  end if;
+ end if;
+ select * into result from public.user_progress where user_id=auth.uid() and item_id=a.item_id;
+ return jsonb_build_object('attempt',to_jsonb(a)||jsonb_build_object('server_now',clock_timestamp()),'progress',case when result.user_id is null then null else to_jsonb(result) end);
+end $$;
+revoke all on function public.start_university_control(boolean) from public,anon;
+revoke all on function public.save_university_control(uuid,jsonb,integer,boolean) from public,anon;
+grant execute on function public.start_university_control(boolean) to authenticated;
+grant execute on function public.save_university_control(uuid,jsonb,integer,boolean) to authenticated;
+commit;
