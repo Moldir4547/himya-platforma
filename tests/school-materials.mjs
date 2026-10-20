@@ -19,7 +19,7 @@ const cases=[
  ['kinetics','Кинетика слайд.pptx'],
  ['acid-base-ph','Қышқыл және негіз ерітінділер слайд.pptx']];
 for(const [slug,name]of cases)assert.equal(matchesTopic(name,unit(slug),'presentation'),true,name);
-assert.equal(matchesTopic(cases[3][1],unit('atoms-substances'),'presentation'),false);
+assert.equal(matchesTopic('7 сынып. Химиялық элементтердің периодтық кестесі.pptx',unit('atoms-substances'),'presentation'),false);
 assert.equal(matchesTopic('Жұмыс парағы. Атомдар мен Молекулалар Заттардың құпиясы.pdf',unit('atoms-substances'),'presentation'),false);
 assert.equal(matchesTopic('Жұмыс парағы. Атомдар мен Молекулалар Заттардың құпиясы.pdf',unit('atoms-substances'),'worksheet'),true);
 });
