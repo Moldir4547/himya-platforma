@@ -67,6 +67,11 @@
   .stream { opacity:0; }
   .running2 .stream { opacity:1; animation: dash .35s linear infinite; }
   .waterRect { transform:scaleY(0); transform-box:fill-box; transform-origin:bottom; transition:transform 1.4s ease; }
+
+/* Fit the original teacher experiment inside a phone-sized lesson panel. */
+svg{max-width:100%;height:auto}
+td{overflow-wrap:anywhere}
+@media(max-width:600px){.wrap{padding:18px 10px 40px}.step{padding:12px}.scene{gap:8px}h1{overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
