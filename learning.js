@@ -1,3 +1,4 @@
+import {createUniversityControl} from './university-control.js';
 import { LEVELS, questionsFor, grade } from "./redox-data.js";
 import { learningApi } from "./learning-api.js";
 const esc = (s = "") =>
@@ -19,6 +20,7 @@ export function schoolPracticeView(item){
  return '<section class="orientation-panel school-topic-practice" aria-labelledby="school-practice-title"><h2 id="school-practice-title">Тақырып бойынша тәжірибе · '+(grade8?'8':'9')+'-сынып</h2><p>Тиісті тақырыптың материалын оқып, білімді интерактивті жұмыспен бекітіңіз.</p><div class="practice-entry-grid">'+activities.map(([title,copy,href,action])=>'<a href="'+esc(href)+'"><strong>'+title+'</strong><span>'+copy+'</span><b>'+action+' →</b></a>').join('')+'</div></section>';
 }
 export function createLearning({ store, state, navigate, render, shell }) {
+  const universityControl = createUniversityControl({store,state,render,shell});
   const api = learningApi(store);
   let game = null,
     rows = null,
@@ -163,6 +165,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
       });
   }
   function bind(root) {
+    universityControl.bind(root);
     root.querySelectorAll("[data-bridge-option]").forEach((button) => {
       button.addEventListener("click", () => {
         const card = button.closest("[data-bridge-evaluation]");
@@ -335,6 +338,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
     callback: api.callback,
     bind,
     route(p) {
+      const controlPage=universityControl.route(p);if(controlPage!==null)return controlPage;
       if (game?.owner && game.owner !== state.user?.id) game = null;
       if (p === "/learn/redox") return shell(intro());
       if (p === "/games/redox") return shell(gameView());
