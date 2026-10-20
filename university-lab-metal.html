@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>№3 зертханалық жұмыс — виртуалды нұсқа</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fa;--card:#fff;--text:#13293d;--muted:#5c7080;--primary:#0b3d5c;--accent:#d9611f;--border:#e3e9ed;
+--gas:#7fa7c2;--water:#4a9ad8;--acid:#cdb24a;--glass:rgba(160,200,225,.2)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}}
+:root[data-theme="dark"]{--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:22px 14px 60px}
+h1{font-size:1.3rem;margin:0 0 6px}
+.box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;font-size:.86rem;line-height:1.5}
+.box b{color:var(--primary)}
+.fig{position:sticky;top:0;z-index:5;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:12px;text-align:center}
+.fig svg{height:min(300px,38vh);width:100%}
+.step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;opacity:.4;pointer-events:none;transition:opacity .2s}
+.step.active{opacity:1;pointer-events:auto}
+.step h3{margin:0 0 4px;font-size:.97rem}
+.step p{margin:2px 0 8px;color:var(--muted);font-size:.84rem;line-height:1.4}
+button{background:var(--primary);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:.85rem;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+select{padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+.readout{margin-top:8px;font-size:.88rem;color:var(--text);line-height:1.45}
+.scene{display:flex;align-items:flex-end;justify-content:center;gap:12px;flex-wrap:wrap;margin:6px 0}
+.lcd{background:#101b24;color:#7fffa0;font-family:Consolas,monospace;padding:6px 12px;border-radius:6px;min-width:110px;text-align:center}
+table{border-collapse:collapse;font-size:.82rem}td{padding:4px 8px;border-bottom:1px solid var(--border)}
+#vap td{padding:2px 8px}#vap tr.hl{background:var(--accent);color:#fff;font-weight:700}
+#calc{width:100%;display:none;margin-top:8px}#calc td:last-child{text-align:right;font-weight:600}
+.result{background:var(--accent);color:#fff;border-radius:12px;padding:16px;margin-top:12px;text-align:center;display:none}
+.result .big{font-size:1.5rem;font-weight:700}
+.note{font-size:.78rem;color:var(--muted);margin-top:8px;display:none}
+.center{text-align:center;margin-top:12px}
+.part{opacity:0;transition:opacity .5s}.part.on{opacity:1}
+.flow{stroke-dasharray:5 5;opacity:0}
+.running .flow{opacity:1;animation:dash .5s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-20}}
+.bub{opacity:0}.running .bub{animation:bubUp 1.2s ease-in infinite}
+@keyframes bubUp{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-12px);opacity:0}}
+#acid{opacity:0;transition:opacity .6s}#acid.on{opacity:.55}
+#metalG{opacity:0;transition:opacity .5s,transform .9s;transform-box:fill-box;transform-origin:center}#metalG.on{opacity:1}
+#stopLift{transition:transform .5s}
+#smp{opacity:0;transform:translateY(-28px);transition:all .7s}#smp.drop{opacity:1;transform:none}
+#needle{transform-origin:140px 62px;transition:transform 1.2s}
+
+/* Fit the teacher's experiment inside the lesson on narrow phones. */
+svg{max-width:100%;height:auto}
+td{overflow-wrap:anywhere}
+select{max-width:100%}
+@media(max-width:600px){.wrap{padding:18px 10px 40px}.box,.step{padding:12px}h1{overflow-wrap:anywhere}.scene{gap:8px}.fig svg{height:min(220px,32vh)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>№3 зертханалық жұмыс · виртуалды нұсқа</h1>
+<div class="box"><b>Металл эквивалентін ығыстыру әдісімен анықтау.</b><br>
+<b>Жұмыстың мақсаты:</b> бұл жұмыста магнийдің эквиваленттік массасы қышқылдан сутекті ығыстыру арқылы анықталады.<br>
+<b>Қажет аспаптар мен реактивтер:</b> штатив, бюретка, воронка, резина шланг, өлшенген Mg (Fe, Zn), сұйылтылған H₂SO₄, барометр, термометр.<br>
+Металл: <select id="metal"><option value="Mg">Mg (магний)</option><option value="Zn">Zn (мырыш)</option><option value="Fe">Fe (темір)</option></select></div>
+
+<div class="fig"><svg id="fig" viewBox="0 0 360 300">
+<defs>
+<clipPath id="tubeClip"><path transform="translate(112,100) rotate(45)" d="M-9,0 V53 a9,9 0 0 0 18,0 V0 Z"/></clipPath>
+<clipPath id="burClip"><rect x="158" y="68" width="14" height="172"/></clipPath>
+</defs>
+<g id="pStand" class="part">
+<rect x="70" y="282" width="230" height="9" rx="2" fill="#5c7080"/>
+<rect x="214" y="34" width="5" height="250" fill="#5c7080"/>
+</g>
+<g id="pTA" class="part">
+<line x1="214" y1="118" x2="100" y2="118" stroke="#5c7080" stroke-width="4"/>
+<rect x="212" y="112" width="10" height="12" rx="2" fill="#5c7080"/>
+</g>
+<g id="pBur" class="part">
+<line x1="214" y1="150" x2="174" y2="150" stroke="#5c7080" stroke-width="4"/>
+<rect x="212" y="144" width="10" height="12" rx="2" fill="#5c7080"/>
+<path d="M157,68 V240 L163.5,252 H166.5 L173,240 V68" fill="var(--glass)" stroke="var(--muted)" stroke-width="2"/>
+<rect id="bw" x="158" y="84" width="14" height="156" fill="var(--water)" opacity=".75" clip-path="url(#burClip)"/>
+<polygon points="158,240 172,240 166.5,252 163.5,252" fill="var(--water)" opacity=".75"/>
+<line id="mn" x1="158" y1="84" x2="172" y2="84" stroke="#1d5f99" stroke-width="1.4"/>
+<g id="ticks" stroke="var(--muted)" stroke-width=".8" font-size="7" fill="var(--muted)"></g>
+<rect x="154" y="143" width="22" height="9" rx="2" fill="none" stroke="#5c7080" stroke-width="2"/>
+<rect x="159" y="62" width="12" height="8" rx="1" fill="#b0642f"/>
+<text id="lv" x="177" y="87" font-size="8" fill="var(--primary)" font-weight="700">0,0</text>
+<line x1="174" y1="196" x2="190" y2="196" stroke="var(--muted)" stroke-width=".8"/>
+<circle cx="197" cy="196" r="7" fill="var(--card)" stroke="var(--primary)"/><text x="197" y="199" font-size="9" text-anchor="middle" fill="var(--primary)">1</text>
+</g>
+<g id="pFun" class="part">
+<path id="hoseO" d="" fill="none" stroke="#6a7882" stroke-width="6" stroke-linecap="round"/>
+<path id="hoseW" d="" fill="none" stroke="var(--water)" stroke-width="3" stroke-linecap="round"/>
+<g id="funnel">
+<line x1="219" y1="8" x2="246" y2="8" stroke="#5c7080" stroke-width="4"/>
+<rect x="211" y="2" width="12" height="12" rx="2" fill="#5c7080"/>
+<path d="M240,0 L284,0 L266,26 L266,44 L258,44 L258,26 Z" fill="var(--glass)" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="246,8 278,8 266,26 258,26" fill="var(--water)" opacity=".75"/>
+<rect x="259" y="26" width="6" height="18" fill="var(--water)" opacity=".75"/>
+<circle cx="298" cy="8" r="7" fill="var(--card)" stroke="var(--primary)"/><text x="298" y="11" font-size="9" text-anchor="middle" fill="var(--primary)">2</text>
+</g>
+</g>
+<g id="pTB" class="part">
+<path d="M118,93 C122,40 165,30 165,60" fill="none" stroke="#7b8791" stroke-width="4.5" stroke-linecap="round"/>
+<path id="gasH" class="flow" d="M118,93 C122,40 165,30 165,60" fill="none" stroke="var(--gas)" stroke-width="2"/>
+<g transform="translate(112,100) rotate(45)">
+<path d="M-9,0 V53 a9,9 0 0 0 18,0 V0" fill="var(--glass)" stroke="var(--muted)" stroke-width="2"/>
+<line x1="-11" y1="0" x2="11" y2="0" stroke="var(--muted)" stroke-width="2.5"/>
+<g id="metalG"><rect id="mrect" x="3" y="26" width="5.5" height="10" rx="1.5" fill="#c9d1d6" stroke="var(--muted)" stroke-width=".5"/></g>
+</g>
+<rect id="acid" x="40" y="131" width="100" height="30" fill="var(--acid)" clip-path="url(#tubeClip)"/>
+<circle class="bub" cx="80" cy="136" r="1.8" fill="#fff" style="animation-delay:0s"/>
+<circle class="bub" cx="84" cy="138" r="1.5" fill="#fff" style="animation-delay:.4s"/>
+<circle class="bub" cx="78" cy="139" r="1.6" fill="#fff" style="animation-delay:.8s"/>
+<g id="stopLift"><g transform="translate(112,100) rotate(45)"><rect x="-6.5" y="-9" width="13" height="13" rx="1.5" fill="#b0642f"/></g></g>
+<rect x="88" y="109" width="14" height="14" rx="2" fill="none" stroke="#5c7080" stroke-width="2" transform="rotate(45 95 116)"/>
+<line x1="68" y1="108" x2="82" y2="108" stroke="var(--muted)" stroke-width=".8"/>
+<circle cx="61" cy="108" r="7" fill="var(--card)" stroke="var(--primary)"/><text x="61" y="111" font-size="9" text-anchor="middle" fill="var(--primary)">3</text>
+</g>
+</svg></div>
+
+<div class="step active" id="s1"><h3>1. Аспапты құрастыру (43-сурет)</h3>
+<p>Штативке бекітілген бюреткаға резина түтік арқылы теңестіргіш воронка жалғанады, бюреткаға резина шлангпен реакция жүретін сынауық қосылады.</p>
+<button id="b1" onclick="assemble()">Аспапты құрастыру</button><div class="readout" id="r1"></div></div>
+
+<div class="step" id="s2"><h3>2. Аспаптың герметикалығын тексеру</h3>
+<p>Аспап толық құрастырылған соң теңестіргіш воронканы біраз төмен түсіреміз. Бюреткадағы су деңгейі бірқалыпты тұрса — аспап герметикалы; деңгей төмендесе — ауа кіріп тұр, тығындар мен шлангты тексеру керек.</p>
+<button id="b2" onclick="test1()">Воронканы төмен түсіру</button><div class="readout" id="r2"></div></div>
+
+<div class="step" id="s3"><h3>3. Металды өлшеу</h3>
+<p>Эквиваленті анықталатын металды таразыда 0,001 г дәлдікпен өлшейміз.</p>
+<div class="scene"><svg viewBox="0 0 200 110" width="170" height="94">
+<rect x="20" y="88" width="160" height="14" rx="4" fill="var(--primary)"/>
+<rect x="40" y="20" width="120" height="68" rx="6" fill="var(--glass)" stroke="var(--muted)" stroke-width="2"/>
+<line x1="100" y1="76" x2="100" y2="88" stroke="var(--muted)" stroke-width="2"/>
+<ellipse cx="100" cy="76" rx="28" ry="4" fill="none" stroke="var(--muted)" stroke-width="2"/>
+<rect id="smp" x="92" y="71" width="16" height="4" rx="1" fill="#c9d1d6" stroke="var(--muted)" stroke-width=".5"/></svg>
+<div class="lcd" id="lcd3">0,000 г</div></div>
+<button id="b3" onclick="weigh()">Таразыда өлшеу</button></div>
+
+<div class="step" id="s4"><h3>4. Реакция сынауығын дайындау</h3>
+<p>Сынауыққа 1–2 мл сұйылтылған H₂SO₄ құяды; сынауықты көлбеу ұстап, металды қабырғасына салады (металл қышқылға түспеуі керек) да, сынауықты абайлап тығынмен жабады.</p>
+<button id="b4" onclick="prepare()">Қышқыл құю және металл салу</button><div class="readout" id="r4"></div></div>
+
+<div class="step" id="s5"><h3>5. Герметикалықты қайта тексеру және бастапқы деңгей (a₁)</h3>
+<p>Реакция басталмай тұрып аспаптың герметикалығын тағы тексереміз де, бюреткадағы судың бастапқы деңгейін (a₁, мл) жазып аламыз.</p>
+<button id="b5" onclick="reread()">Тексеру және a₁ оқу</button><div class="readout" id="r5"></div></div>
+
+<div class="step" id="s6"><h3>6. Реакция</h3>
+<p>Металды қышқылға салып, реакцияны бақылаймыз: металл ериді, бөлінген сутек бюреткадағы суды ығыстырады.</p>
+<button id="b6" onclick="react()">Металды қышқылға салу</button><div class="readout" id="r6"></div></div>
+
+<div class="step" id="s7"><h3>7. Деңгейлерді теңестіру және соңғы деңгей (a₂)</h3>
+<p>Металл толық еріп, сынауық суыған соң воронкадағы және бюреткадағы су деңгейлерін теңестіріп, реакциядан кейінгі деңгейді (a₂, мл) оқимыз.</p>
+<button id="b7" onclick="level()">Деңгейді теңестіру</button><div class="readout" id="r7"></div></div>
+
+<div class="step" id="s8"><h3>8. Температура, қысым және су буының қысымы</h3>
+<p>Термометрмен бөлме температурасын (t), барометрмен атмосфералық қысымды (P) оқимыз; бөлме температурасындағы су буының қысымын (h) 1-кестеден жазып аламыз.</p>
+<div class="scene"><svg viewBox="0 0 200 120" width="200" height="120">
+<rect x="26" y="14" width="8" height="82" rx="4" fill="var(--glass)" stroke="var(--muted)" stroke-width="1.5"/>
+<rect id="hg" x="28.5" y="88" width="3" height="8" fill="#d33"/><circle cx="30" cy="102" r="9" fill="#d33"/>
+<text x="30" y="10" font-size="7" text-anchor="middle" fill="var(--muted)">°C</text>
+<circle cx="140" cy="62" r="44" fill="var(--glass)" stroke="var(--muted)" stroke-width="2"/>
+<g id="dial" stroke="var(--muted)" stroke-width="1.2"></g>
+<text x="105" y="95" font-size="7" fill="var(--muted)">730</text><text x="162" y="95" font-size="7" fill="var(--muted)">780</text>
+<text x="140" y="86" font-size="7" text-anchor="middle" fill="var(--muted)">мм.сын.бағ.</text>
+<g id="needle"><line x1="140" y1="62" x2="140" y2="26" stroke="#d33" stroke-width="2"/></g><circle cx="140" cy="62" r="3" fill="var(--primary)"/></svg>
+<table id="vap"></table></div>
+<button id="b8" onclick="env()">Көрсеткіштерді оқу</button><div class="readout" id="r8"></div></div>
+
+<div class="step" id="s9"><h3>9. Қорытынды есептеулер</h3>
+<p>Барлық мәндер жиналды — нәтижені есептейміз.</p>
+<button id="b9" onclick="calc()">Есептеу</button>
+<table id="calc"></table></div>
+<div class="result" id="res"><div>Магнийдің эквиваленттік массасы (тәжірибеден)</div><div class="big" id="eP"></div><div id="eErr" style="margin-top:6px;font-size:.92rem"></div></div>
+<p class="note" id="note">Ескерту: 4-тармақта 2 г H₂ қалыпты жағдайда 22,4 л көлем алады (1 г сутек — 11,2 л). Нұсқаулықта «2 г — 11,2 л» деп басылып кеткен, ол есепті екі есе бұрмалайды, сондықтан 22,4 л алынды.</p>
+<div class="center"><button class="secondary" onclick="location.reload()">↺ Қайта бастау (жаңа нұсқа)</button></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id),act=id=>$(id).classList.add('active');
+const R=(a,b,d)=>+(Math.random()*(b-a)+a).toFixed(d),F=(x,d)=>x.toFixed(d).replace('.',',');
+const VP={18:2.063,19:2.196,20:2.337,21:2.486,22:2.643,23:2.809,24:2.985,25:3.169,26:3.363};
+const MET={Mg:{M:24.305,r:[.028,.040],c:'#c9d1d6'},Zn:{M:65.38,r:[.09,.115],c:'#9aa6ad'},Fe:{M:55.845,r:[.075,.095],c:'#6f7479'}};
+const S={t:Math.round(R(18,26,0)),Pmm:Math.round(R(745,758,0)),a1:R(.3,1.4,1)};
+S.Pk=+(S.Pmm*0.133322).toFixed(2);S.h=VP[S.t];
+const Y0=84,K=3,yOf=a=>Y0+K*a,fyFor=a=>yOf(a)-8;
+const fig=$('fig');
+function setLevel(a){const y=yOf(a);$('bw').setAttribute('y',y);$('bw').setAttribute('height',240-y+.5);
+$('mn').setAttribute('y1',y);$('mn').setAttribute('y2',y);$('lv').setAttribute('y',y+3);$('lv').textContent=F(a,1);}
+function setFun(fy){S.fy=fy;$('funnel').setAttribute('transform','translate(0,'+fy+')');
+const d='M165,252 C165,280 262,280 262,'+(fy+44);$('hoseO').setAttribute('d',d);$('hoseW').setAttribute('d',d);}
+function tween(ms,fn,done){const t0=performance.now();(function f(now){const p=Math.min(1,(now-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(e);p<1?requestAnimationFrame(f):done&&done();})(t0);}
+function count(el,v,d,u,ms){tween(ms,e=>el.textContent=F(v*e,d)+' '+u,()=>el.textContent=F(v,d)+' '+u);}
+function leak(cb){const f0=fyFor(S.a1);tween(800,e=>setFun(f0+45*e),()=>setTimeout(()=>tween(700,e=>setFun(f0+45*(1-e)),cb),1000));}
+
+(function init(){
+let t='';for(let a=0;a<=50;a++){const y=yOf(a),l=a%10==0?10:a%5==0?7:4;t+='<line x1="157" y1="'+y+'" x2="'+(157+l)+'" y2="'+y+'"/>';
+if(a%10==0)t+='<text x="153" y="'+(y+2.5)+'" text-anchor="end" stroke="none">'+a+'</text>';}
+$('ticks').innerHTML=t;
+let d='';for(let g=-60;g<=60;g+=15){d+='<line x1="140" y1="22" x2="140" y2="28" transform="rotate('+g+' 140 62)"/>';}
+$('dial').innerHTML=d;
+let v='<tr><td colspan="2" style="font-weight:700">1-кесте: су буының қысымы</td></tr><tr><td>t, °C</td><td>h, кПа</td></tr>';
+for(const k in VP)v+='<tr id="vp'+k+'"><td>'+k+'</td><td>'+F(VP[k],3)+'</td></tr>';
+$('vap').innerHTML=v;setLevel(S.a1);setFun(fyFor(S.a1));})();
+
+function assemble(){$('b1').disabled=true;
+['pStand','pTA','pBur','pFun','pTB'].forEach((id,i)=>setTimeout(()=>$(id).classList.add('on'),i*550));
+setTimeout(()=>{$('r1').textContent='Аспап құрастырылды: 1 — бюретка, 2 — теңестіргіш воронка, 3 — реакция сынауығы.';act('s2')},2900);}
+function test1(){$('b2').disabled=true;$('r2').textContent='Воронка төмен түсірілуде…';
+leak(()=>{$('r2').textContent='✓ Бюреткадағы су деңгейі өзгермеді — аспап герметикалы.';act('s3')});}
+function weigh(){$('b3').disabled=true;$('metal').disabled=true;const m=MET[$('metal').value];
+$('res').firstElementChild.textContent=({'Mg':'Магнийдің','Zn':'Мырыштың','Fe':'Темірдің'})[$('metal').value]+' эквиваленттік массасы (тәжірибеден)';
+S.M=m.M;S.mTrue=R(m.r[0],m.r[1],4);S.m=+(S.mTrue+R(-.0004,.0004,4)).toFixed(3);
+$('mrect').setAttribute('fill',m.c);$('smp').setAttribute('fill',m.c);$('smp').classList.add('drop');
+setTimeout(()=>count($('lcd3'),S.m,3,'г',900),500);setTimeout(()=>act('s4'),1700);}
+function prepare(){$('b4').disabled=true;$('stopLift').style.transform='translate(9px,-9px)';
+setTimeout(()=>{$('acid').classList.add('on');$('metalG').classList.add('on')},600);
+setTimeout(()=>{$('stopLift').style.transform='none';$('r4').textContent='1–2 мл H₂SO₄ құйылды, металл сынауықтың қабырғасында тұр (қышқылға тимейді), сынауық тығынмен жабылды.'},1500);
+setTimeout(()=>act('s5'),1900);}
+function reread(){$('b5').disabled=true;$('r5').textContent='Герметикалық қайта тексерілуде…';
+leak(()=>{$('r5').innerHTML='✓ Аспап герметикалы. Судың бастапқы деңгейі: <b>a₁ = '+F(S.a1,1)+' мл</b>';act('s6')});}
+function react(){$('b6').disabled=true;
+S.pur=R(.985,1,3);const V=S.pur*S.mTrue/S.M*8.314*(273.15+S.t)/(S.Pk-S.h)*1000;
+S.a2=+(S.a1+V+R(-.1,.1,2)).toFixed(1);S.aPre=S.a2-R(.4,.9,1);
+fig.classList.add('running');const mg=$('metalG');mg.style.transform='translateY(18px)';
+setTimeout(()=>{mg.style.transition='transform 2.6s linear';mg.style.transform='translateY(18px) scale(.05)';
+tween(2600,e=>setLevel(S.a1+(S.aPre-S.a1)*e));},900);
+setTimeout(()=>{fig.classList.remove('running');$('r6').textContent='Металл толық еріді, сутек бөлінді. Сынауық бөлме температурасына дейін суыды.';act('s7')},3700);}
+function level(){$('b7').disabled=true;const fS=S.fy,fE=yOf(S.a2)-8,aS=S.aPre;
+tween(1800,e=>{setFun(fS+(fE-fS)*e);setLevel(aS+(S.a2-aS)*e)},()=>{
+$('r7').innerHTML='✓ Воронкадағы және бюреткадағы су деңгейлері тең. <b>a₂ = '+F(S.a2,1)+' мл</b>';act('s8')});}
+function env(){$('b8').disabled=true;
+tween(1200,e=>{const H=8+(S.t-10)/25*70*e;$('hg').setAttribute('y',96-H);$('hg').setAttribute('height',H);});
+$('needle').style.transform='rotate('+((S.Pmm-755)/25*60)+'deg)';
+setTimeout(()=>{$('vp'+S.t).classList.add('hl');
+$('r8').innerHTML='t = <b>'+S.t+' °C</b> · P = <b>'+S.Pmm+' мм.сын.бағ. = '+F(S.Pk,2)+' кПа</b> · h (1-кесте) = <b>'+F(S.h,3)+' кПа</b>';act('s9')},1300);}
+function calc(){$('b9').disabled=true;
+const V=+(S.a2-S.a1).toFixed(1),PH=S.Pk-S.h,T=273+S.t,V0=V*PH*273/(101.325*T),m0=V0*2/22400,E=S.m*1/m0,Et=S.M/2,dE=Et-E,rel=dE/Et*100;
+const rows=[['m — металл массасы',F(S.m,3)+' г'],['a₁ / a₂','' +F(S.a1,1)+' / '+F(S.a2,1)+' мл'],
+['1. V = a₂ − a₁',F(V,1)+' мл'],['2. P(H₂) = P − h',F(PH,2)+' кПа'],
+['3. V₀ = V·P(H₂)·T₀ / (P₀·T)',F(V0,2)+' мл'],['4. m₀(H₂) = V₀·2 / 22400',F(m0*1000,3)+' мг'],
+['5. Э = m(M)·Э(H) / m(H),  Э(H) = 1',F(E,2)+' г/моль'],['6. Э(теор) = M/2',F(Et,2)+' г/моль'],
+['±I = Э(теор) − Э(практ)',(dE>=0?'+':'−')+F(Math.abs(dE),2)],['%I = ±I / Э(теор) · 100%',(rel>=0?'+':'−')+F(Math.abs(rel),2)+' %']];
+const c=$('calc');c.innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');c.style.display='table';
+$('eP').textContent='Э = '+F(E,2)+' г/моль';$('eErr').textContent='Абсолютті қате: '+(dE>=0?'+':'−')+F(Math.abs(dE),2)+' · Салыстырмалы қате: '+F(Math.abs(rel),2)+' %';
+$('res').style.display='block';$('note').style.display='block';}
+</script>
+</body>
+</html>
