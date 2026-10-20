@@ -8,7 +8,7 @@ const host=document.querySelector('main');
 const copy=x=>JSON.parse(JSON.stringify(x));
 const store={
  async listCurrentControlAttempts(){return copy(rows.filter(a=>a.user_id===state.user.id).reverse());},
- async getAnalytics(){return{details:[],users:[]};},
+ async getAnalytics(){return{details:[{user_id:'owner',item_id:'control-item',score:1,max_score:30},{user_id:'other',item_id:'control-item',score:20,max_score:30}],users:[{id:'owner',display_name:'Бірінші студент'},{id:'other',display_name:'Екінші студент'}]};},
  async startCurrentControl(restart){let a=rows.find(a=>a.user_id===state.user.id&&!a.finished_at);if(!a&&!restart)a=rows.filter(a=>a.user_id===state.user.id).at(-1);if(!a){a={id:crypto.randomUUID(),user_id:state.user.id,item_id:'control-item',started_at:new Date().toISOString(),deadline:new Date(Date.now()+1800000).toISOString(),answers:Array(30).fill(-1),questions:CONTROL_QUESTIONS,revision:0};rows.push(a);}return{...copy(a),server_now:new Date().toISOString()};},
  async saveCurrentControl(id,answers,revision,finish){saves++;if(offline){offline=false;throw Error('offline');}const a=rows.find(a=>a.id===id&&a.user_id===state.user.id);if(!a)throw Error('forbidden');const expired=Date.parse(a.deadline)<=Date.now();if(!a.finished_at){if(!expired){if(a.revision!==revision)throw Error('stale_attempt');a.answers=copy(answers);}a.revision++;if(finish||expired){a.finished_at=new Date().toISOString();a.score=a.answers.filter((v,i)=>v===a.questions[i].correct_index).length;}}const progress=a.finished_at?{item_id:a.item_id,score:a.score,max_score:30,quiz_answers:copy(a.answers),attempt_count:rows.filter(r=>r.finished_at).length}:null;return{attempt:{...copy(a),server_now:new Date().toISOString()},progress};}
 };
@@ -42,7 +42,7 @@ test('timed control desktop and phone: 30 choices, resume, save retry, review, c
   await page.locator('[data-control-form] button[type="submit"]').click();
   await page.getByRole('heading',{name:'Нәтиже: 1 / 30',exact:true}).waitFor();
   assert.ok(await page.getByText('Дұрыс жауап:',{exact:false}).count()>=30);
-  await page.evaluate(()=>openCard());await page.getByText('Соңғы ұпай, жауаптар және алдыңғы талпыныстар сақталады.',{exact:true}).waitFor();
+  await page.evaluate(()=>openCard());await page.getByText('Оқу әрекеттері, бақылау нәтижелері және қателермен жұмыс.',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>state.progress[0].quiz_answers.length),30);
   await page.evaluate(()=>{currentPath='/universitet/agymdyk-bakylau/1';remount();});await page.locator('[data-control-restart]').waitFor();await page.locator('[data-control-restart]').click();
   await page.locator('[data-control-clock]').waitFor();await page.evaluate(()=>expire());
@@ -52,6 +52,7 @@ test('timed control desktop and phone: 30 choices, resume, save retry, review, c
   await page.evaluate(()=>preview());await page.locator('[data-control-start]').click();await page.locator('[data-control-clock]').waitFor();
   const before=await page.evaluate(()=>saves);await page.locator('[data-control-form] button[type="submit"]').click();
   await page.getByRole('heading',{name:'Нәтиже: 0 / 30',exact:true}).waitFor();assert.equal(await page.evaluate(()=>saves),before);
+  await page.evaluate(()=>openCard());await page.locator('[data-card-user]').waitFor();await page.getByRole('button',{name:'Картаны ашу →'}).first().click();await page.locator('.knowledge-student-name').waitFor();assert.equal(await page.locator('#card-controls').count(),1);assert.equal(await page.locator('#card-lectures').count(),1);assert.equal(await page.locator('#card-labs').count(),1);await page.locator('[data-card-user]').selectOption('other');assert.equal(await page.locator('.knowledge-student-name').textContent(),'Екінші студент');assert.equal(await page.locator('.knowledge-attempt').count(),0);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);assert.deepEqual(errors,[]);
   await context.close();
  }}finally{await browser.close();await new Promise(r=>server.close(r));}
