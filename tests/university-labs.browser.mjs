@@ -10,7 +10,7 @@ const fixture='<!doctype html><html lang="kk"><head><base href="/himya-platforma
 "const host=document.querySelector('#host');window.mount=(detail=false)=>{host.innerHTML=detail?'<main class=\"lesson-main\"><div class=\"lesson-body\">Авторлық теория</div><div class=\"resource-list\">Мұғалім материалы</div><section class=\"quiz-card\">Тест</section></main>':'<div class=\"lms-unit-list\">'+UNIVERSITY_LABS.map(lab=>'<a class=\"lms-unit-card\" href=\"/himya-platforma/universitet/ozin-ozi-daiyndau/'+lab.slug+'\">'+lab.title+'</a>').join('')+'</div>';const path='/universitet/ozin-ozi-daiyndau'+(detail?'/'+UNIVERSITY_LABS[1].slug:'');bindUniversityLabs(host,path);bindUniversityLabs(host,path);};mount();"+
 '</script></body></html>';
 test('topic mapping keeps CO2 separate from magnesium',()=>{
-assert.equal(labForPath(base+'/zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau'),undefined);
+assert.equal(labForPath(base+'/zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau').file,'university-lab-metal.html');
 assert.equal(labForPath('/himya-platforma'+base+'/'+UNIVERSITY_LABS[1].slug+'/').file,'university-lab-co2.html');
 assert.equal(labForPath('/mektep/'+UNIVERSITY_LABS[1].slug),undefined);
 for(const lab of UNIVERSITY_LABS)assert.match(readFileSync(new URL('../'+lab.file,import.meta.url),'utf8'),/<html lang="kk">/);
@@ -21,7 +21,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -33,7 +33,7 @@ const context=await browser.newContext({viewport:{width,height:900}}),page=await
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://127.0.0.1:'+server.address().port+'/');
 await page.locator('.university-html-lab').last().waitFor();
-assert.equal(await page.locator('.university-html-lab').count(),2);
+assert.equal(await page.locator('.university-html-lab').count(),3);
 assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
@@ -53,6 +53,21 @@ await frame.getByRole('button',{name:'Нәтижені есептеу'}).click()
 await frame.locator('#result').waitFor({state:'visible'});
 assert.match(await frame.locator('#mExp').textContent(),/\d+\.\d+ г\/моль/);
 assert.doesNotMatch(await frame.locator('#mExp').textContent(),/NaN/);
+}else if(lab.file.includes('metal')){
+const metal=width===1440?'Mg':width===390?'Zn':'Fe';
+await frame.locator('#metal').selectOption(metal);
+for(let step=1;step<=9;step++){
+ await frame.locator('#s'+step+'.active').waitFor();
+ await frame.locator('#b'+step).click();
+}
+await frame.locator('#res').waitFor({state:'visible'});
+const result=await frame.locator('#eP').textContent();
+assert.match(result,/Э = \d+,\d+ г\/моль/);
+const value=Number(result.match(/\d+,\d+/)[0].replace(',','.'));
+const expected={Mg:12.1525,Zn:32.69,Fe:27.9225}[metal];
+assert.ok(Math.abs(value-expected)/expected<0.12,'equivalent mass is consistent with selected metal');
+assert.match(await frame.locator('#res').textContent(),{Mg:/Магнийдің/,Zn:/Мырыштың/,Fe:/Темірдің/}[metal]);
+assert.equal(await frame.locator('#metal').isDisabled(),true);
 }else{
 await frame.getByRole('button',{name:'1. Қышқылдар',exact:true}).click();
 await frame.locator('#acid1-btn').click();
