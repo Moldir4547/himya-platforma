@@ -22,10 +22,13 @@ test('titles are supported, equal numbers stay stable, other numbers are ignored
   assert.deepEqual(sortLectureResources([]), []);
 });
 for (const Store of [LocalApiStore, SupabaseStore]) {
-  test(Store.name + ' returns resources in lecture order', async () => {
+ for (const method of ['listResources', 'listAllResources']) {
+  test(Store.name + '.' + method + ' returns resources in lecture order', async () => {
     const store = new Store('https://example.test', 'public-key');
     store.validSession = async () => null;
     store.request = async () => [{filename:'Дәріс №12. Тақырып'}, {filename:'Дәріс №2. Тақырып'}];
-    assert.deepEqual((await store.listResources('lectures')).map(r=>r.filename), ['Дәріс №2. Тақырып', 'Дәріс №12. Тақырып']);
+    assert.deepEqual((await store[method]('lectures')).map(r=>r.filename), ['Дәріс №2. Тақырып', 'Дәріс №12. Тақырып']);
   });
+}
+
 }
