@@ -33,7 +33,7 @@ export class LocalApiStore {
   async listResources(itemId) { return sortLectureResources(await this.request(`/resources?item_id=${encodeURIComponent(itemId)}`)); }
   async uploadResource(itemId,file,onProgress) { return uploadRequest("/api/resources",this.headers({"X-Item-Id":itemId,"X-Filename":encodeURIComponent(file.name),"Content-Type":file.type||"application/octet-stream"}),file,onProgress); }
   async listPopularity(){return this.request("/popularity");}
-  async listAllResources(){ return this.request("/resources"); }
+  async listAllResources(){ return sortLectureResources(await this.request("/resources")); }
   async updateResourceMetadata(id,patch){return this.request(`/resources/${encodeURIComponent(id)}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(patch)});}
   async resourceUrl(resource){ return resource.url; }
   async deleteResource(id) { return this.request(`/resources/${encodeURIComponent(id)}`,{method:"DELETE"}); }
@@ -137,7 +137,7 @@ export class SupabaseStore {
     const session=await this.validSession();
     return sortLectureResources(await this.request(`/rest/v1/content_resources?item_id=eq.${encodeURIComponent(itemId)}&select=*&order=created_at.asc`,{headers:this.headers(session?.access_token)})||[]);
   }
-  async listAllResources(){const session=await this.validSession(),all=[];for(let offset=0;;offset+=1000){const rows=await this.request(`/rest/v1/content_resources?select=*&order=created_at.desc,id.asc&limit=1000&offset=${offset}`,{headers:this.headers(session?.access_token)})||[];all.push(...rows);if(rows.length<1000)return all;}}
+  async listAllResources(){const session=await this.validSession(),all=[];for(let offset=0;;offset+=1000){const rows=await this.request(`/rest/v1/content_resources?select=*&order=created_at.desc,id.asc&limit=1000&offset=${offset}`,{headers:this.headers(session?.access_token)})||[];all.push(...rows);if(rows.length<1000)return sortLectureResources(all);}}
   async listPopularity(){const session=await this.validSession();return this.request("/rest/v1/rpc/material_popularity",{method:"POST",headers:this.headers(session?.access_token),body:"{}"});}
   async updateResourceMetadata(id,patch){const session=await this.validSession();const rows=await this.request(`/rest/v1/content_resources?id=eq.${encodeURIComponent(id)}`,{method:'PATCH',headers:this.headers(session?.access_token,{Prefer:'return=representation'}),body:JSON.stringify(patch)});if(!rows?.[0])throw new Error('Материал сақталмады');return rows[0];}
   async resourceUrl(resource,download=false){
