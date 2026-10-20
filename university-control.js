@@ -3,8 +3,8 @@ const BASE='/universitet/agymdyk-bakylau';
 const CARD='/universitet/bilim-kartasy';
 const esc=(v='')=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function createUniversityControl({store,state,render,shell}){
- let owner=null,attempt=null,draft=[],historyRows=[],loaded=false,loading=false,error='',status='',busy=false,offset=0,queue=Promise.resolve(),timer=null,finishing=false;
- function reset(){owner=state.user?.id;attempt=null;draft=[];historyRows=[];loaded=false;loading=false;error='';status='';busy=false;finishing=false;offset=0;}
+ let owner=null,attempt=null,draft=[],historyRows=[],loaded=false,loading=false,error='',status='',busy=false,offset=0,queue=Promise.resolve(),timer=null,finishing=false,expiredSent=false;
+ function reset(){owner=state.user?.id;attempt=null;draft=[];historyRows=[];loaded=false;loading=false;error='';status='';busy=false;finishing=false;expiredSent=false;offset=0;}
  function syncOwner(){if(owner!==state.user?.id)reset();}
  const now=()=>Date.now()+offset;
  const key=id=>'chem-university-control:'+owner+':'+id;
@@ -23,14 +23,14 @@ export function createUniversityControl({store,state,render,shell}){
    if(state.user.role==='admin'){if(finish){attempt={...attempt,answers:[...draft],finished_at:new Date().toISOString(),score:reviewControl(CONTROL_QUESTIONS,draft).filter(q=>q.correct).length};status='Әкімшінің алдын ала көруі: нәтиже сақталмайды.';}return;}
    const result=await store.saveCurrentControl(id,[...draft],attempt.revision,finish);
    if(owner!==uid||state.user?.id!==uid||attempt?.id!==id)return;
-   attempt=result.attempt;offset=Date.parse(attempt.server_now)-Date.now();updateProgress(result.progress);
+   error='';attempt=result.attempt;offset=Date.parse(attempt.server_now)-Date.now();updateProgress(result.progress);
    if(attempt.finished_at){draft=[...attempt.answers];try{localStorage.removeItem(key(id));}catch{}historyRows=[attempt,...historyRows.filter(r=>r.id!==id)];}
    status=attempt.finished_at?'Нәтиже мен жауаптар студенттің білім картасында сақталды.':'Жауаптар серверде сақталды.';
   });
   queue=task;return task.catch(e=>{if(owner!==uid)return;error=e.message.includes('stale_attempt')?'Бұл талпыныс басқа терезеде өзгерді. Бетті жаңартыңыз.':'Сақталмады: '+e.message+' Жергілікті жауаптар сақталды; қайта жіберіңіз.';}).finally(()=>{if(owner===uid){busy=false;if(finish)finishing=false;render();}});
  }
  function finish(){if(finishing||attempt?.finished_at)return;finishing=true;return save(true);}
- async function start(restart=false){if(busy)return;busy=true;error='';const uid=owner;render();try{
+ async function start(restart=false){if(busy)return;busy=true;expiredSent=false;error='';const uid=owner;render();try{
   if(state.user.role==='admin')adopt({id:'preview',started_at:new Date().toISOString(),deadline:new Date(Date.now()+1800000).toISOString(),answers:Array(30).fill(-1),questions:CONTROL_QUESTIONS,revision:0});
   else {const a=await store.startCurrentControl(restart);if(owner!==uid||state.user?.id!==uid)return;adopt(a);}
   status='';if(!attempt.finished_at&&remainingSeconds(attempt.deadline,now())===0)await finish();
@@ -56,7 +56,7 @@ export function createUniversityControl({store,state,render,shell}){
   if(finishing||attempt.finished_at||remainingSeconds(attempt.deadline,now())===0){finish();return;}
   draft[Number(input.dataset.controlAnswer)]=Number(input.value);error='';remember();save(false);
  }));
- if(attempt&&!attempt.finished_at&&host.querySelector('[data-control-clock]')){const tick=()=>{const left=remainingSeconds(attempt.deadline,now()),clock=host.querySelector('[data-control-clock]');if(clock)clock.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');if(left===0&&!finishing)finish();};timer=setInterval(tick,1000);tick();}
+ if(attempt&&!attempt.finished_at&&host.querySelector('[data-control-clock]')){const tick=()=>{const left=remainingSeconds(attempt.deadline,now()),clock=host.querySelector('[data-control-clock]');if(clock)clock.textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');if(left===0&&!finishing&&!expiredSent){expiredSent=true;finish();}};timer=setInterval(tick,1000);tick();}
  }
  return {route,bind};
 }
