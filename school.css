@@ -57,7 +57,7 @@
  .ws-header{padding:12px;background:white!important;color:#173744!important;border-bottom:3px solid #285f86}
  .ws-header p{color:#173744}.ws-header button,.ws-teacher-files,.topic-materials,.ws-online-task p,.ws-reflection a,[data-school-form]>button,[data-school-status]{display:none!important}
  .ws-paper-identity{display:block;padding:18px 0}
- .ws-reference{display:none}
+ .ws-reference{padding:8px 0}.ws-reference>summary{display:none}.ws-reference .ws-concept{padding:10px;break-inside:avoid}.ws-reference .ws-concept p{font-size:10pt}.ws-reference .ws-visual{max-width:300px}.ws-reference .ws-concepts,.ws-reference .ws-class-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .ws-paper-task,.ws-online-task{padding:12px 0;break-inside:avoid}
  .school-question{break-inside:avoid}
  .school-question input{border:0;border-bottom:1px solid black;max-width:8cm}
