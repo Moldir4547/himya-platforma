@@ -85,13 +85,15 @@ export function matchesTopic(filename,u,kind){
 export function filterTopicMaterials(root,u){
  root.querySelectorAll('[data-topic-materials]').forEach(host=>{
   const cards=[...host.querySelectorAll('.resource-card')];
-  let shown=0;
+  const kept=[],seen=new Set();
   for(const card of cards){
    const title=card.querySelector('strong')?.textContent||'';
    const keep=matchesTopic(title,u,host.dataset.topicMaterials);
-   if(keep)shown++;else card.remove();
+   const id=card.querySelector('[data-open-resource]')?.dataset.openResource||title;
+   if(keep&&!seen.has(id)){kept.push(card);seen.add(id);}
   }
-  if(!shown){
+  host.replaceChildren(...kept);
+  if(!kept.length){
    host.replaceChildren();
    const p=document.createElement('p');
    p.textContent=host.dataset.topicMaterials==='presentation'?'Бұл тақырыпқа сәйкес дайын презентация әзірге жүктелмеген. Түсіну бөліміндегі материалмен жалғастырыңыз.':'';
@@ -116,4 +118,4 @@ export function worksheetIntro(u,svg){
  return '<article class="school-worksheet"><header class="ws-header"><span>Жұмыс парағы · '+u.grade+'-сынып · '+esc(u.paras)+'</span><h2>'+esc(u.title)+'</h2><p>Байқа → салыстыр → есепте → түсіндір</p><button type="button" data-worksheet-print>Басып шығару / PDF</button></header><div class="ws-paper-identity">Аты-жөні: ____________________ Сыныбы: ______ Күні: __________</div><details class="ws-reference"><summary>Тірек сызба · еске түсір</summary>'+concepts+'<div class="ws-visual">'+svg+'</div><p class="ws-equation">'+esc(u.f.formula)+'</p></details><section class="ws-paper-task"><h3>1. Негізгі ойды тап</h3><p>'+esc(u.topics.join(' · '))+': осы ұғымдардың байланысын сызбамен көрсетіп, бір мысал жазыңыз.</p><div class="ws-writing-lines" aria-label="Қағаздағы жауап орны"></div></section><section class="ws-paper-task"><h3>2. Өмірмен байланыстыр</h3><p>'+esc(u.life)+'</p><p>Қысқа жауап беріңіз. Оны сабақтағы бір дерекпен негіздеңіз.</p><div class="ws-writing-lines" aria-label="Қағаздағы жауап орны"></div></section><section class="ws-online-task"><h3>3. Есепте және тексер</h3><p>Сандық жауаптарды төменде тексеріп, нәтижесін аккаунтыңызға сақтай аласыз. Алғашқы екі тапсырманы дәптерде немесе басып шығарылған парақта орындаңыз.</p></section></article>';
 }
 export function worksheetEnd(u){return '<aside class="ws-reflection"><h3>Өзіңді тексер</h3><ul><li>Негізгі ұғымдарды ажыраттым.</li><li>Есепте өлшем бірліктерін көрсеттім.</li><li>Жауабымды дерекпен түсіндірдім.</li></ul><p>Қиналсаңыз, <a href="#understand" data-school-tab="understand">Түсіну бөліміне оралыңыз →</a></p></aside>';}
-export function bindWorksheet(root){root.querySelector('[data-worksheet-print]')?.addEventListener('click',()=>window.print());}
+export function bindWorksheet(root){root.querySelector('[data-worksheet-print]')?.addEventListener('click',()=>{const reference=root.querySelector('.ws-reference');const wasOpen=reference?.open;if(reference)reference.open=true;try{window.print();}finally{if(reference)reference.open=wasOpen;}});}
