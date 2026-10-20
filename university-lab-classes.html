@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="kk">
 <head>
+<meta charset="UTF-8">
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -143,6 +144,10 @@
   ul.reagents{columns:2;font-size:14px;color:var(--ink-soft);padding-left:18px;}
   ul.reagents li{margin-bottom:4px;break-inside:avoid;}
   .safety{background:var(--acid-bg);color:#7A3524;border-radius:6px;padding:12px 14px;font-size:14px;margin-top:16px;}
+
+/* Responsive presentation; experiment content and handlers remain unchanged. */
+.eq{overflow-wrap:anywhere}
+@media(max-width:600px){.wrap{padding:18px 10px 40px}section.panel{padding:14px 12px}.lab-row>div{min-width:0!important;max-width:100%}.grid4{grid-template-columns:minmax(0,1fr)}ul.reagents{columns:1}header.top h1{font-size:22px;overflow-wrap:anywhere}}
 </style>
 </head>
 <body>
