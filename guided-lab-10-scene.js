@@ -20,7 +20,7 @@ export function scene10(l,s,task){
  }
  if(k==='calorimetry'){
  const t=i>=5?26.8:20;
- art='<path d="M290 175l17 146h145l18-146z" fill="#f5f1e4" stroke="#a9aca1" stroke-width="5"/><path d="M308 241h145l-8 70H316z" fill="#d9e9e7"/><rect x="280" y="162" width="200" height="16" rx="6" fill="#c7ccbf"/><path d="M420 150v139" stroke="#9caaac" stroke-width="5"/>'+thermometer(355,175,t)+text(382,344,'Оқшауланған стақан · 100 мл')+beaker(150,195)+text(150,344,'50,0 мл HCl')+beaker(610,195)+text(610,344,'50,0 мл NaOH');
+ art='<path d="M290 175l17 146h145l18-146z" fill="#f5f1e4" stroke="#a9aca1" stroke-width="5"/>'+(i>=3?'<path d="M308 '+(i>=4?241:276)+'h145l-8 '+(i>=4?70:35)+'H316z" fill="#d9e9e7"/>':'')+'<rect x="280" y="162" width="200" height="16" rx="6" fill="#c7ccbf"/><path d="M420 150v139" stroke="#9caaac" stroke-width="5"/>'+thermometer(355,175,t)+text(382,344,i>=4?'Ерітінді: 100 мл':i>=3?'HCl: 50 мл':'Оқшауланған стақан')+beaker(150,195,i>=3?'transparent':'#d9e9e9')+text(150,344,'50,0 мл HCl')+beaker(610,195,i>=4?'transparent':'#d9e9e9')+text(610,344,'50,0 мл NaOH');
  caption='Қақпақтағы датчик және араластырғыш · герметикалық емес';
  readings=i>=5?['T₀ = 20,0 °C; Tmax = 26,8 °C','m = 100 г; c = 4,18 Дж/(г·°C)','Екі ерітінді: 1,00 М, әрқайсысы 50,0 мл']:['Екі ерітіндінің бастапқы температурасы: 20,0 °C'];
  }
