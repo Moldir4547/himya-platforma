@@ -20,6 +20,7 @@ const assets = new Set([
   "university-lab-co2.html",
   "university-lab-metal.html",
   "university-lab-classes.html",
+  "university-lab-kinetics.html",
   "university-control-data.js",
   "registration.js",
   "bond-practice.js",

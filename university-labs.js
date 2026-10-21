@@ -3,14 +3,21 @@ export const UNIVERSITY_LABS = [
  {slug:'zerthanalyq-sabaq-beiorganikalyq-qosylystardyn-negizgi-klastary-oksidter-qyshqyldar-negizder-tuzdar',file:'university-lab-classes.html',title:'Қышқылдар, негіздер және тұздар',description:'Заттардың қасиеттерін тәжірибеде бақылап, реакция теңдеулерін салыстырыңыз.'},
  {slug:'zerthanalyq-sabaq-5-komirteginin-iv-oksidinin-salystyrmaly-moldik-massasyn-anyqtau',file:'university-lab-co2.html',title:'CO₂ молярлық массасын анықтау',description:'Жағдайларды тіркеп, колбаны өлшеңіз, газбен толтырыңыз және нәтижені есептеңіз.',note:'Авторлық HTML файлда №4 деп белгіленген. Платформада осы тақырып №5 зертханалық сабаққа сәйкес келеді.'},
  {slug:'zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau',file:'university-lab-metal.html',title:'Металдың эквиваленттік массасын анықтау',description:'Аспапты құрастырып, герметикалығын тексеріңіз. Металды өлшеп, бөлінген сутек көлемі арқылы эквиваленттік массасын есептеңіз.',note:'Авторлық HTML файлда №3 деп белгіленген. Платформада осы тақырып №4 зертханалық сабаққа сәйкес келеді.'}
+ ,{slug:'reaction-rate-equilibrium',file:'university-lab-kinetics.html',title:'Химиялық реакция жылдамдығы және химиялық тепе-теңдік',description:'Концентрация мен температураның әсерін, кейін тепе-теңдіктің ығысуын қадаммен бақылаңыз.',note:'Жүктелген авторлық HTML нұсқа · №5.',matchTopic:true}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
-export function labForPath(path){
- return UNIVERSITY_LABS.find(lab=>path.replace(/^\/himya-platforma(?=\/|$)/,'').replace(/\/$/,'')===course+'/'+lab.slug);
+export function labForPath(path,title=''){
+ const clean=path.replace(/^\/himya-platforma(?=\/|$)/,'').replace(/\/$/,'');
+ const exact=UNIVERSITY_LABS.find(lab=>clean===course+'/'+lab.slug);
+ if(exact)return exact;
+ // Existing administrator-created URLs can vary; match the complete topic,
+ // never the printed laboratory number, and only inside this lab course.
+ if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic);
 }
 export function bindUniversityLabs(root,pathname=location.pathname){
  const path=pathname.replace(/^\/himya-platforma(?=\/|$)/,'').replace(/\/$/,'');
- if(path!==course&&!labForPath(path))return;
+ const detailLab=labForPath(path,root.querySelector('h1')?.textContent||'');
+ if(path!==course&&!detailLab)return;
  function insert(lab,anchor){
   if(!anchor||root.querySelector('[data-university-lab="'+lab.slug+'"]'))return;
   const section=document.createElement('section');
@@ -33,11 +40,11 @@ export function bindUniversityLabs(root,pathname=location.pathname){
  }
  if(path===course){
   root.querySelectorAll('a.lms-unit-card').forEach(card=>{
-   const lab=labForPath(new URL(card.getAttribute('href'),document.baseURI).pathname);
+   const lab=labForPath(new URL(card.getAttribute('href'),document.baseURI).pathname,card.textContent);
    if(lab)insert(lab,card);
   });
  }else{
   const main=root.querySelector('.lesson-main');
-  insert(labForPath(path),main?.querySelector('.resource-list')||main?.querySelector('.lesson-body'));
+  insert(detailLab,main?.querySelector('.resource-list')||main?.querySelector('.lesson-body'));
  }
 }

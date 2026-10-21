@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>№5 зертханалық жұмыс — виртуалды нұсқа</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fa;--card:#fff;--text:#13293d;--muted:#5c7080;--primary:#0b3d5c;--accent:#d9611f;--border:#e3e9ed;--ok:#22c55e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}}
+:root[data-theme="dark"]{--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:22px 14px 60px}
+h1{font-size:1.3rem;margin:0 0 8px}
+.box,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:12px;font-size:.86rem;line-height:1.5;transition:box-shadow .3s,border-color .3s}
+.box b{color:var(--primary)}.mut{color:var(--muted);font-size:.78rem}
+.card.flash{box-shadow:0 0 0 3px rgba(34,197,94,.55);border-color:var(--ok)}
+.shelf{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.shelf div{display:flex;flex-direction:column;align-items:center;width:78px;font-size:.68rem;text-align:center;color:var(--muted);line-height:1.2}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:.76rem}
+.chk{margin-top:6px;font-size:.82rem}.chk .g{font-weight:700;margin-top:9px;color:var(--primary)}
+.i{display:flex;gap:9px;align-items:center;padding:3px 6px;border-radius:6px;color:var(--muted)}
+.dot{width:12px;height:12px;border-radius:50%;background:#b8c4cc;flex:none;transition:.3s}
+.i.cur{background:rgba(74,154,216,.12);color:var(--text)}.i.cur .dot{background:#f5a524;box-shadow:0 0 0 3px rgba(245,165,36,.3)}
+.i.done{color:var(--text)}.i.done .dot{background:var(--ok);box-shadow:0 0 9px 2px rgba(34,197,94,.75)}
+#scene{width:100%;height:auto;max-height:52vh;display:block;border-radius:8px}
+.bar{display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.lcd{background:#101b24;color:#7fffa0;font-family:Consolas,monospace;padding:6px 12px;border-radius:6px;min-width:112px;text-align:center}
+.lcd.stop{color:#fff;background:#16803c}
+#say{flex:1;min-width:180px;font-size:.84rem}
+.st{font-weight:700;color:var(--primary);margin-bottom:4px}.card p{margin:2px 0 8px;color:var(--muted)}
+button{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:.88rem;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+table{border-collapse:collapse;font-size:.8rem;width:100%;margin:6px 0}th,td{border:1px solid var(--border);padding:4px 6px;text-align:center}th{background:var(--bg)}
+.rep svg{color:var(--text);width:100%;max-width:340px;display:block;margin:6px auto 0}
+.center{text-align:center;margin-top:12px}
+.dash{animation:dash .35s linear infinite}@keyframes dash{to{stroke-dashoffset:-22}}
+.steam{animation:st 1.6s ease-in infinite;opacity:0}@keyframes st{0%{opacity:0;transform:translateY(6px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-12px)}}
+#rv h3{margin:12px 0 4px;font-size:.95rem;color:var(--primary)}#rv p{margin:3px 0;color:var(--text)}
+.table-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>№5 зертханалық жұмыс · виртуалды нұсқа</h1>
+<div class="box"><b>Химиялық реакция жылдамдығы және химиялық тепе-теңдік</b><br>
+<b>Жұмыстың мақсаты:</b> химиялық реакцияның заттардың концентрациясына және температураға тәуелді екенін зерттеу; химиялық тепе-теңдіктің ығысуы мен заттардың концентрацияларының арасындағы тәуелділікті зерттеу.</div>
+<div class="box"><b>Қажет аспаптар мен реактивтер</b>
+<div class="shelf" id="shelf"></div><div class="shelf" id="chips"></div></div>
+<div class="box"><b>Орындалу реті</b> <span class="mut">— орындалған қадам жасыл түспен жанады</span><div class="chk" id="chk"></div></div>
+
+<div class="card" id="scard"><svg id="scene" viewBox="0 0 400 250"></svg>
+<div class="bar"><div class="lcd" id="clock">⏱ 0,0 с</div><div id="say"></div></div></div>
+<div class="card"><div class="st" id="stT"></div><p id="stD"></p><button id="go" onclick="runStep()"></button></div>
+
+<div class="card rep" id="r1b" style="display:none"><b>10-кесте</b><div class="table-scroll"><table id="t10"></table></div><svg id="ch1" viewBox="0 0 250 170"></svg></div>
+<div class="card rep" id="r2b" style="display:none"><b>11-кесте</b><div class="table-scroll"><table id="t11"></table></div><svg id="ch2" viewBox="0 0 250 170"></svg></div>
+<div class="card" id="rv" style="display:none"></div>
+<div class="center"><button class="secondary" onclick="location.reload()">↺ Қайта бастау (жаңа нұсқа)</button></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const R=(a,b,d)=>+(Math.random()*(b-a)+a).toFixed(d),F=(x,d)=>x.toFixed(d).replace('.',',');
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),rg=c=>'rgb('+c.map(Math.round).join()+')';
+const mix=(a,va,b,vb)=>a.map((x,i)=>(x*va+b[i]*vb)/((va+vb)||1));
+const wait=(ms,f)=>setTimeout(f,ms);
+function tween(ms,fn,done){const t0=performance.now();(function f(now){const p=Math.min(1,(now-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(e,p);p<1?requestAnimationFrame(f):done&&done()})(t0)}
+function seq(fns,done){let i=0;(function n(){i<fns.length?fns[i++](n):done&&done()})()}
+const CLEAR='#d3eaf5',FE='#f0dc7a',RED='#e0523a',REDD='#b3261b',REDD2='#c0301f',PALE='#f4b983';
+const sc=$('scene');let TB=[],tid=0,Q={t0:R(19,23,0)},S2={};
+const say=s=>$('say').innerHTML=s;
+
+/* ---------- apparatus ---------- */
+function base(){sc.innerHTML='<rect width="400" height="250" fill="#eef4f7"/><rect y="205" width="400" height="45" fill="#cdbb9e"/><rect y="205" width="400" height="3" fill="#b3a083"/>';TB=[]}
+function lab(x,y,s,z){const t=el('text',{x,y,'text-anchor':'middle','font-size':z||10,fill:'#13293d'},sc);t.textContent=s;return t}
+function rack(x1,x2,y){el('rect',{x:x1,y,width:x2-x1,height:9,rx:3,fill:'#b08a5b'},sc);[x1+10,x2-18].forEach(x=>el('rect',{x,y:y+9,width:8,height:196-y,fill:'#9c7848'},sc))}
+function mk(x,y,o){o=o||{};const w=o.w||26,h=o.h||110,id='c'+(tid++),t={x,y,w,h,k:o.k||4.6,vol:0,rgb:hx(CLEAR),dx:0,dy:0,tilt:0};
+ t.g=el('g',{},sc);const cp=el('clipPath',{id},t.g);el('path',{d:`M0,0V${h-w/2}a${w/2},${w/2} 0 0 0 ${w},0V0Z`},cp);
+ const cg=el('g',{'clip-path':`url(#${id})`},t.g);t.lg=el('g',{},cg);
+ t.liq=el('rect',{x:-300,y:h,width:600,height:400,opacity:.85},t.lg);t.liq.style.fill=rg(t.rgb);
+ t.tb=el('rect',{x:-300,y:h,width:600,height:400,fill:'#f1e6a6',opacity:0},t.lg);
+ el('path',{d:`M0,0V${h-w/2}a${w/2},${w/2} 0 0 0 ${w},0V0`,fill:'rgba(200,225,240,.18)',stroke:'#5c7080','stroke-width':2},t.g);
+ el('path',{d:`M-3,0H${w+3}`,stroke:'#5c7080','stroke-width':2.5,'stroke-linecap':'round'},t.g);
+ el('path',{d:`M4,8V${h-18}`,stroke:'#fff','stroke-width':2,opacity:.6,'stroke-linecap':'round'},t.g);
+ t.upd=()=>{const s=t.h-t.vol*t.k;t.liq.setAttribute('y',s);t.tb.setAttribute('y',s);
+  t.g.setAttribute('transform',`translate(${t.x+t.dx},${t.y+t.dy}) rotate(${t.tilt},${t.w/2},0)`);
+  t.lg.setAttribute('transform',`rotate(${-t.tilt},${t.w/2},${s})`)};
+ t.col=(hex,ms)=>{t.liq.style.transition='fill '+(ms||1600)+'ms';t.rgb=hx(hex);t.liq.style.fill=rg(t.rgb)};
+ t.upd();TB.push(t);return t}
+function pourer(){const p=el('g',{id:'pr',style:'display:none'},sc);
+ el('path',{id:'prS',d:'','stroke-width':2.6,fill:'none','stroke-linecap':'round'},p);el('g',{id:'prC'},p);
+ const t=el('text',{id:'prT',x:14,y:-46,'font-size':9,'font-weight':700,fill:'#13293d',style:'paint-order:stroke;stroke:#eef4f7;stroke-width:3px'},p)}
+function look(mode,hex){const gl='rgba(200,225,240,.4)',s='stroke="#5c7080"';
+ $('prC').innerHTML=mode=='pour'?`<rect x="-7" y="0" width="14" height="48" rx="2" fill="${gl}" ${s} stroke-width="1.6"/><rect id="prL" x="-6" y="1" width="12" height="40" fill="${hex}" opacity=".9"/>`+[10,20,30,40].map(y=>`<line x1="-7" y1="${y}" x2="-2" y2="${y}" ${s} stroke-width=".8"/>`).join('')
+ :mode=='drops'?`<path d="M-2.5,0V30h5V0" fill="${gl}" ${s} stroke-width="1.4"/><path d="M-8,30c0,-9 16,-9 16,0v14c0,6 -16,6 -16,0z" fill="#5a4a42"/><rect x="-1.5" y="1" width="3" height="10" fill="${hex}"/>`
+ :`<rect x="-2.5" y="2" width="5" height="36" rx="2" fill="#9aa6ad"/><ellipse cx="0" cy="3" rx="7" ry="4.5" fill="#9aa6ad"/><circle cx="-2" cy="2" r="1.8" fill="#fff"/><circle cx="2" cy="4" r="1.6" fill="#fff"/>`}
+function addTo(t,mL,hex,o,cb){o=o||{};const mode=o.mode||'pour',lx=t.x+t.w/2,ly=t.y-(mode=='drops'?14:10);
+ look(mode,hex);const P=$('pr'),S=$('prS');P.style.display='';P.setAttribute('transform',`translate(${lx},${ly})`);
+ $('prC').setAttribute('transform',mode=='drops'?'rotate(180)':'rotate(-135)');$('prT').textContent=o.lab||'';
+ S.setAttribute('stroke',mode=='crystals'?'#fff':hex);S.style.filter=mode=='crystals'?'drop-shadow(0 0 1px #5c7080)':'';
+ S.setAttribute('stroke-dasharray',mode=='pour'?'none':mode=='drops'?'2 9':'3 8');S.setAttribute('class',mode=='pour'?'':'dash');
+ const v0=t.vol,c0=t.rgb,c1=hx(hex),cm=o.keep?c0:mix(c0,v0,c1,mL);t.liq.style.transition='none';
+ tween(o.ms||1100,e=>{t.vol=v0+mL*e;t.upd();t.liq.style.fill=rg(c0.map((x,i)=>x+(cm[i]-x)*e));
+  S.setAttribute('d','M0,0V'+Math.max(4,t.y+t.h-t.vol*t.k-ly));const L=$('prL');L&&L.setAttribute('height',40*(1-e*.8))},
+  ()=>{t.rgb=cm;P.style.display='none';cb&&cb()})}
+function transfer(a,b,mL,cb,ms){const dir=b.x<a.x?-1:1,hf=a.w/2,lipx=a.x+hf+dir*hf*.574,dxT=b.x+b.w/2-lipx,dyT=b.y-12-a.y-hf*.819;
+ const v0=a.vol,w0=b.vol,cA=a.rgb,cB=b.rgb,cm=mix(cB,w0,cA,mL),P=$('pr'),S=$('prS');a.liq.style.transition=b.liq.style.transition='none';
+ tween(600,e=>{a.tilt=dir*55*e;a.dx=dxT*e;a.dy=dyT*e;a.upd()},()=>{
+  $('prC').innerHTML='';$('prT').textContent='';P.style.display='';const ly=a.y+dyT+hf*.819;P.setAttribute('transform',`translate(${b.x+b.w/2},${ly})`);
+  S.setAttribute('stroke',rg(cA));S.setAttribute('stroke-dasharray','none');S.setAttribute('class','');S.style.filter='';
+  tween(ms||1200,e=>{a.vol=v0-mL*e;b.vol=w0+mL*e;a.upd();b.upd();b.liq.style.fill=rg(cB.map((x,i)=>x+(cm[i]-x)*e));
+   S.setAttribute('d','M0,0V'+Math.max(4,b.y+b.h-b.vol*b.k-ly))},()=>{b.rgb=cm;P.style.display='none';
+   tween(600,e=>{a.tilt=dir*55*(1-e);a.dx=dxT*(1-e);a.dy=dyT*(1-e);a.upd()},cb)})})}
+function runClock(t,T,cb){const ck=$('clock'),D=(2.2+.08*T)*1000;ck.classList.remove('stop');
+ tween(D,(e,p)=>{ck.textContent='⏱ '+F(T*p,1)+' с';const k=Math.max(0,Math.min(1,(p-.5)/.5));t.tb.setAttribute('opacity',k*k*(3-2*k)*.9)},
+ ()=>{ck.textContent='⏱ '+F(T,1)+' с';ck.classList.add('stop');cb&&cb(T)})}
+
+/* ---------- scenes ---------- */
+function scene1(){base();rack(60,340,128);[105,187,269].forEach((x,i)=>{mk(x,72);lab(x+13,222,'№'+(i+1),11)});pourer();say('Үш үлкен сынауық штативте тұр.')}
+function setTemp(i,v){const h=10+(v-15)/40*80;S2['m'+i].setAttribute('y',191-h);S2['m'+i].setAttribute('height',h);S2['t'+i].textContent=Math.round(v)+'°C'}
+function scene2(){base();S2={};const cx3=[66,200,334];
+ cx3.forEach((cx,i)=>{el('rect',{x:cx-30,y:197,width:60,height:8,rx:2,fill:'#3a3f45'},sc);S2['h'+i]=el('rect',{x:cx-28,y:199,width:56,height:2,fill:'#ff5a2a',opacity:0},sc);
+  el('rect',{x:cx-50,y:98,width:100,height:99,rx:6,fill:'rgba(200,225,240,.25)',stroke:'#5c7080','stroke-width':2.2},sc);
+  el('rect',{x:cx-48,y:126,width:96,height:69,fill:'#a9d3ea',opacity:.55},sc)});
+ cx3.forEach((cx,i)=>{mk(cx-34,78,{w:22,h:112,k:5.4});mk(cx+12,78,{w:22,h:112,k:5.4});lab(cx-23,216,'Na₂S₂O₃',9);lab(cx+23,216,'H₂SO₄',9);
+  el('rect',{x:cx+53,y:94,width:7,height:96,rx:3.5,fill:'rgba(200,225,240,.3)',stroke:'#5c7080','stroke-width':1.4},sc);
+  el('circle',{cx:cx+56.5,cy:191,r:6.5,fill:'#d33'},sc);S2['m'+i]=el('rect',{x:cx+55,y:150,width:3,height:40,fill:'#d33'},sc);
+  S2['t'+i]=lab(cx+57,88,'',9);setTemp(i,Q.t0)});
+ pourer();say('Үш су моншасы: біріншісі бөлме температурасында ('+Q.t0+' °C).')}
+function heat(i,target,cb){const cx=[66,200,334][i];S2['h'+i].setAttribute('opacity',1);const st=[0,1,2].map(k=>{const p=el('path',{d:`M${cx-14+k*14},94q-5,-8 0,-15`,stroke:'#fff','stroke-width':2.5,fill:'none',class:'steam',style:'animation-delay:'+k*.4+'s'},sc);return p});
+ say('Су моншасы қыздырылуда…');tween(2600,e=>setTemp(i,Q.t0+(target-Q.t0)*e),()=>{S2['h'+i].setAttribute('opacity',0);st.forEach(p=>p.remove());say('Температура '+target+' °C-қа жетті.');cb()})}
+function scene3(){base();rack(26,90,132);rack(120,350,132);mk(40,62,{w:34,h:130,k:7.4});lab(57,222,'үлкен сынауық',9);
+ [135,196,257,318].forEach((x,i)=>{mk(x,82,{w:26,h:110,k:14});lab(x+13,222,'№'+(i+1),11)});pourer();say('Үлкен сынауық және төрт кішкене сынауық дайын.')}
+
+/* ---------- tables & charts ---------- */
+function tbl(id,heads,n){let h='<tr>'+heads.map(x=>'<th>'+x+'</th>').join('')+'</tr>';
+ for(let r=0;r<n;r++)h+='<tr>'+heads.map((_,c)=>'<td id="'+id+r+'_'+c+'">'+(c?'—':r+1)+'</td>').join('')+'</tr>';$(id).innerHTML=h}
+const cell=(id,r,c,v)=>{$(id+r+'_'+c).textContent=v};
+function chart(id,pts,xl,yl,xd,yd){const W=250,H=170,L=42,B=34,Tp=10,Rt=12,xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),a=Math.min(...xs),b=Math.max(...xs),m=Math.max(...ys)*1.2;
+ const X=x=>L+10+(x-a)/((b-a)||1)*(W-L-Rt-20),Y=y=>H-B-y/m*(H-B-Tp);
+ let s=`<path d="M${L},${Tp}V${H-B}H${W-Rt}" stroke="#5c7080" fill="none" stroke-width="1.5"/><polyline points="${pts.map(p=>X(p[0])+','+Y(p[1])).join(' ')}" fill="none" stroke="#d9611f" stroke-width="2"/>`;
+ pts.forEach(p=>{s+=`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="3.5" fill="#d9611f"/><text x="${X(p[0])}" y="${H-B+12}" font-size="9" text-anchor="middle" fill="currentColor">${xd(p[0])}</text><text x="${L-4}" y="${Y(p[1])+3}" font-size="9" text-anchor="end" fill="currentColor">${yd(p[1])}</text>`});
+ s+=`<text x="${(L+W)/2}" y="${H-5}" font-size="10" text-anchor="middle" fill="currentColor">${xl}</text><text transform="translate(10 ${(H-B)/2}) rotate(-90)" font-size="10" text-anchor="middle" fill="currentColor">${yl}</text>`;$(id).innerHTML=s}
+
+/* ---------- steps ---------- */
+const V1=[5,10,15],W1=[10,5,0],res={t1:[],t2:[],T2:[]};
+const gap=f=>c=>f(()=>wait(250,c));
+const acid=i=>d=>addTo(TB[i],5,CLEAR,{lab:'H₂SO₄ · 5 мл'},()=>{cell('t10',i,3,5);cell('t10',i,4,20);
+ const tt=+(15/(V1[i]/20)*R(.97,1.03,3)).toFixed(1);say('Секундомер қосылды (уақыт жылдамдатылған көрсетіледі).');
+ runClock(TB[i],tt,t=>{res.t1[i]=t;cell('t10',i,5,F(t,1));cell('t10',i,6,F(1/t,4));say('Ерітінді лайланды: коллоидты күкірт S↓ түзілді (ақшыл-сары тұнба), SO₂ иісі шықты. t = '+F(t,1)+' с.');d()})});
+const steps=[
+{g:0,t:'Na₂S₂O₃ ерітіндісін құю',d:'Нөмірі бар үлкен үш сынауыққа сұйылтылған натрий тиосульфатының ерітіндісін 1) 5 мл, 2) 10 мл, 3) 15 мл құямыз.',b:'Na₂S₂O₃ құю',
+ run:d=>{$('r1b').style.display='';seq([0,1,2].map(i=>gap(c=>addTo(TB[i],V1[i],CLEAR,{lab:'Na₂S₂O₃ · '+V1[i]+' мл'},()=>{cell('t10',i,1,V1[i]);c()}))),d)}},
+{g:0,t:'Дистилденген су қосу',d:'Бірінші сынауыққа 10 мл, екіншісіне 5 мл су қосамыз (үшіншіге су қосылмайды). Үш сынауықтағы көлем 15 мл болады.',b:'Су қосу',
+ run:d=>seq([0,1].map(i=>gap(c=>addTo(TB[i],W1[i],CLEAR,{lab:'H₂O · '+W1[i]+' мл'},()=>{cell('t10',i,2,W1[i]);c()}))),()=>{cell('t10',2,2,'–');d()})},
+{g:0,t:'№1 сынауық: H₂SO₄ + секундомер',d:'1-сынауыққа 5 мл күкірт қышқылын қосып, секундомерді қосамыз; ерітінді лайланғанда тоқтатып, уақытты жазамыз.',b:'H₂SO₄ қосу, секундомерді қосу',run:acid(0)},
+{g:0,t:'№2 сынауық: H₂SO₄ + секундомер',d:'Дәл осылай 2-сынауыққа 5 мл H₂SO₄ қосып, лай пайда болғанға дейінгі уақытты өлшейміз.',b:'H₂SO₄ қосу, секундомерді қосу',run:acid(1)},
+{g:0,t:'№3 сынауық: H₂SO₄ + секундомер',d:'3-сынауыққа 5 мл H₂SO₄ қосып, уақытты өлшейміз.',b:'H₂SO₄ қосу, секундомерді қосу',run:acid(2)},
+{g:0,t:'10-кесте және график',d:'Нәтижені кестеге жазамыз; ординатқа V = 1/t, абсциссаға Na₂S₂O₃ концентрациясын салып график саламыз.',b:'График салу',
+ run:d=>{chart('ch1',V1.map((v,i)=>[v/20,1/res.t1[i]]),'c(Na₂S₂O₃), шартты бірлік','V = 1/t, с⁻¹',x=>F(x,2),y=>F(y,3));say('Концентрация артқан сайын жылдамдық артады.');d()}},
+{g:1,t:'Сынауықтарды дайындау',d:'Үш сынауыққа 5 мл Na₂S₂O₃, басқа үш сынауыққа 5 мл H₂SO₄ құямыз.',b:'Ерітінділерді құю',pre:scene2,
+ run:d=>{$('r2b').style.display='';const f=[];[0,1,2].forEach(i=>f.push(gap(c=>addTo(TB[2*i],5,CLEAR,{lab:'Na₂S₂O₃ · 5 мл',ms:800},c))));
+  [0,1,2].forEach(i=>f.push(gap(c=>addTo(TB[2*i+1],5,CLEAR,{lab:'H₂SO₄ · 5 мл',ms:800},c))));
+  const b=+(R(26,34,1)),g1=R(2.1,3,2),g2=+(g1*R(.93,1.07,2)).toFixed(2);res.T2=[b,+(b/g1).toFixed(1),+(b/g1/g2).toFixed(1)];
+  seq(f,()=>{[0,1,2].forEach(i=>{cell('t11',i,1,5);cell('t11',i,2,5)});d()})}},
+{g:1,t:'Бөлме температурасында араластыру',d:'Бірінші жұпты бөлме температурасында (t) араластырып, лай пайда болғанға дейінгі уақытты жазамыз.',b:'Араластыру',run:d=>mixI(0,d)},
+{g:1,t:'Температураны +10 °C көтеру',d:'Келесі жұпты жылы суға салып, температурасын 10 °C-қа көтереміз, араластырып, уақытты жазамыз.',b:'Қыздыру және араластыру',run:d=>mixI(1,d)},
+{g:1,t:'Температураны +20 °C көтеру',d:'Үшінші жұпты бөлме температурасынан 20 °C-қа жоғары қыздырып, араластырып, уақытты жазамыз.',b:'Қыздыру және араластыру',run:d=>mixI(2,d)},
+{g:1,t:'11-кесте және график',d:'Абсцисса осіне температураны, ордината осіне жылдамдықты салып график саламыз.',b:'График салу',
+ run:d=>{chart('ch2',res.T2.map((t,i)=>[Q.t0+10*i,1/t]),'t, °C','V = 1/t, с⁻¹',x=>x,y=>F(y,3));say('Температура көтерілген сайын жылдамдық күрт артады.');d()}},
+{g:2,t:'FeCl₃ және KCNS ерітінділерін құю',d:'Үлкен сынауыққа 5 мл 0,001 н FeCl₃ және 5 мл KCNS ерітінділерін құямыз. Реакция: FeCl₃ + 3KCNS ⇌ Fe(CNS)₃ + 3KCl.',b:'Ерітінділерді құю',pre:scene3,
+ run:d=>seq([gap(c=>addTo(TB[0],5,FE,{lab:'FeCl₃ 0,001 н · 5 мл'},c)),gap(c=>addTo(TB[0],5,CLEAR,{lab:'KCNS 0,001 н · 5 мл'},c))],()=>{
+  say('Fe³⁺ + 3CNS⁻ → Fe(CNS)₃: ерітінді қанды-қызыл түске боялды.');TB[0].col(RED,2400);wait(2600,d)})},
+{g:2,t:'Ерітіндіні 4 сынауыққа бөлу',d:'Алынған қызыл ерітіндіні төрт сынауыққа тең бөліп құямыз.',b:'Бөлу',
+ run:d=>seq([1,2,3,4].map(i=>c=>transfer(TB[0],TB[i],2.5,c,800)),()=>{say('Төрт сынауықта да түс бірдей.');d()})},
+{g:2,t:'1-сынауық: концентрлі FeCl₃',d:'Бірінші сынауыққа концентрлі FeCl₃ ерітіндісін қосамыз.',b:'FeCl₃ (конц.) тамызу',
+ run:d=>addTo(TB[1],.3,'#b97a1c',{mode:'drops',lab:'FeCl₃ (конц.)',keep:1,ms:1800},()=>{TB[1].col(REDD,2400);say('Түс қоюланды: тепе-теңдік оңға (Fe(CNS)₃ түзілуіне) ығысты.');wait(2600,d)})},
+{g:2,t:'2-сынауық: концентрлі KCNS',d:'Екінші сынауыққа концентрлі KCNS ерітіндісін қосамыз.',b:'KCNS (конц.) тамызу',
+ run:d=>addTo(TB[2],.3,CLEAR,{mode:'drops',lab:'KCNS (конц.)',keep:1,ms:1800},()=>{TB[2].col(REDD2,2400);say('Түс қоюланды: тепе-теңдік оңға ығысты.');wait(2600,d)})},
+{g:2,t:'3-сынауық: KCl кристалдары',d:'Үшінші сынауыққа аздап калий хлоридінің кристалдарын қосамыз.',b:'KCl кристалдарын салу',
+ run:d=>addTo(TB[3],.1,'#ffffff',{mode:'crystals',lab:'KCl кристалдары',keep:1,ms:1600},()=>{const t=TB[3],cr=[0,1,2].map(k=>el('rect',{x:t.x+6+k*6,y:t.y+t.h-8-(k%2)*3,width:4,height:4,fill:'#fff',stroke:'#8fa0ab','stroke-width':.6},sc));
+  t.col(PALE,3600);say('Түс солғындады: тепе-теңдік солға (бастапқы заттарға қарай) ығысты.');
+  tween(3600,e=>cr.forEach(r=>r.setAttribute('opacity',1-e)),()=>{cr.forEach(r=>r.remove());d()})})},
+{g:2,t:'4-сынауық — салыстыру',d:'Төртінші сынауық салыстыру үшін өзгеріссіз қалады. Үш сынауықтың түсін төртіншімен салыстырамыз.',b:'Түстерді салыстыру',
+ run:d=>{[['қою ↑','#b3261b'],['қою ↑','#b3261b'],['ақшыл ↓','#c27a1c'],['салыстыру','#5c7080']].forEach((a,i)=>{const t=lab(TB[i+1].x+13,238,a[0],10);t.setAttribute('fill',a[1]);t.setAttribute('font-weight',700)});
+  say('Түсті 4-сынауықпен салыстырыңыз.');wait(1200,d)}},
+{g:2,t:'Құбылысты ашу',d:'Барлық тәжірибенің құбылысы мен қорытындысын көреміз.',b:'Құбылысты ашу',run:d=>{reveal();d()}}
+];
+function mixI(i,d){const T=res.T2[i],go=()=>transfer(TB[2*i+1],TB[2*i],5,()=>{say('Лай пайда болғанға дейінгі уақыт өлшенуде…');
+ runClock(TB[2*i],T,t=>{cell('t11',i,3,Q.t0+10*i);cell('t11',i,4,F(t,1));cell('t11',i,5,F(1/t,4));say('Ерітінді лайланды (S↓). t = '+F(t,1)+' с, температура '+(Q.t0+10*i)+' °C.');d()})});
+ i?heat(i,Q.t0+10*i,go):go()}
+function reveal(){const a=res.t1,b=res.T2,g1=b[0]/b[1],g2=b[1]/b[2];
+ const rv=$('rv');rv.style.display='';rv.className='card';rv.innerHTML=`<b style="font-size:1rem">Құбылыс және қорытынды</b>
+<h3>1-тәжірибе. Концентрацияның әсері</h3><p>Na₂S₂O₃ + H₂SO₄ = Na₂SO₄ + SO₂↑ + H₂O + S↓. Қышқыл қосқан соң ерітінді біраз уақыттан кейін лайланады: түзілген ұсақ күкірт бөлшектері ақшыл-сары тұнба береді.</p>
+<p>Na₂S₂O₃ концентрациясы 0,25 → 0,50 → 0,75 шартты бірлікке артқанда лай уақыты ${F(a[0],1)} → ${F(a[1],1)} → ${F(a[2],1)} с болды. Концентрация артқан сайын жылдамдық артады: V = 1/t концентрацияға шамамен тура пропорционал (әсер етуші массалар заңы).</p>
+<h3>2-тәжірибе. Температураның әсері</h3><p>${Q.t0}, ${Q.t0+10}, ${Q.t0+20} °C кезінде лай уақыты ${F(b[0],1)} → ${F(b[1],1)} → ${F(b[2],1)} с. Температура әр 10 °C-қа көтерілгенде уақыт шамамен ${F(g1,1)} және ${F(g2,1)} есе қысқарды, яғни жылдамдық сонша есе артты.</p>
+<p>Вант-Гофф ережесі: v₂/v₁ = γ<sup>(t₂−t₁)/10</sup>, мұнда температуралық коэффициент γ = 2–4 (бұл тәжірибеде γ ≈ ${F((g1+g2)/2,1)}).</p>
+<h3>3-тәжірибе. Химиялық тепе-теңдіктің ығысуы</h3><p>FeCl₃ + 3KCNS ⇌ Fe(CNS)₃ + 3KCl. Fe(CNS)₃ қанды-қызыл түс береді.</p>
+<p>1-сынауық (конц. FeCl₃) және 2-сынауық (конц. KCNS): бастапқы зат концентрациясы артты, түс қоюланды — тепе-теңдік оңға ығысты.</p>
+<p>3-сынауық (KCl): өнім жағындағы KCl концентрациясы артты, түс солғындады — тепе-теңдік солға ығысты. 4-сынауық — салыстыру үшін.</p>
+<p><b>Ле-Шателье принципі:</b> тепе-теңдіктегі жүйеге сырттан әсер етсек (концентрацияны өзгертсек), тепе-теңдік сол әсерді әлсірететін жаққа ығысады.</p>
+<p class="mut">Ескерту: уақыттар мен түстер модельдің көрнекі нәтижесі (кездейсоқ қателермен); нақты 0,001 н ерітінділерде түс әлсіз болуы мүмкін.</p>`}
+
+/* ---------- engine ---------- */
+let cur=0;
+const G=['1-тәжірибе. Реакция жылдамдығына концентрацияның әсері','2-тәжірибе. Реакция жылдамдығына температураның әсері','3-тәжірибе. Химиялық тепе-теңдіктің ығысуы'];
+function show(){const s=steps[cur];$('li'+cur).classList.add('cur');$('stT').textContent=(cur+1)+'/'+steps.length+' · '+s.t;$('stD').textContent=s.d;$('go').textContent=s.b;$('go').disabled=false}
+function runStep(){const s=steps[cur];$('go').disabled=true;if(s.pre)s.pre();s.run(()=>{const li=$('li'+cur);li.classList.remove('cur');li.classList.add('done');
+ $('scard').classList.add('flash');wait(1000,()=>$('scard').classList.remove('flash'));cur++;
+ if(cur<steps.length)show();else{$('stT').textContent='✓ Барлық қадам орындалды';$('stD').textContent='Төменде құбылыс пен қорытынды көрсетілген.';$('go').style.display='none';$('rv').scrollIntoView({behavior:'smooth'})}})}
+(function init(){
+ const bottle=(c,solid)=>`<svg viewBox="0 0 24 34" width="26" height="36"><rect x="9" y="1" width="6" height="6" fill="#8a97a1"/><path d="M8,7h8l3,6v18a2,2 0 0 1-2,2H7a2,2 0 0 1-2-2V13z" fill="rgba(200,225,240,.35)" stroke="#5c7080" stroke-width="1.5"/><rect x="6" y="${solid?22:18}" width="12" height="${solid?9:13}" fill="${c}" ${solid?'stroke="#8fa0ab" stroke-width=".6"':''}/></svg>`;
+ $('shelf').innerHTML=[['Na₂S₂O₃ (сұйылт.)',CLEAR],['H₂SO₄ (сұйылт.)',CLEAR],['Дистилденген су',CLEAR],['FeCl₃ 0,001 н',FE],['KCNS 0,001 н',CLEAR],['FeCl₃ (конц.)','#b97a1c'],['KCNS (конц.)',CLEAR],['KCl кристалдары','#fff',1]].map(r=>'<div>'+bottle(r[1],r[2])+r[0]+'</div>').join('');
+ $('chips').innerHTML=['үш үлкен және үш кішкене сынауық','өлшеуіш сынауық / бюретка','секундомер','термометр','су моншасы','штатив'].map(x=>'<span class="chip">'+x+'</span>').join('');
+ let h='';steps.forEach((s,i)=>{if(i==0||steps[i-1].g!=s.g)h+='<div class="g">'+G[s.g]+'</div>';h+='<div class="i" id="li'+i+'"><span class="dot"></span>'+(i+1)+'. '+s.t+'</div>'});$('chk').innerHTML=h;
+ tbl('t10',['№','Na₂S₂O₃, мл','H₂O, мл','H₂SO₄, мл','Жалпы көлем, мл','t, с','V = 1/t, с⁻¹'],3);
+ tbl('t11',['№','Na₂S₂O₃, мл','H₂SO₄, мл','t, °C','t, с','V = 1/t, с⁻¹'],3);
+ scene1();show()})();
+</script>
+</body>
+</html>
