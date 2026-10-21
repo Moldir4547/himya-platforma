@@ -11,7 +11,7 @@ const copy=o=>JSON.parse(JSON.stringify(o));
 let records={},active=host.selected||'hydrogen',dirty=false,task=null,saveTimer=null,selectedNote=0,resetArmed=false,saveBusy=false,flash='',generation=0;
 let storageStatus='Өз бақылауыңызды жазып, сақтаңыз.';
 for(const l of LABS)if(host.initial?.[l.id])records[l.id]=validRecord(l,host.initial[l.id]);
-if(!LABS.some(l=>l.id===active))active='hydrogen';
+if(!LABS.some(l=>l.id===active))active=LABS[0].id;
 const lab=()=>LABS.find(l=>l.id===active);
 const state=()=>records[active]||(records[active]=fresh(lab()));
 function pause(s){s.elapsedMs=elapsed(s);s.runningSince=null;}
