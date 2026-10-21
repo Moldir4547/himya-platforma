@@ -29,6 +29,8 @@ const assets = new Set([
   "equivalent-path.js",
   "school.js",
   "school-materials.js",
+  "teacher-materials.js",
+  "teacher-materials.css",
   "guided-lab.js",
   "guided-lab-model.js",
   "guided-lab-data.js",
