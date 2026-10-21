@@ -32,6 +32,8 @@ const assets = new Set([
   "guided-lab.js",
   "guided-lab-model.js",
   "guided-lab-data.js",
+  "guided-lab-8-data.js",
+  "guided-lab-8-scene.js",
   "guided-lab.css",
   "school-labs.js",
   "school-curriculum.js",
