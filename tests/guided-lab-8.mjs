@@ -5,6 +5,7 @@ for(const l of LABS8){assert.ok(SCHOOL_UNITS.some(u=>u.grade===8&&u.slug===l.top
 for(let i=0;i<l.steps.length;i++){assert.throws(()=>completeStep(l,r,i+1),/step_order/);r=completeStep(l,r,i);r.notes[i]='Мен құбылысты бақылап, нәтижесін өз сөзіммен жаздым.';}
 assert.notEqual(scene8(l,r,null),before);r.conclusion='Бақылауға сүйенген ғылыми қорытынды жасалды.';r.finished=true;assert.equal(validRecord(l,r).finished,true);
 }
+const metals=LABS8.find(l=>l.id==='g8-metals');assert.doesNotMatch(scene8(metals,{...fresh(metals),index:4},null),/M270 136V95H520V250/);
 const mass=LABS8.find(l=>l.id==='g8-mass'),r={...fresh(mass),index:5};assert.match(scene8(mass,r,null),/80,00 г/);
 const carbonate=LABS8.find(l=>l.id==='g8-carbonate');assert.match(scene8(carbonate,{...fresh(carbonate),index:4},null),/лайланды/);assert.match(scene8(carbonate,{...fresh(carbonate),index:5},null),/мөлдірленді/);
 });
