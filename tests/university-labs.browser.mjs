@@ -7,12 +7,16 @@ import {UNIVERSITY_LABS,labForPath} from '../university-labs.js';
 const base='/universitet/ozin-ozi-daiyndau';
 const fixture='<!doctype html><html lang="kk"><head><base href="/himya-platforma/"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="school.css"></head><body><main id="host"></main><script type="module">'+
 "import {UNIVERSITY_LABS,bindUniversityLabs} from './university-labs.js';"+
-"const host=document.querySelector('#host');window.mount=(detail=false)=>{host.innerHTML=detail?'<main class=\"lesson-main\"><div class=\"lesson-body\">Авторлық теория</div><div class=\"resource-list\">Мұғалім материалы</div><section class=\"quiz-card\">Тест</section></main>':'<div class=\"lms-unit-list\">'+UNIVERSITY_LABS.map(lab=>'<a class=\"lms-unit-card\" href=\"/himya-platforma/universitet/ozin-ozi-daiyndau/'+lab.slug+'\">'+lab.title+'</a>').join('')+'</div>';const path='/universitet/ozin-ozi-daiyndau'+(detail?'/'+UNIVERSITY_LABS[1].slug:'');bindUniversityLabs(host,path);bindUniversityLabs(host,path);};mount();"+
+"const host=document.querySelector('#host');window.mount=(detail=false)=>{host.innerHTML=detail?'<main class=\"lesson-main\"><div class=\"lesson-body\">Авторлық теория</div><div class=\"resource-list\">Мұғалім материалы</div><section class=\"quiz-card\">Тест</section></main>':'<div class=\"lms-unit-list\">'+UNIVERSITY_LABS.map(lab=>'<a class=\"lms-unit-card\" href=\"/himya-platforma/universitet/ozin-ozi-daiyndau/'+(lab.matchTopic?'author-kinetics-topic':lab.slug)+'\">'+lab.title+'</a>').join('')+'</div>';const path='/universitet/ozin-ozi-daiyndau'+(detail?'/'+UNIVERSITY_LABS[1].slug:'');bindUniversityLabs(host,path);bindUniversityLabs(host,path);};mount();"+
 '</script></body></html>';
 test('topic mapping keeps CO2 separate from magnesium',()=>{
 assert.equal(labForPath(base+'/zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau').file,'university-lab-metal.html');
 assert.equal(labForPath('/himya-platforma'+base+'/'+UNIVERSITY_LABS[1].slug+'/').file,'university-lab-co2.html');
 assert.equal(labForPath('/mektep/'+UNIVERSITY_LABS[1].slug),undefined);
+assert.equal(labForPath(base+'/admin-created-lesson','№6 Химиялық реакция жылдамдығы және химиялық тепе-теңдік').file,'university-lab-kinetics.html');
+assert.equal(labForPath('/universitet/darister/topic','Реакция жылдамдығы және тепе-теңдік'),undefined);
+assert.equal(labForPath(base+'/number-5','№5 CO₂ молярлық массасы'),undefined);
+assert.equal(labForPath(base+'/rate-only','Реакция жылдамдығы'),undefined);
 for(const lab of UNIVERSITY_LABS)assert.match(readFileSync(new URL('../'+lab.file,import.meta.url),'utf8'),/<html lang="kk">/);
 });
 test('teacher simulations run in responsive isolated embeds',async()=>{
@@ -21,7 +25,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -33,7 +37,7 @@ const context=await browser.newContext({viewport:{width,height:900}}),page=await
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://127.0.0.1:'+server.address().port+'/');
 await page.locator('.university-html-lab').last().waitFor();
-assert.equal(await page.locator('.university-html-lab').count(),3);
+assert.equal(await page.locator('.university-html-lab').count(),4);
 assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
@@ -68,6 +72,13 @@ const expected={Mg:12.1525,Zn:32.69,Fe:27.9225}[metal];
 assert.ok(Math.abs(value-expected)/expected<0.12,'equivalent mass is consistent with selected metal');
 assert.match(await frame.locator('#res').textContent(),{Mg:/Магнийдің/,Zn:/Мырыштың/,Fe:/Темірдің/}[metal]);
 assert.equal(await frame.locator('#metal').isDisabled(),true);
+}else if(lab.file.includes('kinetics')){
+await frame.getByRole('button',{name:'Na₂S₂O₃ құю',exact:true}).click();
+await frame.locator('#li0.done').waitFor();
+assert.equal(await frame.locator('#t100_1').textContent(),'5');
+assert.equal(await frame.locator('#t101_1').textContent(),'10');
+assert.equal(await frame.locator('#t102_1').textContent(),'15');
+assert.equal(await frame.getByRole('button',{name:'Су қосу',exact:true}).isEnabled(),true);
 }else{
 await frame.getByRole('button',{name:'1. Қышқылдар',exact:true}).click();
 await frame.locator('#acid1-btn').click();
