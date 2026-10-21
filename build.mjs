@@ -27,6 +27,8 @@ const files = [
   "school-materials.js",
   "guided-lab.js",
   "guided-lab-data.js",
+  "guided-lab-11-data.js",
+  "guided-lab-11-scene.js",
   "guided-lab-10-data.js",
   "guided-lab-10-scene.js",
   "guided-lab-9-data.js",
