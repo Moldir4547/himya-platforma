@@ -13,25 +13,25 @@ export function scene10(l,s,task){
  let art='',caption='',readings=[];
  if(k==='gas'){
  const v=i>=5?24:i>=4?14:0;
- art=flask(230,i===4?8:0,i>=4)+'<path d="M212 196h36" stroke="#9a8775" stroke-width="13"/><path d="M230 195V131H410" stroke="#8ea8ae" stroke-width="7" fill="none"/>'+syringe(440,110,v)+'<path d="M615 175V78M595 320h45M615 175h-95" stroke="#788d92" stroke-width="6" fill="none"/>'+text(230,344,'Mg + сұйылтылған HCl')+text(520,344,'Газ шприці · H₂')+device(40,70,'Таразы',i>=2?'0,0243 г':'—');
+ art=flask(230,i===4?8:0,i>=4)+'<path d="M212 196h36" stroke="#9a8775" stroke-width="13"/><path d="M230 195V131H410" stroke="#8ea8ae" stroke-width="7" fill="none"/>'+syringe(440,110,v)+'<path d="M615 320V78M595 320h45M615 175h-95v-23M600 175v-23" stroke="#788d92" stroke-width="6" fill="none"/>'+text(230,344,'Mg + сұйылтылған HCl')+text(520,344,'Газ шприці · H₂')+device(40,70,'Таразы',i>=2?'0,0243 г':'—');
  if(i>=2&&i<4)art+='<rect x="219" y="272" width="22" height="30" rx="4" fill="#9fa7a8"/>';
  caption=i>=5?'25 °C · 101,3 кПа · шприц деңгейінде оқу':'Поршень еркін қозғалады; газ жолы бітелмейді.';
  readings=i>=5?['m(Mg) = 0,0243 г','V(H₂) = 24,0 мл','T = 298,15 K; p = 101,3 кПа']:['Шприцтің бастапқы көлемі: 0,0 мл'];
  }
  if(k==='calorimetry'){
  const t=i>=5?26.8:20;
- art='<path d="M290 175l17 146h145l18-146z" fill="#f5f1e4" stroke="#a9aca1" stroke-width="5"/><path d="M308 241h145l-8 70H316z" fill="#d9e9e7"/><rect x="280" y="162" width="200" height="16" rx="6" fill="#c7ccbf"/><path d="M420 150v139" stroke="#9caaac" stroke-width="5"/>'+thermometer(355,98,t)+text(382,344,'Оқшауланған стақан · 100 мл')+beaker(150,195)+text(150,344,'50,0 мл HCl')+beaker(610,195)+text(610,344,'50,0 мл NaOH');
+ art='<path d="M290 175l17 146h145l18-146z" fill="#f5f1e4" stroke="#a9aca1" stroke-width="5"/><path d="M308 241h145l-8 70H316z" fill="#d9e9e7"/><rect x="280" y="162" width="200" height="16" rx="6" fill="#c7ccbf"/><path d="M420 150v139" stroke="#9caaac" stroke-width="5"/>'+thermometer(355,175,t)+text(382,344,'Оқшауланған стақан · 100 мл')+beaker(150,195)+text(150,344,'50,0 мл HCl')+beaker(610,195)+text(610,344,'50,0 мл NaOH');
  caption='Қақпақтағы датчик және араластырғыш · герметикалық емес';
  readings=i>=5?['T₀ = 20,0 °C; Tmax = 26,8 °C','m = 100 г; c = 4,18 Дж/(г·°C)','Екі ерітінді: 1,00 М, әрқайсысы 50,0 мл']:['Екі ерітіндінің бастапқы температурасы: 20,0 °C'];
  }
  if(k==='dissolution'){
- art=beaker(240,185,'#dae7e8')+beaker(520,185,'#dae7e8')+thermometer(260,126,i>=3?16.8:20)+thermometer(540,126,i>=4?28.3:20)+text(240,344,'5,00 г NH₄Cl + 100 г су')+text(520,344,'5,00 г CaCl₂ + 100 г су');
+ art=beaker(240,185,'#dae7e8')+beaker(520,185,'#dae7e8')+thermometer(260,175,i>=3?16.8:20)+thermometer(540,175,i>=4?28.3:20)+text(240,344,'5,00 г NH₄Cl + 100 г су')+text(520,344,'5,00 г CaCl₂ + 100 г су');
  caption='Жылу әсері мен өздігінен жүруді бөлек түсіндіріңіз.';
  readings=i>=5?['Бастапқы T: 20,0 °C','NH₄Cl: 16,8 °C; сусыз CaCl₂: 28,3 °C','Температуралар — жуық модельдік деректер']:['Су үлгілерінің массасы мен бастапқы температурасы бірдей'];
  }
  if(k==='kinetics'){
  const v1=i>=5?24.5:i>=4?8:i>=3?3:0,v2=i>=5?24.5:i>=4?18:i>=3?7:0;
- art=flask(195,i>=3&&i<5?3:0,i>=3)+flask(525,i>=3&&i<5?9:0,i>=3)+'<path d="M177 196h36M507 196h36" stroke="#9a8775" stroke-width="13"/>'+'<path d="M195 195V144H85V131H115M525 195V144H415V131H445" stroke="#8ea8ae" stroke-width="6" fill="none"/>'+syringe(145,110,v1)+syringe(475,110,v2)+text(195,344,'0,50 М HCl')+text(525,344,'1,00 М HCl');
+ art='<path d="M330 320V78M310 320h40M330 175H220v-23M300 175v-23M660 320V78M640 320h40M660 175H550v-23M630 175v-23" stroke="#788d92" stroke-width="6" fill="none"/>'+flask(195,i>=3&&i<5?3:0,i>=3)+flask(525,i>=3&&i<5?9:0,i>=3)+'<path d="M177 196h36M507 196h36" stroke="#9a8775" stroke-width="13"/>'+'<path d="M195 195V144H85V131H115M525 195V144H415V131H445" stroke="#8ea8ae" stroke-width="6" fill="none"/>'+syringe(145,110,v1)+syringe(475,110,v2)+text(195,344,'0,50 М HCl')+text(525,344,'1,00 М HCl');
  caption='Mg массасы, HCl көлемі және температура бірдей.';
  readings=i>=5?['Соңғы көлемдер: 24,5 мл және 24,5 мл','Екі үлгіде де HCl артық']:i>=4?['Бірдей модельдік уақыт: 8,0 мл / 18,0 мл','Аралық көлемдер сапалық салыстыруға арналған']:['Газ шприцтері бастапқыда 0,0 мл'];
  }
