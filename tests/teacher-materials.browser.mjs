@@ -57,7 +57,7 @@ test('real app: teacher navigation, group isolation, combined filters, preview/d
    assert.equal(await page.locator('[data-teacher-entry]').count(),2);
    assert.equal(await page.locator('#pisa').count(),1);
    await page.locator('#pisa a').click();
-   await page.getByRole('heading',{name:'Интерактивті және инновациялық тапсырмалар',exact:true}).waitFor();
+   await page.waitForURL(base+'/himya-platforma/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar');
    assert.equal(new URL(page.url()).pathname,'/himya-platforma/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar');
    await page.goto(base+'/himya-platforma/mugalim-materialdary/ustaz');
    await page.locator('[data-open-resource="s1"]').waitFor();
