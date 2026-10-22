@@ -52,3 +52,20 @@ test('presentation panels contain only published slide files, with grade/topic i
  assert.equal(matchesTopic('Атомдар.pdf',unit('atoms-substances'),'presentation',{category:'Презентация'}),true);
  assert.doesNotMatch(html,/<iframe|<svg|<form|school-notes/);
 });
+
+test('worksheet panels contain only uploaded worksheet files and preserve file actions',()=>{
+ const items=[{id:'g7',path:'/mektep/teoriya/7-synyp',is_published:true},{id:'g8',path:'/mektep/teoriya/8-synyp',is_published:true},{id:'hidden',parent_id:'g7',is_published:false}];
+ const file=(id,filename,extra={})=>({id,item_id:'g7',filename,...extra});
+ const files=[file('sheet','Жұмыс парағы Атомдар.pdf'),file('sheet','Жұмыс парағы Атомдар.pdf'),file('slide','Атомдар.pptx'),file('theory','Атомдар теория.pdf'),file('video','Атомдар.mp4'),file('draft','Жұмыс парағы Атомдар.pdf',{is_published:false}),file('other','Жұмыс парағы Атомдар.pdf',{item_id:'g8'}),file('hidden','Жұмыс парағы Атомдар.pdf',{item_id:'hidden'})];
+ for(const topic of [null,unit('atoms-substances')]){
+  const html=schoolFileMaterials(items,files,7,topic,'worksheet');
+  assert.equal((html.match(/class="resource-card"/g)||[]).length,1);
+  assert.match(html,/data-open-resource="sheet"/);
+  assert.match(html,/data-download-resource="sheet"/);
+  for(const id of ['slide','theory','video','draft','other','hidden'])assert.doesNotMatch(html,new RegExp('data-open-resource="'+id+'"'));
+  assert.doesNotMatch(html,/<form|<svg|<textarea|ws-reference|data-school-answer|data-worksheet-print/);
+ }
+ const empty=schoolFileMaterials(items,files,7,unit('oxides'),'worksheet');
+ assert.match(empty,/school-file-empty/);
+ assert.doesNotMatch(empty,/resource-card|<form|<svg/);
+});
