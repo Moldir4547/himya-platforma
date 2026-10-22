@@ -68,6 +68,6 @@ for(const grade of [7,8,9,10,11]){
 if(width===1440)assert.equal(await page.evaluate(()=>window.allLabPanels()),71);
 await page.evaluate(()=>window.openUnit('carbon'));
 await page.locator('[data-school-tab="lab"]').first().click();
-assert.equal(await page.locator('[data-lab]').inputValue(),'g8-carbon');
+assert.equal(await page.locator('[data-lab]').inputValue(),'g8-carbonate');
 assert.equal(await page.locator('[data-school-form],[data-lab-control],[data-lab-picture]').count(),0);
 await page.locator('[role=tab][aria-selected=true]').press('Home');assert.equal(await page.locator('[role=tab][aria-selected=true]').textContent(),'Түсіну');await page.evaluate(()=>window.switchOwner());await page.locator('[data-school-tab="results"]').first().click();assert.equal(await page.locator('.school-result-list article').filter({hasText:'Әлі орындалмаған'}).count(),6);assert.deepEqual(errors,[]);mkdirSync(new URL('../test-output',import.meta.url),{recursive:true});await page.evaluate(()=>window.openUnit('bonding'));await page.screenshot({path:new URL('../test-output/school-'+width+'.png',import.meta.url).pathname.replace(/^\/([A-Za-z]:)/,'$1'),fullPage:true});await ctx.close();}}finally{await browser.close();await new Promise(r=>server.close(r));}});
