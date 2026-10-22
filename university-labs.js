@@ -3,7 +3,8 @@ export const UNIVERSITY_LABS = [
  {slug:'zerthanalyq-sabaq-beiorganikalyq-qosylystardyn-negizgi-klastary-oksidter-qyshqyldar-negizder-tuzdar',file:'university-lab-classes.html',title:'Қышқылдар, негіздер және тұздар',description:'Заттардың қасиеттерін тәжірибеде бақылап, реакция теңдеулерін салыстырыңыз.'},
  {slug:'zerthanalyq-sabaq-5-komirteginin-iv-oksidinin-salystyrmaly-moldik-massasyn-anyqtau',file:'university-lab-co2.html',title:'CO₂ молярлық массасын анықтау',description:'Жағдайларды тіркеп, колбаны өлшеңіз, газбен толтырыңыз және нәтижені есептеңіз.',note:'Авторлық HTML файлда №4 деп белгіленген. Платформада осы тақырып №5 зертханалық сабаққа сәйкес келеді.'},
  {slug:'zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau',file:'university-lab-metal.html',title:'Металдың эквиваленттік массасын анықтау',description:'Аспапты құрастырып, герметикалығын тексеріңіз. Металды өлшеп, бөлінген сутек көлемі арқылы эквиваленттік массасын есептеңіз.',note:'Авторлық HTML файлда №3 деп белгіленген. Платформада осы тақырып №4 зертханалық сабаққа сәйкес келеді.'}
- ,{slug:'reaction-rate-equilibrium',file:'university-lab-kinetics.html',title:'Химиялық реакция жылдамдығы және химиялық тепе-теңдік',description:'Концентрация мен температураның әсерін, кейін тепе-теңдіктің ығысуын қадаммен бақылаңыз.',note:'Жүктелген авторлық HTML нұсқа · №5.',matchTopic:true}
+ ,{slug:'reaction-rate-equilibrium',file:'university-lab-kinetics.html',title:'Химиялық реакция жылдамдығы және химиялық тепе-теңдік',description:'Концентрация мен температураның әсерін, кейін тепе-теңдіктің ығысуын қадаммен бақылаңыз.',note:'Жүктелген авторлық HTML нұсқа · №5.',matchTopic:'kinetics'}
+ ,{slug:'solution-preparation',file:'university-lab-solutions.html',title:'Әртүрлі концентрациялы ерітінділер дайындау',description:'Концентрлі ерітіндіден сұйылту, құрғақ тұздан ерітінді дайындау, масса мен көлемді есептеу және ареометрмен тығыздықты өлшеу.',note:'Жүктелген авторлық HTML нұсқа · №6.',matchTopic:'solutions'}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
 export function labForPath(path,title=''){
@@ -12,7 +13,8 @@ export function labForPath(path,title=''){
  if(exact)return exact;
  // Existing administrator-created URLs can vary; match the complete topic,
  // never the printed laboratory number, and only inside this lab course.
- if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic);
+ if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='kinetics');
+ if(clean.startsWith(course+'/')&&/ерітінді/iu.test(title)&&/дайында/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='solutions');
 }
 export function bindUniversityLabs(root,pathname=location.pathname){
  const path=pathname.replace(/^\/himya-platforma(?=\/|$)/,'').replace(/\/$/,'');
