@@ -8,6 +8,7 @@ const items=[
  {id:'g',parent_id:'s',area:'school',path:'/mektep/teoriya/7-synyp',title:'7-сынып',is_published:true},
  {id:'u',area:'university',path:'/universitet',title:'ЖОО',is_published:true},
  {id:'l',parent_id:'u',area:'university',path:'/universitet/daris',title:'Дәріс',is_published:true},
+ {id:'pisa',parent_id:'s',area:'school',path:'/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar',title:'Интерактивті және инновациялық тапсырмалар',body:'<h2>Бұрынғы PISA кейстері</h2>',is_published:true},
  {id:'h',area:'school',path:'/hidden',title:'Жасырын',is_published:false}
 ];
 const resources=[
@@ -43,14 +44,27 @@ test('real app: teacher navigation, group isolation, combined filters, preview/d
    await context.addCookies([{name:'member',value:'1',url:base}]);
    await page.goto(base+'/himya-platforma/mugalim-materialdary');
    await page.locator('.teacher-direction').last().waitFor();
-   assert.equal(await page.locator('.teacher-direction').count(),2);
+   assert.equal(await page.getByRole('heading',{name:'PISA тапсырмалары',exact:true}).count(),1);
+   assert.equal(await page.locator('#pisa a').getAttribute('href'),'/himya-platforma/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar');
+   assert.equal(await page.locator('.teacher-direction').count(),3);
    await page.locator('.teacher-direction').filter({hasText:'Оқытушы'}).click();
    await page.locator('[data-open-resource="u1"]').waitFor();
    assert.equal(await page.locator('[data-open-resource="s1"]').count(),0);
    assert.match(await page.title(),/Оқытушы/);
+   assert.equal(await page.locator('#pisa').count(),0);
    await page.getByRole('navigation',{name:'Материал бағыты'}).getByRole('link',{name:'Ұстаз',exact:false}).click();
    await page.locator('[data-open-resource="s1"]').waitFor();
    assert.equal(await page.locator('[data-teacher-entry]').count(),2);
+   assert.equal(await page.locator('#pisa').count(),1);
+   assert.deepEqual(writes,[],'teacher material views must remain read-only');
+   const pisaSave=page.waitForResponse(r=>r.url().endsWith('/api/progress')&&r.request().method()==='POST');
+   await page.locator('#pisa a').click();
+   await page.waitForURL(base+'/himya-platforma/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar');
+   assert.equal(new URL(page.url()).pathname,'/himya-platforma/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar');
+   await pisaSave;
+   assert.deepEqual(writes.splice(0),['/api/progress'],'opening the existing PISA lesson retains its normal visit progress');
+   await page.goto(base+'/himya-platforma/mugalim-materialdary/ustaz');
+   await page.locator('[data-open-resource="s1"]').waitFor();
    await page.getByLabel('Материал іздеу',{exact:true}).fill('АТОМ');
    assert.equal(await page.locator('[data-teacher-entry]:visible').count(),1);
    await page.getByLabel('Материал түрі',{exact:true}).selectOption('pdf');
