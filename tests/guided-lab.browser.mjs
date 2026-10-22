@@ -21,7 +21,7 @@ try{for(const width of [1440,390,320]){const ctx=await browser.newContext({viewp
  assert.equal(await nav.getByRole('link').count(),9);
  assert.equal(await page.locator('[data-school-card]').count(),10);
  await nav.locator('[data-grade-seven-mode="presentation"]').click();
- assert.equal(await page.locator('[data-school-card][href$="#presentation"]').count(),10);
+ assert.equal(await page.locator('[data-school-card]').count(),0);assert.equal(await page.locator('.school-file-empty').count(),1);
  await nav.locator('[data-grade-seven-mode="lab"]').click();
  assert.equal(await page.locator('#chem-guided-lab[data-grade="7"]').count(),1);
  assert.equal(await page.locator('[data-lab] option').count(),15);

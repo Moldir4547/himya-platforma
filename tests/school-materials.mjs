@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {SCHOOL_UNITS} from '../school-curriculum.js';
-import {matchesTopic,worksheetIntro,worksheetEnd,CLASS_CARDS} from '../school-materials.js';
+import {matchesTopic,schoolFileMaterials,worksheetIntro,worksheetEnd,CLASS_CARDS} from '../school-materials.js';
 const unit=slug=>SCHOOL_UNITS.find(u=>u.slug===slug);
 test('existing teacher slide and worksheet filenames map to their lesson topics',()=>{
 const cases=[
@@ -36,4 +36,19 @@ for(const u of SCHOOL_UNITS){
 }
 assert.match(worksheetIntro(unit('salts-genetic'),''),/Карбонаттар мен сульфаттар — тұздардың түрлері/);
 assert.doesNotMatch(worksheetIntro({...unit('safety-mixtures'),title:'<script>alert(1)</script>'},''),/<script>/);
+});
+
+test('presentation panels contain only published slide files, with grade/topic isolation and original actions',()=>{
+ const items=[{id:'g7',path:'/mektep/teoriya/7-synyp',is_published:true},{id:'g8',path:'/mektep/teoriya/8-synyp',is_published:true},{id:'child',parent_id:'g7',title:'Атомдар',is_published:true},{id:'hidden',parent_id:'g7',is_published:false}];
+ const file=(id,filename,extra={})=>({id,item_id:'child',filename,...extra});
+ const files=[file('slide','Атомдар.pptx'),file('theory','Атомдар теория.pdf'),file('pdf-slide','Атомдар.pdf',{category:'Презентация'}),file('doc','Атомдар.docx'),file('sheet','Жұмыс парағы Атомдар.pdf'),file('draft','Атомдар.pptx',{is_published:false}),file('other-grade','Атомдар.pptx',{item_id:'g8'}),file('hidden-parent','Атомдар.pptx',{item_id:'hidden'}),file('slide','Атомдар.pptx')];
+ const html=schoolFileMaterials(items,files,7,unit('atoms-substances'));
+ assert.equal((html.match(/class="resource-card"/g)||[]).length,2);
+ assert.match(html,/data-open-resource="slide"/);
+ assert.match(html,/data-download-resource="pdf-slide"/);
+ for(const id of ['theory','doc','sheet','draft','other-grade','hidden-parent'])assert.doesNotMatch(html,new RegExp('data-open-resource="'+id+'"'));
+ assert.equal(matchesTopic('Атомдар.pdf',unit('atoms-substances'),'presentation'),false);
+ assert.equal(matchesTopic('Атомдар презентация.pdf',unit('atoms-substances'),'presentation'),true);
+ assert.equal(matchesTopic('Атомдар.pdf',unit('atoms-substances'),'presentation',{category:'Презентация'}),true);
+ assert.doesNotMatch(html,/<iframe|<svg|<form|school-notes/);
 });

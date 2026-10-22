@@ -73,12 +73,40 @@ const aliases={
 'nanomaterials':['нано','жаңа материал'],
 'green-chemistry':['жасыл химия','атмосфера','жаһандық']
 };
-export function matchesTopic(filename,u,kind){
- const name=normalize(filename);
- if(kind==='presentation'&&!/\.(pptx?|pdf)$/i.test(filename.trim()))return false;
- if(kind==='presentation'&&/жұмыс парағы/i.test(filename))return false;
- if(kind==='worksheet'&&!/жұмыс парағы/i.test(filename))return false;
- return (aliases[u.slug]||[u.title]).some(term=>name.includes(normalize(term)));
+export function matchesTopic(filename,u,kind,metadata={}){
+ const name=normalize([filename,metadata.title,metadata.topicTitle].filter(Boolean).join(' '));
+ if(kind==='presentation'){
+  const ppt=/\.pptx?$/i.test(filename.trim());
+  const markedPdf=/\.pdf$/i.test(filename.trim())&&(/презентац|слайд|presentation|slide/iu.test(filename)||normalize(metadata.category)==='презентация');
+  if(!ppt&&!markedPdf)return false;
+  if(/жұмыс парағы/iu.test(filename))return false;
+ }
+ if(kind==='worksheet'&&!/жұмыс парағы/iu.test(filename))return false;
+ return !u||(aliases[u.slug]||[u.title]).some(term=>name.includes(normalize(term)));
+}
+// Render only resource cards. Never ask the lesson renderer for theory, video,
+// assessment or progress markup when a user requests a file-only panel.
+export function schoolFileMaterials(items=[],resources=[],grade,u,kind='presentation'){
+ const parent=items.find(item=>item.path==='/mektep/teoriya/'+grade+'-synyp');
+ if(!parent)return '<p>Сынып материалдары әзірге қосылмаған.</p>';
+ const byId=new Map(items.map(item=>[item.id,item]));
+ function inGrade(item){
+  const seen=new Set();
+  while(item){
+   if(seen.has(item.id)||!item.is_published)return false;
+   seen.add(item.id);if(item.id===parent.id)return true;
+   item=byId.get(item.parent_id);
+  }
+  return false;
+ }
+ const seen=new Set(),files=resources.filter(r=>{
+  const item=byId.get(r.item_id);
+  if(!item||!inGrade(item)||r.is_published===false||r.is_published===0||seen.has(r.id))return false;
+  if(!matchesTopic(r.filename||'',u,kind,{...r,topicTitle:item.title}))return false;
+  seen.add(r.id);return true;
+ });
+ if(!files.length)return '<p class="school-file-empty">'+(kind==='presentation'?'Бұл бөлімге презентация әзірге жүктелмеген.':'Бұл тақырыпқа жұмыс парағы әзірге жүктелмеген.')+'</p>';
+ return '<div class="resource-list school-file-list">'+files.map(r=>'<article class="resource-card"><span class="file-type">'+esc((r.filename||'').split('.').pop().toUpperCase())+'</span><strong>'+esc(r.filename)+'</strong><div class="material-actions"><button data-open-resource="'+esc(r.id)+'">Ашу</button><button data-download-resource="'+esc(r.id)+'">Жүктеп алу</button></div></article>').join('')+'</div>';
 }
 // The wrapper receives the platform's existing resource markup: original file IDs,
 // access controls and open/download actions stay with their original resources.
