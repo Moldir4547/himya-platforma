@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {teacherEntries,teacherRoute,TEACHER_PATH} from '../teacher-materials.js';
+import {teacherEntries,teacherRoute,teacherPisaSection,TEACHER_PATH} from '../teacher-materials.js';
 const items=[
  {id:'s',area:'school',path:'/mektep',title:'Мектеп',is_published:true},
  {id:'u',area:'university',path:'/universitet',title:'ЖОО',is_published:true},
@@ -32,4 +32,19 @@ test('two directions keep original open/download IDs and group isolation',()=>{
  assert.match(teacherRoute(TEACHER_PATH+'/ustaz',ctx),/data-download-resource="school"/);
  assert.equal(teacherRoute(TEACHER_PATH+'/unknown',ctx),null);
  assert.match(teacherRoute(TEACHER_PATH+'/ustaz',{...ctx,state:{...ctx.state,allResources:[{id:'x',item_id:'g',filename:'<script>.pdf'}]}}),/&lt;script&gt;/);
+});
+
+test('published legacy PISA pages appear in teacher home and school direction without copying content',()=>{
+ const legacy={id:'pisa',parent_id:'s',path:'/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar',title:'Интерактивті және инновациялық тапсырмалар',is_published:true,body:'<p>Original cases</p>'};
+ const input=[...items,legacy,{id:'draft-pisa',parent_id:'s',title:'PISA draft',path:'/hidden-pisa',is_published:false},{id:'nested-pisa',parent_id:'hidden',title:'PISA hidden ancestor',path:'/nested-pisa',is_published:true},{id:'bridge-pisa',parent_id:'bridge',title:'PISA bridge',path:'/bridge-pisa',is_published:true}];
+ const before=JSON.stringify(input),ctx={state:{items:input,allResources:resources},shell:x=>x};
+ for(const path of [TEACHER_PATH,TEACHER_PATH+'/ustaz']){
+  const html=teacherRoute(path,ctx);
+  assert.match(html,/id="pisa"/);
+  assert.ok(html.includes('href="/mektep/interaktivti-zhane-innovaciyalyq-tapsyrmalar"'));
+  assert.doesNotMatch(html,/Original cases|hidden-pisa|nested-pisa|bridge-pisa/);
+ }
+ assert.doesNotMatch(teacherRoute(TEACHER_PATH+'/oqytushy',ctx),/id="pisa"/);
+ assert.equal(teacherPisaSection(items),'');
+ assert.equal(JSON.stringify(input),before);
 });
