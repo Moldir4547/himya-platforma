@@ -54,7 +54,7 @@ test('presentation panels contain only published slide files, with grade/topic i
 });
 
 test('worksheet panels contain only uploaded worksheet files and preserve file actions',()=>{
- const items=[{id:'g7',path:'/mektep/teoriya/7-synyp'},{id:'g8',path:'/mektep/teoriya/8-synyp'},{id:'hidden',parent_id:'g7',is_published:false}];
+ const items=[{id:'g7',path:'/mektep/teoriya/7-synyp',is_published:true},{id:'g8',path:'/mektep/teoriya/8-synyp',is_published:true},{id:'hidden',parent_id:'g7',is_published:false}];
  const file=(id,filename,extra={})=>({id,item_id:'g7',filename,...extra});
  const files=[file('sheet','Жұмыс парағы Атомдар.pdf'),file('sheet','Жұмыс парағы Атомдар.pdf'),file('slide','Атомдар.pptx'),file('theory','Атомдар теория.pdf'),file('video','Атомдар.mp4'),file('draft','Жұмыс парағы Атомдар.pdf',{is_published:false}),file('other','Жұмыс парағы Атомдар.pdf',{item_id:'g8'}),file('hidden','Жұмыс парағы Атомдар.pdf',{item_id:'hidden'})];
  for(const topic of [null,unit('atoms-substances')]){
