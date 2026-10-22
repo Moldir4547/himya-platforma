@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>№6 зертханалық жұмыс — виртуалды нұсқа</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fa;--card:#fff;--text:#13293d;--muted:#5c7080;--primary:#0b3d5c;--accent:#d9611f;--border:#e3e9ed;--ok:#22c55e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}}
+:root[data-theme="dark"]{--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:22px 14px 60px}
+h1{font-size:1.3rem;margin:0 0 8px}
+.box,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:12px;font-size:.86rem;line-height:1.5;transition:box-shadow .3s,border-color .3s}
+.box b{color:var(--primary)}.mut{color:var(--muted);font-size:.78rem}
+.card.flash{box-shadow:0 0 0 3px rgba(34,197,94,.55);border-color:var(--ok)}
+.shelf{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.shelf div{display:flex;flex-direction:column;align-items:center;width:84px;font-size:.68rem;text-align:center;color:var(--muted);line-height:1.2}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:.76rem}
+.chk{margin-top:6px;font-size:.82rem}.chk .g{font-weight:700;margin-top:9px;color:var(--primary)}
+.i{display:flex;gap:9px;align-items:center;padding:3px 6px;border-radius:6px;color:var(--muted)}
+.dot{width:12px;height:12px;border-radius:50%;background:#b8c4cc;flex:none;transition:.3s}
+.i.cur{background:rgba(74,154,216,.12);color:var(--text)}.i.cur .dot{background:#f5a524;box-shadow:0 0 0 3px rgba(245,165,36,.3)}
+.i.done{color:var(--text)}.i.done .dot{background:var(--ok);box-shadow:0 0 9px 2px rgba(34,197,94,.75)}
+#scene{width:100%;height:auto;max-height:54vh;display:block;border-radius:8px}
+.bar{display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.lcd{background:#101b24;color:#7fffa0;font-family:Consolas,monospace;padding:6px 12px;border-radius:6px;min-width:112px;text-align:center}
+#say{flex:1;min-width:180px;font-size:.84rem}
+.st{font-weight:700;color:var(--primary);margin-bottom:4px}.card p{margin:2px 0 8px;color:var(--muted)}
+button{background:var(--primary);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:.88rem;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+#ask label{display:flex;gap:8px;align-items:center;margin:4px 0;font-size:.84rem}
+#ask input{width:100px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text)}
+#askMsg{margin-top:8px;font-size:.84rem}
+table{border-collapse:collapse;font-size:.8rem;width:100%;margin:6px 0}th,td{border:1px solid var(--border);padding:4px 6px;text-align:center}th{background:var(--bg)}
+.center{text-align:center;margin-top:12px}
+.dash{animation:dash .35s linear infinite}@keyframes dash{to{stroke-dashoffset:-22}}
+.stir{transform-box:fill-box;transform-origin:50% 0;animation:stir .7s ease-in-out infinite alternate}@keyframes stir{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+#rv{overflow-x:auto}#ask label{flex-wrap:wrap}#rv h3{margin:10px 0 3px;font-size:.92rem;color:var(--primary)}#rv p{margin:3px 0;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>№6 зертханалық жұмыс · виртуалды нұсқа</h1>
+<div class="box"><b>Әртүрлі концентрациялы ерітінділер дайындау</b> (концентрлі ерітінділер және нормалдылық)<br>
+<b>Жұмыстың мақсаты:</b> құрғақ тұздан және тығыздығы белгілі қышқылдан әртүрлі концентрациялы ерітінділерді дайындау.<br>
+<span class="mut">Бұл нұсқада: 1 (ә) — концентрлі ерітіндіден 10 % қышқыл және ρ = 1,05 г/мл сілті; 2 (а) — 0,5 н BaCl₂; 2 (ә) — 0,1 М H₂SO₄.</span></div>
+<div class="box"><b>Қажет аспаптар мен реактивтер</b><div class="shelf" id="shelf"></div><div class="shelf" id="chips"></div></div>
+<div class="box"><b>Орындалу реті</b> <span class="mut">— орындалған қадам жасыл түспен жанады</span><div class="chk" id="chk"></div></div>
+
+<div class="card" id="scard"><svg id="scene" viewBox="0 0 400 250"></svg>
+<div class="bar"><div class="lcd" id="clock">— </div><div id="say"></div></div></div>
+<div class="card"><div class="st" id="stT"></div><p id="stD"></p><div id="ask"></div><button id="go" onclick="runStep()"></button><div id="askMsg"></div></div>
+<div class="card" id="rv" style="display:none"></div>
+<div class="center"><button class="secondary" onclick="location.reload()">↺ Қайта бастау (жаңа нұсқа)</button></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const R=(a,b,d)=>+(Math.random()*(b-a)+a).toFixed(d),F=(x,d)=>x.toFixed(d).replace('.',',');
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),rg=c=>'rgb('+c.map(Math.round).join()+')';
+const mix=(a,va,b,vb)=>a.map((x,i)=>(x*va+b[i]*vb)/((va+vb)||1));
+const wait=(ms,f)=>setTimeout(f,ms),say=s=>$('say').innerHTML=s;
+function tween(ms,fn,done){const t0=performance.now();(function f(now){const p=Math.min(1,(now-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(e,p);p<1?requestAnimationFrame(f):done&&done()})(t0)}
+const CLEAR='#d3eaf5';
+
+/* ---- density tables, 20 °C: [mass %, g/mL] (reference values) ---- */
+const TH=[[0,.9982],[1,1.0051],[2,1.0118],[3,1.0184],[4,1.025],[5,1.0317],[10,1.0661],[15,1.102],[20,1.1394],[25,1.1783],[30,1.2185],[35,1.2579],[40,1.3028],[45,1.3476],[50,1.3951],[55,1.4453],[60,1.4983],[65,1.5533],[70,1.6105],[75,1.6692],[80,1.7272],[85,1.7786],[90,1.8144],[95,1.8337],[98,1.8361]];
+const TN=[[0,.9982],[1,1.0095],[2,1.0207],[4,1.0428],[6,1.0648],[8,1.0869],[10,1.1089],[12,1.1309],[14,1.153],[16,1.1751],[18,1.1972],[20,1.2191],[24,1.2629],[28,1.3064],[30,1.3279],[32,1.349],[36,1.39],[40,1.43]];
+const TB=[[0,.9982],[1,1.0075],[2,1.0165],[4,1.0346],[5,1.044],[6,1.0535],[8,1.0728],[10,1.095],[12,1.1175],[14,1.1405],[16,1.1648],[18,1.1894],[20,1.214],[24,1.265]];
+const rho=(t,w)=>{let i=0;while(i<t.length-2&&t[i+1][0]<w)i++;const a=t[i],b=t[i+1];return a[1]+(w-a[0])/(b[0]-a[0])*(b[1]-a[1])};
+const lk=(t,r)=>{let i=0;while(i<t.length-2&&t[i+1][1]<r)i++;const a=t[i],b=t[i+1];return{a,b,w:a[0]+(r-a[1])/(b[1]-a[1])*(b[0]-a[0])}};
+const hyr=r=>+(r+(r<1.12?R(-.0006,.0006,4):R(-.003,.003,4))).toFixed(3);
+const lkT=(L,r)=>`кесте: ${F(L.a[1],4)} → ${L.a[0]} %, ${F(L.b[1],4)} → ${L.b[0]} %; интерполяция`;
+
+/* ---- apparatus ---- */
+let vid=0,SC={};const sc=$('scene');
+function base(){sc.innerHTML='<rect width="400" height="250" fill="#eef4f7"/><rect y="218" width="400" height="32" fill="#cdbb9e"/><rect y="218" width="400" height="3" fill="#b3a083"/>'}
+function lab(x,y,s,z){const t=el('text',{x,y,'text-anchor':'middle','font-size':z||9,fill:'#13293d'},sc);t.textContent=s;return t}
+function cylSpec(w,h,Vm,n){let ex='';for(let k=1;k<=n;k++){const y=h-(h-10)*k/n;ex+=`<line x1="${w-(k%2?5:9)}" y1="${y}" x2="${w}" y2="${y}" stroke="#5c7080" stroke-width=".9"/>`;if(k%2==0)ex+=`<text x="${w-11}" y="${y+2.5}" font-size="6.5" text-anchor="end" fill="#5c7080">${Vm/n*k}</text>`}
+ return{cl:`M0,0V${h}H${w}V0Z`,od:`M-3,0H0V${h}H${w}V0H${w+3}M-4,${h+1}H${w+4}`,pts:[[0,h],[Vm,10]],hw:w/2,mx:w/2,ex}}
+function flaskSpec(){const p='M-6,0V46C-6,56 -40,60 -40,100A40,40 0 0 0 40,100C40,60 6,56 6,46V0';
+ return{cl:p+'Z',od:p+'M-9,-1H9',pts:[[0,138],[40,127],[100,110],[160,88],[205,66],[238,48],[250,34]],hw:6,mx:0,ex:'<path d="M-9,34H9" stroke="#d33" stroke-width="1.6"/><text x="12" y="37" font-size="7" fill="#d33">250 мл</text>'}}
+function ves(x,y,o){const id='v'+(vid++),v={x,y,mx:o.mx,hw:o.hw,pv:[o.mx,0],vol:0,rgb:hx(CLEAR),dx:0,dy:0,tilt:0};
+ v.g=el('g',{},sc);el('path',{d:o.cl},el('clipPath',{id},v.g));
+ v.lg=el('g',{},el('g',{'clip-path':`url(#${id})`},v.g));
+ v.liq=el('rect',{x:-300,y:600,width:800,height:600,opacity:.85},v.lg);v.liq.style.fill=rg(v.rgb);
+ el('path',{d:o.od,fill:'none',stroke:'#5c7080','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'},v.g);v.g.insertAdjacentHTML('beforeend',o.ex||'');
+ v.ys=q=>{const p=o.pts;let i=0;while(i<p.length-2&&p[i+1][0]<q)i++;return p[i][1]+(q-p[i][0])/(p[i+1][0]-p[i][0])*(p[i+1][1]-p[i][1])};
+ v.upd=()=>{const s=v.ys(v.vol);v.liq.setAttribute('y',v.vol<=0?600:s);v.g.setAttribute('transform',`translate(${v.x+v.dx},${v.y+v.dy}) rotate(${v.tilt},${v.pv[0]},${v.pv[1]})`);v.lg.setAttribute('transform',`rotate(${-v.tilt},${v.pv[0]},${s})`)};
+ v.upd();return v}
+function thermo(x,y){el('rect',{x,y,width:6,height:86,rx:3,fill:'rgba(200,225,240,.4)',stroke:'#5c7080','stroke-width':1.2},sc);el('circle',{cx:x+3,cy:y+90,r:6,fill:'#d33'},sc);
+ const hg=el('rect',{x:x+2,y:y+60,width:2,height:30,fill:'#d33'},sc),tx=el('text',{x:x+3,y:y-4,'text-anchor':'middle','font-size':9,'font-weight':700,fill:'#13293d'},sc);
+ const o={set:T=>{const h=8+(T-10)/50*74;hg.setAttribute('y',y+90-h);hg.setAttribute('height',h);tx.textContent=Math.round(T)+'°'}};o.set(20);return o}
+function pourer(){const p=el('g',{id:'pr',style:'display:none'},sc);el('path',{id:'prS',d:'','stroke-width':2.6,fill:'none','stroke-linecap':'round'},p);el('g',{id:'prC'},p);
+ el('text',{id:'prT',x:14,y:-46,'font-size':9,'font-weight':700,fill:'#13293d',style:'paint-order:stroke;stroke:#eef4f7;stroke-width:3px'},p)}
+function look(mode,hex){const gl='rgba(200,225,240,.4)',s='stroke="#5c7080"';
+ $('prC').innerHTML=mode=='pour'?`<rect x="-7" y="0" width="14" height="48" rx="2" fill="${gl}" ${s} stroke-width="1.6"/><rect id="prL" x="-6" y="1" width="12" height="40" fill="${hex}" opacity=".9"/>`+[10,20,30,40].map(y=>`<line x1="-7" y1="${y}" x2="-2" y2="${y}" ${s} stroke-width=".8"/>`).join('')
+ :mode=='drops'?`<path d="M-2.5,0V30h5V0" fill="${gl}" ${s} stroke-width="1.4"/><path d="M-8,30c0,-9 16,-9 16,0v14c0,6 -16,6 -16,0z" fill="#5a4a42"/><rect x="-1.5" y="1" width="3" height="10" fill="${hex}"/>`
+ :`<rect x="-2.5" y="2" width="5" height="36" rx="2" fill="#9aa6ad"/><ellipse cx="0" cy="3" rx="7" ry="4.5" fill="#9aa6ad"/><circle cx="-2" cy="2" r="1.8" fill="#fff"/><circle cx="2" cy="4" r="1.6" fill="#fff"/>`}
+function addTo(v,mL,hex,o,cb){o=o||{};const mode=o.mode||'pour',lx=v.x+v.mx,ly=v.y-(mode=='drops'?14:10)-(o.up||0);
+ look(mode,hex);const P=$('pr'),S=$('prS');P.style.display='';P.setAttribute('transform',`translate(${lx},${ly})`);
+ $('prC').setAttribute('transform',mode=='drops'?'rotate(180)':'rotate(-135)');$('prT').textContent=o.lab||'';
+ S.setAttribute('stroke',mode=='crystals'?'#fff':hex);S.style.filter=mode=='crystals'?'drop-shadow(0 0 1px #5c7080)':'';
+ S.setAttribute('stroke-dasharray',mode=='pour'?'none':mode=='drops'?'2 9':'3 8');S.setAttribute('class',mode=='pour'?'':'dash');
+ const v0=v.vol,c0=v.rgb,c1=hx(hex),cm=o.keep?c0:mix(c0,v0,c1,mL);v.liq.style.transition='none';
+ tween(o.ms||1100,e=>{v.vol=v0+mL*e;v.upd();v.liq.style.fill=rg(c0.map((x,i)=>x+(cm[i]-x)*e));
+  S.setAttribute('d','M0,0V'+Math.max(4,v.y+v.ys(v.vol)-ly));const L=$('prL');L&&L.setAttribute('height',40*(1-e*.8))},()=>{v.rgb=cm;P.style.display='none';cb&&cb()})}
+function transfer(a,b,mL,cb,ms,up){const dir=b.x<a.x?-1:1,hf=a.hw,lipx=a.x+a.mx+dir*hf*.574,dxT=b.x+b.mx-lipx,dyT=b.y-12-(up||0)-a.y-hf*.819;
+ const v0=a.vol,w0=b.vol,cA=a.rgb,cB=b.rgb,cm=mix(cB,w0,cA,mL),P=$('pr'),S=$('prS');a.liq.style.transition=b.liq.style.transition='none';
+ tween(600,e=>{a.tilt=dir*55*e;a.dx=dxT*e;a.dy=dyT*e;a.upd()},()=>{
+  $('prC').innerHTML='';$('prT').textContent='';P.style.display='';const ly=a.y+dyT+hf*.819;P.setAttribute('transform',`translate(${b.x+b.mx},${ly})`);
+  S.setAttribute('stroke',rg(cA));S.setAttribute('stroke-dasharray','none');S.setAttribute('class','');S.style.filter='';
+  tween(ms||1300,e=>{a.vol=v0-mL*e;b.vol=w0+mL*e;a.upd();b.upd();b.liq.style.fill=rg(cB.map((x,i)=>x+(cm[i]-x)*e));S.setAttribute('d','M0,0V'+Math.max(4,b.y+b.ys(b.vol)-ly))},()=>{
+   b.rgb=cm;P.style.display='none';tween(600,e=>{a.tilt=dir*55*(1-e);a.dx=dxT*(1-e);a.dy=dyT*(1-e);a.upd()},cb)})})}
+function rock(v,cb){v.pv=[0,90];tween(1800,(e,p)=>{v.tilt=28*Math.sin(p*Math.PI*4);v.upd()},()=>{v.tilt=0;v.pv=[0,0];v.upd();cb&&cb()})}
+function hydro(v,r,cb){const cx=v.x+v.mx,yS=v.y+v.ys(v.vol),g=v.hy=el('g',{},sc),D=r<1.12?.002:.01,k0=Math.round(r/D);
+ el('rect',{x:cx-2.5,y:yS-52,width:5,height:86,fill:'#f4efe0',stroke:'#7a6f55','stroke-width':.8},g);
+ el('ellipse',{cx,cy:yS+56,rx:9,ry:22,fill:'#f4efe0',stroke:'#7a6f55','stroke-width':.8},g);el('rect',{x:cx-6,y:yS+68,width:12,height:9,rx:3,fill:'#777'},g);
+ for(let k=k0-3;k<=k0+1;k++){const y=yS+(k*D-r)/D*16;el('line',{x1:cx-2.5,y1:y,x2:cx+1,y2:y,stroke:'#7a6f55','stroke-width':.8},g);
+  const t=el('text',{x:cx+4,y:y+2.5,'font-size':6.5,fill:'#5a4a30'},g);t.textContent=F(k*D,D<.005?3:2)}
+ el('line',{x1:cx-13,y1:yS,x2:cx+13,y2:yS,stroke:'#d33','stroke-width':1.3},g);
+ tween(1400,e=>g.setAttribute('transform',`translate(0,${-70*(1-e)+(e>.6?3*Math.sin(e*30)*(1-e):0)})`),()=>wait(500,cb))}
+function drain(v,cb){const v0=v.vol;if(v.hy){const h=v.hy;v.hy=null;tween(500,e=>h.setAttribute('transform',`translate(0,${-70*e})`),()=>h.remove())}
+ tween(900,e=>{v.vol=v0*(1-e);v.upd()},()=>{v.vol=0;v.upd();cb&&cb()})}
+
+/* ---- scenes ---- */
+function sceneDil(c){base();SC={};
+ SC.bath=el('g',{style:'opacity:0;transition:opacity .8s'},sc);el('rect',{x:112,y:150,width:146,height:68,rx:6,fill:'#bfe3f5',opacity:.8,stroke:'#5c7080','stroke-width':1.5},SC.bath);
+ [0,1,2,3].forEach(k=>el('rect',{x:122+k*32,y:156+(k%2)*6,width:11,height:11,rx:2,fill:'#fff',opacity:.9,transform:`rotate(${k*12} ${128+k*32} 162)`},SC.bath));
+ SC.T=ves(30,40,cylSpec(34,174,300,6));SC.B=ves(130,104,cylSpec(110,110,400,4));SC.M=ves(300,70,cylSpec(40,144,250,5));
+ el('rect',{x:352,y:150,width:38,height:68,rx:5,fill:'#cfe6f0',stroke:'#5c7080','stroke-width':1.5},sc);el('rect',{x:363,y:136,width:16,height:14,fill:'#cfe6f0',stroke:'#5c7080','stroke-width':1.5},sc);el('rect',{x:361,y:130,width:20,height:7,rx:2,fill:'#c0392b'},sc);
+ el('rect',{x:356,y:168,width:30,height:28,rx:2,fill:'#fff'},sc);lab(371,180,c.fm,8);lab(371,191,'конц.',6.5);
+ SC.th=thermo(206,96);SC.rod=el('line',{x1:170,y1:84,x2:178,y2:204,stroke:'#8fb5cb','stroke-width':3.5,'stroke-linecap':'round',style:'opacity:0'},sc);
+ lab(47,236,'биік цилиндр');lab(185,236,'стақан');lab(320,236,'өлшеуіш цилиндр');pourer();say('Аспаптар дайын.')}
+function sceneFlask(k){base();SC={};SC.T=ves(300,40,cylSpec(34,174,300,6));SC.F=ves(190,72,flaskSpec());
+ SC.fun=el('g',{transform:'translate(190,72)',style:'opacity:0;transition:opacity .5s'},sc);el('path',{d:'M-24,-38L24,-38L6,-2H-6Z',fill:'rgba(200,225,240,.45)',stroke:'#5c7080','stroke-width':1.8,'stroke-linejoin':'round'},SC.fun);
+ SC.stp=el('rect',{x:182,y:62,width:16,height:12,rx:2,fill:'#b0642f',style:'opacity:0;transition:opacity .5s'},sc);
+ if(k=='C'){el('rect',{x:20,y:200,width:120,height:18,rx:4,fill:'#3b4a56'},sc);el('rect',{x:76,y:182,width:8,height:18,fill:'#9aa6ad'},sc);el('ellipse',{cx:80,cy:182,rx:36,ry:5,fill:'#b9c4cb',stroke:'#5c7080'},sc);
+  el('path',{d:'M58,172H102L96,182H64Z',fill:'#e8edf0',stroke:'#5c7080','stroke-width':1.2},sc);SC.pile=el('polygon',{points:'66,172 72,162 80,156 88,162 94,172',fill:'#fff',stroke:'#8fa0ab','stroke-width':1,style:'opacity:0'},sc);
+  SC.setPile=s=>SC.pile.setAttribute('transform',`translate(80 172) scale(${s}) translate(-80 -172)`);lab(80,236,'технохимиялық таразы')}
+ else{SC.S=ves(60,118,cylSpec(18,96,10,5));lab(69,236,'цилиндр 10 мл')}
+ lab(190,236,'өлшеуіш колба');lab(317,236,'биік цилиндр');pourer();say('Аспаптар дайын.')}
+
+/* ---- experiments ---- */
+const ST={},res={};
+const mk=(g,t,d,b,o)=>Object.assign({g,t,d,b},o);
+function hystep(X,tab,fm,after){return d=>{X.wT=X.wT||0;const T=SC.T;addTo(T,170,CLEAR,{lab:fm+' (зертханалық)'},()=>{X.r1=hyr(X.rT);hydro(T,X.r1,()=>{const L=lk(tab,X.r1);X.w1=Math.round(L.w*10)/10;
+ say(`ρ₁ = <b>${F(X.r1,3)} г/мл</b>. ${lkT(L)}: <b>ω₁ = ${F(X.w1,1)} %</b>`+(after?after():''));wait(900,()=>drain(T,d))})})}}
+function dil(c){const X=ST[c.k]={};X.wT=R(c.lo,c.hi,1);X.rT=rho(c.tab,X.wT);X.r1=+X.rT.toFixed(3);X.w1=X.wT;X.w2=c.rt?Math.round(lk(c.tab,c.rt).w*100)/100:c.w2;return[
+mk(c.g,'Есептеу (оқытушы тексереді)','','Оқытушыға тексертіу',{pre:()=>sceneDil(c),dd:()=>`Берілгені: дайындалатын ерітіндінің массасы ${F(c.ms,0)} г`+(c.rt?` (200 мл, ρ = 1,05 г/мл; кестеден ω₂ = ${F(X.w2,2)} %)`:`, ω₂ = ${F(X.w2,2)} %`)+`; зертханалық ерітінді (ыдыстағы белгі): ω₁ = ${F(X.w1,1)} %, ρ₁ = ${F(X.r1,3)} г/мл. Қажетті m, V мәндерін есептеп енгізіңіз.`,
+ ask:()=>{const mc=c.ms*X.w2/X.w1,Vc=mc/X.r1,Vw=c.ms-mc;X.Vc=Vc;X.Vw=Vw;return{f:[['m(конц. ерітінді), г','mc'],['V(конц. ерітінді), мл','Vc'],['V(су), мл','Vw']],a:{mc,Vc,Vw},tol:.02,h:'m(конц.) = m(дайынд.)·ω₂/ω₁; V = m/ρ₁; V(су) = m(дайынд.) − m(конц.) (ρ(су) = 1 г/мл)'}}}),
+mk(c.g,'Судың көлемін өлшеп, стақанға құю','Цилиндрмен судың есептелген көлемін өлшеп алып, стақанға құямыз.','Суды өлшеп құю',{
+ run:d=>{X.Vwm=Math.round((X.Vw+R(-.6,.6,2))*2)/2;addTo(SC.M,X.Vwm,CLEAR,{lab:'H₂O · '+F(X.Vwm,1)+' мл'},()=>{say('Судың көлемі: <b>'+F(X.Vwm,1)+' мл</b>');transfer(SC.M,SC.B,X.Vwm,d)})}}),
+mk(c.g,`Концентрлі ${c.nn} өлшеп, суға құю`,`Цилиндрмен концентрлі ерітіндінің есептелген көлемін өлшеп алып, суға аздап құямыз, шыны таяқшамен араластырамыз (${c.safe}).`,'Өлшеп, суға құю',{
+ run:d=>{X.Vcm=Math.round((X.Vc+R(-.4,.4,2))*2)/2;addTo(SC.M,X.Vcm,CLEAR,{lab:c.fm+' (конц.) · '+F(X.Vcm,1)+' мл'},()=>{X.Tm=+(20+c.dT()).toFixed(0);SC.rod.style.opacity=1;SC.rod.setAttribute('class','stir');
+  say(c.fm+' ерітіндісі суға аздап құйылуда, шыны таяқшамен араластырылады…');tween(3800,e=>SC.th.set(20+(X.Tm-20)*e));
+  transfer(SC.M,SC.B,X.Vcm,()=>{SC.rod.removeAttribute('class');SC.rod.style.opacity=0;say('Ерітінді қызды: <b>'+X.Tm+' °C</b> (араласу жылу бөле жүреді).');d()},2600)})}}),
+mk(c.g,'Суыту және ареометрмен тығыздығын өлшеу','Ерітіндіні 6-кестеде көрсетілген температураға (20 °C) дейін суытып, құрғақ биік цилиндрге құйып, ареометрмен тығыздығын өлшейміз.','Суытып, тығыздығын өлшеу',{
+ run:d=>{SC.bath.style.opacity=1;say('Стақан суық су моншасында 20 °C-қа дейін суытылуда…');tween(3200,e=>SC.th.set(X.Tm-(X.Tm-20)*e),()=>{
+  transfer(SC.B,SC.T,SC.B.vol,()=>{const sol=X.Vcm*X.rT*X.wT/100,tot=X.Vcm*X.rT+X.Vwm*.9982;X.wF=100*sol/tot;X.r2=hyr(rho(c.tab,X.wF));
+   hydro(SC.T,X.r2,()=>{const L=lk(c.tab,X.r2);X.w2f=Math.round(L.w*100)/100;
+    say(`ρ₂ = <b>${F(X.r2,3)} г/мл</b>; ${lkT(L)}: <b>ω = ${F(X.w2f,2)} %</b><br>${c.rt?`Берілген ρ = 1,05, табылғаны ${F(X.r2,3)}; ω айырмашылығы: ${F(X.w2f-X.w2,2)} %`:`Берілген ω = 10 %, табылғаны ${F(X.w2f,2)} %; абсолют қате ${F(X.w2f-10,2)} %`}`);
+    wait(900,()=>drain(SC.T,d))})},1400)})}}),
+mk(c.g,'Молярлы және нормалды концентрацияны есептеу','',  'Оқытушыға тексертіу',{dd:()=>`Табылған ω = ${F(X.w2f,2)} %, ρ = ${F(X.r2,3)} г/мл, M(${c.fm}) = ${c.Mr} г/моль. Ерітіндінің молярлы және ${c.eq} концентрацияларын есептеңіз.`,
+ ask:()=>{const M=10*X.w2f*X.r2/c.Mr;res[c.k]={w:X.w2f,r:X.r2,M,N:M*c.f};return{f:[['Молярлы, моль/л','M'],[c.eqL,'N']],a:{M,N:M*c.f},tol:.03,h:`C_M = 10·ω·ρ/M; ${c.f>1?'C_N = C_M·'+c.f:'C_N = C_M ('+c.fm+': f = 1)'}`}}})]}
+const dA=dil({k:'A',g:0,fm:'H₂SO₄',nm:'күкірт қышқылы',nn:'қышқылды',safe:'қышқыл әрдайым суға құйылады, керісінше емес',tab:TH,Mr:98.08,f:2,lo:42,hi:66,ms:250,w2:10,dT:()=>R(14,24,1),eq:'нормалды',eqL:'Нормалды, н'});
+const dB=dil({k:'B',g:1,fm:'NaOH',nm:'натрий гидроксидінің концентрлі',nn:'сілті ерітіндісін',safe:'сілті теріге және көзге қауіпті, абайлаңыз',tab:TN,Mr:40,f:1,lo:27,hi:38,ms:210,rt:1.05,dT:()=>R(9,16,1),eq:'эквивалентті',eqL:'Эквивалентті, моль/л'});
+const Ee=244.26/2,mC=.5*.25*Ee,mH=.1*.25*98.08;
+function fillMark(v,cb){const rem=250-v.vol;addTo(v,rem-10,CLEAR,{lab:'H₂O',up:34,ms:1500},()=>addTo(v,10,CLEAR,{mode:'drops',lab:'H₂O (тамшылатқыш)',up:34,ms:2600},()=>{SC.fun.style.opacity=0;SC.stp.style.opacity=1;say('Белгіге дейін жеткізілді, колба тығынмен жабылып, төңкеріп араластырылды.');rock(v,cb)}))}
+const C=ST.C={},D=ST.D={};D.wT=R(42,66,1);D.rT=rho(TH,D.wT);D.r1=+D.rT.toFixed(3);D.w1=D.wT;
+const steps=[...dA,...dB,
+mk(2,'Есептеу: BaCl₂·2H₂O массасы','250 мл 0,5 н BaCl₂ ерітіндісін дайындау үшін неше грамм BaCl₂·2H₂O қажет? M(BaCl₂·2H₂O) = 244,26 г/моль. Есепті шығарып енгізіңіз (оқытушы тексереді).','Оқытушыға тексертіу',{pre:()=>sceneFlask('C'),
+ ask:()=>({f:[['m(BaCl₂·2H₂O), г','m']],a:{m:mC},tol:.01,h:'Э = M/2 = 122,13 г/моль-экв; m = N·V·Э = 0,5 · 0,250 · 122,13'})}),
+mk(2,'Технохимиялық таразыда өлшеу','Есептелген массаны таразыда 0,01 г дәлдікпен өлшеп аламыз.','Таразыда өлшеу',{
+ run:d=>{C.mw=Math.round((mC+R(-.012,.012,3))*100)/100;SC.pile.style.opacity=1;tween(2000,e=>{$('clock').textContent='⚖ '+F(C.mw*e,2)+' г';SC.setPile(.3+.7*e)},()=>{say('Өлшенген масса: <b>'+F(C.mw,2)+' г</b> BaCl₂·2H₂O.');d()})}}),
+mk(2,'Колбаға салып, суда еріту','Тұзды воронка арқылы өлшеуіш колбаға салып, дистилденген су қосып, толық ерігенше шайқаймыз.','Тұзды салу, су қосу',{
+ run:d=>{SC.fun.style.opacity=1;SC.pile.style.opacity=0;addTo(SC.F,.05,'#ffffff',{mode:'crystals',lab:'BaCl₂·2H₂O',keep:1,ms:1500,up:34},()=>{
+  const cr=[0,1,2,3,4].map(k=>el('rect',{x:182+k*5-8,y:72+134-(k%2)*3,width:4,height:4,fill:'#fff',stroke:'#8fa0ab','stroke-width':.6},sc));
+  addTo(SC.F,110,CLEAR,{lab:'H₂O (жуу, еріту)',up:34,ms:1600},()=>{say('Тұз суда ериді…');tween(1800,e=>cr.forEach(r=>r.setAttribute('opacity',1-e)));rock(SC.F,()=>{cr.forEach(r=>r.remove());say('Тұз толық ерігенше шайқалды.');d()})})})}}),
+mk(2,'Белгіге дейін жеткізу және араластыру','Колбадағы деңгейді белгіге дейін жеткіземіз (соңында тамшылатқышпен), аузын жауып, төңкеріп араластырамыз.','Белгіге дейін жеткізу',{run:d=>fillMark(SC.F,d)}),
+mk(2,'Ареометрмен тығыздығын өлшеу','Ерітіндіні құрғақ биік цилиндрге құйып, ареометрмен тығыздығын өлшейміз; кестеден проценттік концентрацияны табамыз.','Құйып, ареометрді салу',{
+ run:d=>{SC.stp.style.opacity=0;transfer(SC.F,SC.T,250,()=>{const Vf=250+R(-.12,.12,2),mBa=C.mw/244.26*208.23;let w=5;for(let i=0;i<8;i++)w=100*mBa/(rho(TB,w)*Vf);
+  C.r=hyr(rho(TB,w));hydro(SC.T,C.r,()=>{const L=lk(TB,C.r);C.w=Math.round(L.w*100)/100;C.N=10*C.w*C.r/104.115;res.C={w:C.w,r:C.r,N:C.N};
+   say(`ρ = <b>${F(C.r,3)} г/мл</b>; ${lkT(L)}: <b>ω = ${F(C.w,2)} %</b>. Табылған концентрация: <b>${F(C.N,3)} н</b> (берілгені 0,5 н; айырмашылығы ${F(Math.abs(C.N-.5)/.5*100,1)} %)`);wait(900,()=>drain(SC.T,d))})},1500,0)}}),
+mk(3,'Есептеу: қышқыл ерітіндісінің массасы мен көлемі','','Оқытушыға тексертіу',{pre:()=>sceneFlask('D'),dd:()=>`250 мл 0,1 М H₂SO₄ дайындау керек. Зертханалық қышқыл (ыдыстағы белгі): ω₁ = ${F(D.w1,1)} %, ρ₁ = ${F(D.r1,3)} г/мл. Қажетті қышқыл ерітіндісінің массасы мен көлемін есептеңіз.`,
+ ask:()=>{const mc=mH/(D.w1/100),Vc=mc/D.r1;D.Vc=Vc;return{f:[['m(қышқыл ерітіндісі), г','mc'],['V(қышқыл ерітіндісі), мл','Vc']],a:{mc,Vc},tol:.02,h:'m(H₂SO₄) = C·V·M = 0,1·0,25·98,08 = 2,452 г; m(ерітінді) = m(H₂SO₄)/ω₁; V = m/ρ₁'}}}),
+mk(3,'Колбаға жартысына дейін су құю','Өлшеуіш колбаға жартысына дейін дистилденген су құямыз.','Су құю',{run:d=>{SC.fun.style.opacity=1;addTo(SC.F,125,CLEAR,{lab:'H₂O · ~125 мл',up:34},()=>d())}}),
+mk(3,'Қышқылды воронкамен құю','Өлшенген қышқылды воронкамен колбаға құямыз, воронканы сумен шаямыз, ерітіндіні араластырамыз.','Қышқылды өлшеп құю',{
+ run:d=>{D.Vcm=Math.round((D.Vc+R(-.06,.06,3))*20)/20;addTo(SC.S,D.Vcm,CLEAR,{lab:'H₂SO₄ (конц.) · '+F(D.Vcm,2)+' мл'},()=>{say('Қышқыл көлемі: <b>'+F(D.Vcm,2)+' мл</b>');
+  transfer(SC.S,SC.F,D.Vcm,()=>addTo(SC.F,10,CLEAR,{lab:'воронканы шаю',up:34,ms:900},()=>rock(SC.F,d)),1500,34)})}}),
+mk(3,'Белгіге дейін жеткізу және араластыру','Деңгейді белгіге дейін жеткізіп, колбаның аузын жауып, төңкеріп араластырамыз.','Белгіге дейін жеткізу',{run:d=>fillMark(SC.F,d)}),
+mk(3,'Ареометрмен тығыздығын өлшеу және дәлдік','Ерітіндіні құрғақ биік цилиндрге құйып, ареометрмен тығыздығын өлшейміз, молярлы концентрацияны есептеп, дәлдігін табамыз.','Құйып, ареометрді салу',{
+ run:d=>{SC.stp.style.opacity=0;transfer(SC.F,SC.T,250,()=>{const Vf=250+R(-.12,.12,2),m=D.Vcm*D.rT*D.wT/100;let w=1;for(let i=0;i<8;i++)w=100*m/(rho(TH,w)*Vf);
+  D.r=hyr(rho(TH,w));hydro(SC.T,D.r,()=>{const L=lk(TH,D.r);D.w=Math.round(L.w*100)/100;D.M=10*D.w*D.r/98.08;res.D={w:D.w,r:D.r,M:D.M};
+   say(`ρ = <b>${F(D.r,3)} г/мл</b>; ${lkT(L)}: ω = ${F(D.w,2)} %. <b>C_M = ${F(D.M,3)} моль/л</b> (берілгені 0,1). Салыстырмалы қате: <b>${F(Math.abs(D.M-.1)/.1*100,1)} %</b>`);wait(900,()=>drain(SC.T,d))})},1500,0)}}),
+mk(3,'Құбылыс және қорытынды','Барлық тәжірибенің нәтижесін және қорытындысын көреміз.','Қорытындыны ашу',{run:d=>{reveal();d()}})
+];
+function reveal(){const A=res.A,B=res.B,Cc=res.C,Dd=res.D,rv=$('rv');rv.style.display='';
+ rv.innerHTML=`<b style="font-size:1rem">Қорытынды</b><table><tr><th>Тәжірибе</th><th>Берілгені</th><th>Табылғаны</th><th>Қате</th></tr>
+<tr><td>1 (ә). 10 % H₂SO₄</td><td>10 %</td><td>${F(A.w,2)} %</td><td>${F(Math.abs(A.w-10)/10*100,1)} %</td></tr>
+<tr><td>1 (ә). NaOH, ρ = 1,05</td><td>1,050 г/мл</td><td>${F(B.r,3)} г/мл</td><td>${F(Math.abs(B.r-1.05)/1.05*100,2)} %</td></tr>
+<tr><td>2 (а). BaCl₂ 0,5 н</td><td>0,5 н</td><td>${F(Cc.N,3)} н</td><td>${F(Math.abs(Cc.N-.5)/.5*100,1)} %</td></tr>
+<tr><td>2 (ә). H₂SO₄ 0,1 М</td><td>0,1 М</td><td>${F(Dd.M,3)} М</td><td>${F(Math.abs(Dd.M-.1)/.1*100,1)} %</td></tr></table>
+<h3>Қорытынды</h3><p>Концентрлі ерітіндіден дайындағанда қажетті масса мен көлем ω₁ және ρ₁ арқылы есептеледі; бастапқы ω₁ дәл болмаса, соңғы концентрацияда да қате болады. Қышқыл мен сілті суға қосылғанда жылу бөлінеді, сондықтан ерітінді 20 °C-қа дейін суытылып барып тығыздығы өлшенеді.</p>
+<p>Құрғақ заттан нормалды ерітінді дайындағанда дәлдік таразы (0,01 г) мен өлшеуіш колбаның белгісіне байланысты. Сұйылтылған (≈1 %) ерітіндінің тығыздығы суға өте жақын, сондықтан ареометрмен өлшегенде салыстырмалы қате үлкен болады (2 (ә) тәжірибесі).</p>
+<p class="mut">Ескерту: тығыздық кестелері — 20 °C кезіндегі анықтамалық мәндер; нұсқаулықтағы 6/7-кестелерден шамалы айырмашылығы болуы мүмкін. Өлшеу қателері модельденген (кездейсоқ).</p>`}
+
+/* ---- engine ---- */
+let cur=0,tries=0;
+const G=['1 (ә). Концентрлі қышқылдан 10 % ерітінді (250 г)','1 (ә). Концентрлі сілтіден ρ = 1,05 г/мл ерітінді (200 мл)','2 (а). 0,5 н BaCl₂ ерітіндісі (250 мл) — құрғақ заттан','2 (ә). 0,1 М H₂SO₄ ерітіндісі (250 мл) — концентрлі ерітіндіден'];
+function show(){const s=steps[cur];tries=0;$('li'+cur).classList.add('cur');$('stT').textContent=(cur+1)+'/'+steps.length+' · '+s.t;$('askMsg').textContent='';$('ask').innerHTML='';
+ if(s.pre&&s.ask)s.pre();$('stD').textContent=s.dd?s.dd():s.d;
+ if(s.ask){const A=s.ask();$('ask').innerHTML=A.f.map(f=>`<label>${f[0]} <input id="in_${f[1]}" inputmode="decimal"></label>`).join('')}
+ $('go').textContent=s.b;$('go').disabled=false}
+function complete(){const li=$('li'+cur);li.classList.remove('cur');li.classList.add('done');$('scard').classList.add('flash');wait(1000,()=>$('scard').classList.remove('flash'));cur++;
+ if(cur<steps.length)show();else{$('stT').textContent='✓ Барлық қадам орындалды';$('stD').textContent='Төменде қорытынды көрсетілген.';$('ask').innerHTML='';$('go').style.display='none';$('rv').scrollIntoView({behavior:'smooth'})}}
+function runStep(){const s=steps[cur];
+ if(s.ask){const A=s.ask();let bad=null;for(const f of A.f){const v=parseFloat($('in_'+f[1]).value.replace(',','.'));if(!(Math.abs(v-A.a[f[1]])<=A.tol*Math.abs(A.a[f[1]]))){bad=f[0];break}}
+  if(bad){tries++;$('askMsg').innerHTML='✗ «'+bad+'» дұрыс емес. Формула: '+A.h+(tries>=2?'<br>Дұрыс жауап: '+A.f.map(f=>f[0]+' = '+F(A.a[f[1]],2)).join('; '):'');return}
+  $('askMsg').textContent='✓ Оқытушы есепті тексерді: дұрыс.';$('go').disabled=true;wait(700,complete);return}
+ $('go').disabled=true;if(s.pre)s.pre();s.run(complete)}
+(function init(){
+ const bottle=(c,solid)=>`<svg viewBox="0 0 24 34" width="26" height="36"><rect x="9" y="1" width="6" height="6" fill="#8a97a1"/><path d="M8,7h8l3,6v18a2,2 0 0 1-2,2H7a2,2 0 0 1-2-2V13z" fill="rgba(200,225,240,.35)" stroke="#5c7080" stroke-width="1.5"/><rect x="6" y="${solid?22:18}" width="12" height="${solid?9:13}" fill="${c}" ${solid?'stroke="#8fa0ab" stroke-width=".6"':''}/></svg>`;
+ $('shelf').innerHTML=[['H₂SO₄ (зертханалық, конц.)',CLEAR],['NaOH (конц. ерітінді)',CLEAR],['BaCl₂·2H₂O кристалдары','#fff',1],['Дистилденген су',CLEAR]].map(r=>'<div>'+bottle(r[1],r[2])+r[0]+'</div>').join('');
+ $('chips').innerHTML=['химиялық стақан','өлшеуіш цилиндр','өлшеуіш колба 250 мл','биік цилиндр','ареометр','технохимиялық таразы','шыны таяқша','термометр','воронка','тамшылатқыш'].map(x=>'<span class="chip">'+x+'</span>').join('');
+ let h='';steps.forEach((s,i)=>{if(i==0||steps[i-1].g!=s.g)h+='<div class="g">'+G[s.g]+'</div>';h+='<div class="i" id="li'+i+'"><span class="dot"></span>'+(i+1)+'. '+s.t+'</div>'});$('chk').innerHTML=h;
+ sceneDil({fm:'H₂SO₄'});show()})();
+</script>
+</body>
+</html>
