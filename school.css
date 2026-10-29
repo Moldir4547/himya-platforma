@@ -64,3 +64,23 @@
  .school-question .school-feedback{display:none}
  .ws-reflection{background:white;break-inside:avoid}
 }
+
+/* Readable volume illustrations for the Understanding tab, grades 7–11. */
+.school-visual{margin:24px 0 30px;padding:24px;border:1px solid #d5e6ec;border-radius:24px;background:linear-gradient(145deg,#f4fafb,#edf4fb);min-width:0}
+.school-visual-heading{margin-bottom:22px}
+.school-visual-heading>span{font-size:.75rem;font-weight:800;letter-spacing:.12em;color:#256c76}
+.school-visual-heading h3{font-size:1.35rem!important;line-height:1.45;margin:10px 0!important;color:#173e54}
+.school-visual-heading p{line-height:1.7;margin:8px 0;max-width:70ch;color:#496778}
+.school-visual-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:18px}
+.school-visual-card{min-width:0;overflow:hidden;background:#fff;border:1px solid #d8e5ec;border-radius:18px;box-shadow:0 6px 20px #183f5810}
+.school-visual-stage{position:relative;background:radial-gradient(ellipse at 50% 35%,#fff 15%,#edf5fa 75%);border-bottom:1px solid #e2edf2}
+.school-visual-stage svg{display:block;width:100%;max-width:340px;height:auto;aspect-ratio:240/220;margin:0 auto;font-family:system-ui,sans-serif}
+.school-visual-stage svg text{font-family:system-ui,sans-serif}
+.school-visual-number{position:absolute;left:14px;top:12px;font-size:.75rem;font-weight:800;color:#607f92;background:#fff9;border-radius:6px;padding:4px 7px}
+.school-visual-copy{padding:18px}
+.school-visual-copy h4{font-size:1.08rem!important;line-height:1.45;color:#173e54;margin:0 0 10px!important}
+.school-visual-copy p{font-size:.98rem;line-height:1.75;color:#38586b;margin:0 0 15px}
+.school-visual-copy strong{display:block;border-radius:9px;padding:10px 12px;background:#edf6f5;color:#175e65;font-size:.95rem;line-height:1.65;overflow-wrap:anywhere}
+.school-visual-note{font-size:.85rem;line-height:1.75;color:#4c687a;margin:20px 0 0}
+@media(max-width:600px){.school-visual{padding:14px 10px;border-radius:16px}.school-visual-grid{grid-template-columns:minmax(0,1fr)}.school-visual-copy{padding:16px}.school-visual-heading{padding:0 4px}.school-visual-heading h3{font-size:1.16rem!important}.school-visual-stage svg{max-width:300px}}
+@media print{.school-visual{background:white;padding:10px;border:0}.school-visual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.school-visual-card{break-inside:avoid;box-shadow:none}.school-visual-copy p{font-size:10pt}}

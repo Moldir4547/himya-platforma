@@ -27,6 +27,13 @@ class SchoolIntegration(unittest.TestCase):
         cls.server.terminate();cls.server.wait(timeout=5);cls.temp.cleanup()
     def submit(self,mode,answers,attempt=None,token=None,**extra):
         return req('POST','/api/school-activity',{'item_id':self.grade,'slug':'bonding','mode':mode,'answers':answers,'attempt_id':attempt or str(uuid.uuid4()),**extra},token=token or self.token)
+    def test_volume_visuals_are_served_as_javascript(self):
+        response=urlopen(BASE+'/school-visuals.js')
+        self.assertEqual(response.status,200)
+        self.assertIn('javascript',response.headers.get('Content-Type',''))
+        source=response.read().decode('utf-8')
+        self.assertIn('export function renderSchoolVisual',source)
+        self.assertNotIn('<!doctype html>',source.lower())
     def test_grading_best_score_receipt_replay_and_ownership(self):
         aid=str(uuid.uuid4())
         row=self.submit('lab',[2,109.5],aid,score=999)

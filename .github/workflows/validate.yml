@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: node --test tests/teacher-materials.mjs tests/guided-lab-11.mjs tests/guided-lab-10.mjs tests/guided-lab-9.mjs tests/guided-lab-8.mjs tests/school-materials.mjs tests/university-control.mjs tests/lecture-order.mjs tests/platform.mjs tests/redox.mjs tests/bond-practice.mjs tests/registration.mjs tests/bridge-path.mjs tests/bond-models.mjs tests/bond-lab.mjs tests/equivalent-path.mjs tests/school.mjs tests/guided-lab.mjs
+      - run: node --test tests/school-visuals.mjs tests/teacher-materials.mjs tests/guided-lab-11.mjs tests/guided-lab-10.mjs tests/guided-lab-9.mjs tests/guided-lab-8.mjs tests/school-materials.mjs tests/university-control.mjs tests/lecture-order.mjs tests/platform.mjs tests/redox.mjs tests/bond-practice.mjs tests/registration.mjs tests/bridge-path.mjs tests/bond-models.mjs tests/bond-lab.mjs tests/equivalent-path.mjs tests/school.mjs tests/guided-lab.mjs
       - run: node scripts/generate-school-specs.mjs --check
       - run: python3 tests/integration.py
       - run: python3 tests/security.py
@@ -32,4 +32,5 @@ jobs:
       - run: node tests/guided-lab-8.sql.mjs
       - run: node tests/university-control.sql.mjs
       - run: npx playwright install --with-deps chromium
-      - run: node --test tests/teacher-materials.browser.mjs tests/guided-lab-11.browser.mjs tests/guided-lab-10.browser.mjs tests/guided-lab-9.browser.mjs tests/guided-lab-8.browser.mjs tests/university-labs.browser.mjs tests/university-control.browser.mjs tests/bond-practice.browser.mjs tests/registration.browser.mjs tests/bridge-path.browser.mjs tests/equivalent-path.browser.mjs tests/school.browser.mjs tests/guided-lab.browser.mjs
+      - run: node --test tests/school.browser.mjs
+      - run: node --test tests/teacher-materials.browser.mjs tests/guided-lab-11.browser.mjs tests/guided-lab-10.browser.mjs tests/guided-lab-9.browser.mjs tests/guided-lab-8.browser.mjs tests/university-labs.browser.mjs tests/university-control.browser.mjs tests/bond-practice.browser.mjs tests/registration.browser.mjs tests/bridge-path.browser.mjs tests/equivalent-path.browser.mjs tests/guided-lab.browser.mjs
