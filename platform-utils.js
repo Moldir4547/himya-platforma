@@ -1,9 +1,10 @@
-export const MAX_FILE_SIZE = 20 * 1024 * 1024;
+export const MAX_FILE_SIZE_MB = 50;
+export const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const FILE_ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.webp,.gif,.mp4,.webm,.mp3,.wav,.zip';
 export function validateFile(file) {
   if (!file) throw new Error('Файл таңдалмады');
   if (!file.size) throw new Error('Бос файлды жүктеуге болмайды');
-  if (file.size > MAX_FILE_SIZE) throw new Error('Файл көлемі 20 MB-тан аспауы керек');
+  if (file.size > MAX_FILE_SIZE) throw new Error(`Файл көлемі ${MAX_FILE_SIZE_MB} MB-тан аспауы керек`);
   const extension = '.' + file.name.split('.').pop().toLowerCase();
   if (!FILE_ACCEPT.split(',').includes(extension)) throw new Error('Бұл файл түріне қолдау көрсетілмейді');
 }

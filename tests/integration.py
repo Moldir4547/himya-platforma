@@ -205,6 +205,34 @@ class PlatformIntegrationTests(unittest.TestCase):
         self.assertEqual(error.exception.code,403)
         request("PATCH",f"/api/content/{item['id']}",previous,admin)
 
+
+    def test_textbook_upload_limit_accepts_50_mib_and_rejects_one_byte_more(self):
+        from http.client import HTTPConnection
+        admin = request("POST", "/api/login", {"email":"admin@chem.local", "password":"Admin123!"})["token"]
+        item = next(row for row in request("GET", "/api/content?admin=1", token=admin) if row["path"] == "/mektep/teoriya/7-synyp")
+        limit = 50 * 1024 * 1024
+        resource = request("POST", "/api/resources", b"%PDF-1.4" + b" " * (limit - 8), admin, {
+            "X-Item-Id": item["id"], "X-Filename": "textbook-7.pdf", "Content-Type": "application/pdf"
+        })
+        try:
+            self.assertEqual(resource["size"], limit)
+            saved = next(row for row in request("GET", "/api/resources?item_id=" + item["id"], token=admin) if row["id"] == resource["id"])
+            self.assertEqual(saved["size"], limit)
+        finally:
+            request("DELETE", "/api/resources/" + resource["id"], token=admin)
+        # Send only the declared length: oversized files must be refused before reading their body.
+        connection = HTTPConnection("127.0.0.1", PORT)
+        try:
+            connection.request("POST", "/api/resources", headers={
+                "Authorization":"Bearer " + admin, "X-Item-Id":item["id"], "X-Filename":"too-large.pdf",
+                "Content-Type":"application/pdf", "Content-Length":str(limit + 1)
+            })
+            response = connection.getresponse()
+            self.assertEqual(response.status, 400)
+            response.read()
+        finally:
+            connection.close()
+
     def test_auth_content_upload_progress_and_analytics(self):
         admin = request("POST", "/api/login", {"email":"admin@chem.local", "password":"Admin123!", "role":"admin"})
         admin_token = admin["token"]
