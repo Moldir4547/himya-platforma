@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateFile,filterMaterials,errorMessage } from '../platform-utils.js';
+import { MAX_FILE_SIZE,MAX_FILE_SIZE_MB,validateFile,filterMaterials,errorMessage } from '../platform-utils.js';
+import {materialEditor} from '../catalog.js';
 import { SupabaseStore } from '../store.js';
 let storage=new Map();globalThis.localStorage={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
-test('file size and extension checks',()=>{for(const name of ['a.pdf','a.doc','a.docx','a.ppt','a.pptx','a.png','a.mp4'])assert.doesNotThrow(()=>validateFile({name,size:40}));for(const file of [null,{name:'a.pdf',size:0},{name:'a.pdf',size:20971521},{name:'a.html',size:1},{name:'a.svg',size:100}])assert.throws(()=>validateFile(file));});
+test('file size and extension checks',()=>{for(const name of ['a.pdf','a.doc','a.docx','a.ppt','a.pptx','a.png','a.mp4'])assert.doesNotThrow(()=>validateFile({name,size:40}));for(const file of [null,{name:'a.pdf',size:0},{name:'a.pdf',size:MAX_FILE_SIZE+1},{name:'a.html',size:1},{name:'a.svg',size:100}])assert.throws(()=>validateFile(file));});
 test('Kazakh search and combined filters',()=>{const rows=[{title:'Химиялық байланыс',filename:'a.pdf',type:'pdf',subject:'Химия',category:'Теория'},{title:'Ерітінділер',filename:'b.pptx',type:'ppt',subject:'Химия',category:'Презентация'}];assert.equal(filterMaterials(rows,{query:'  ХИМИЯЛЫҚ ',type:'pdf',category:'Теория'}).length,1);assert.equal(filterMaterials(rows,{query:'жоқ'}).length,0);});
 test('publishable API key is never sent as bearer JWT',()=>{assert.equal(new SupabaseStore('https://example.test','sb_publishable_test').headers().Authorization,undefined);});
 test('concurrent expired sessions refresh only once',async()=>{storage.clear();const store=new SupabaseStore('https://example.test','key');store.saveSession({access_token:'old',refresh_token:'refresh',expires_at:1});let count=0;store.request=async()=>{count++;await new Promise(r=>setTimeout(r,20));return{access_token:'new',refresh_token:'new-refresh',expires_in:3600};};const sessions=await Promise.all(Array.from({length:8},()=>store.validSession()));assert.equal(count,1);assert.ok(sessions.every(s=>s.access_token==='new'));});
@@ -124,4 +125,13 @@ test('member return links preserve the lesson and reject external or recursive a
  const api=memberRouteContext().memberApi;
  assert.equal(api.safeMemberNext('/himya-platforma/mektep/zhalpy-zhane-beyin/eritindi?level=school#life-review'),'/mektep/zhalpy-zhane-beyin/eritindi?level=school#life-review');
  for(const value of ['https://evil.example/x','//evil.example/x','/\\evil.example/x','/%5Cevil.example/x','/login','/register','/himya-platforma/login'])assert.equal(api.safeMemberNext(value),null);
+});
+
+test('textbook uploads accept the former 20 MiB boundary through 50 MiB and show the same limit',()=>{
+ assert.equal(MAX_FILE_SIZE_MB,50);
+ assert.equal(MAX_FILE_SIZE,50*1024*1024);
+ for(const size of [22423491,MAX_FILE_SIZE])assert.doesNotThrow(()=>validateFile({name:'textbook.pdf',size}));
+ assert.throws(()=>validateFile({name:'textbook.pdf',size:MAX_FILE_SIZE+1}),/50 MB/);
+ assert.match(materialEditor({},[]),/Ең көбі 50 MB/);
+ assert.doesNotMatch(materialEditor({},[]),/20 MB/);
 });

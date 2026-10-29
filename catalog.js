@@ -1,4 +1,4 @@
-import { FILE_ACCEPT, filterMaterials } from './platform-utils.js';
+import { FILE_ACCEPT, MAX_FILE_SIZE_MB, filterMaterials } from './platform-utils.js';
 
 const e = (value = '') => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
 export const SUBJECTS = ['Химия', 'Жалпы химия', 'Бейорганикалық химия', 'Органикалық химия', 'Аналитикалық химия', 'Физикалық химия'];
@@ -62,7 +62,7 @@ export function materialEditor(item, parents, resources = []) {
   const resourceEdit = item.id?.startsWith('resource:');
   return `<section class="material-editor"><a class="back-link" href="/admin/materials">← Материалдар</a><h1>${editing ? 'Материалды өңдеу' : 'Материал қосу'}</h1><p class="editor-intro">${resourceEdit ? 'Өзгерістер тек осы файлға қолданылады.' : 'Файлды таңдап, атауын және тақырыбын көрсетіңіз.'}</p>
   <form id="material-form" data-id="${e(item.id)}" novalidate>
-    ${resourceEdit ? '' : `<label class="file-drop">${editing ? 'Қосымша файл таңдау' : '1. Файл таңдау'}<input name="file" type="file" accept="${FILE_ACCEPT}" aria-describedby="file-format-help" ${editing ? '' : 'required'}/><small id="file-format-help">PDF, DOC/DOCX, PPT/PPTX, Excel, сурет, видео, аудио немесе ZIP. Ең көбі 20 MB.</small></label>`}
+    ${resourceEdit ? '' : `<label class="file-drop">${editing ? 'Қосымша файл таңдау' : '1. Файл таңдау'}<input name="file" type="file" accept="${FILE_ACCEPT}" aria-describedby="file-format-help" ${editing ? '' : 'required'}/><small id="file-format-help">PDF, DOC/DOCX, PPT/PPTX, Excel, сурет, видео, аудио немесе ZIP. Ең көбі ${MAX_FILE_SIZE_MB} MB.</small></label>`}
     <label>Материал атауы<input name="title" value="${e(item.title)}" placeholder="Мысалы, Химиялық байланыс — 8-сынып" required maxlength="180"/></label>
     <label>Қысқаша сипаттама<textarea name="description" required maxlength="1500" rows="3" placeholder="Материалда не бар және кімге арналған?">${e(item.description)}</textarea></label>
     <div class="form-columns"><label>Пән<select name="subject" required>${options([...SUBJECTS, item.subject], item.subject || 'Химия', 'Пәнді таңдаңыз')}</select></label><label>Категория<select name="category" required>${options([...CATEGORIES, item.category], item.category, 'Категорияны таңдаңыз')}</select></label></div>

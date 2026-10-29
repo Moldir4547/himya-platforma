@@ -23,7 +23,7 @@ SCHOOL_ASSESSMENTS = json.loads((ROOT / "school-assessments.json").read_text(enc
 DATA_DIR = Path(os.environ.get("CHEM_DATA_DIR", ROOT / "data"))
 UPLOAD_DIR = DATA_DIR / "uploads"
 DB_PATH = DATA_DIR / "chemistry.db"
-MAX_UPLOAD = 20 * 1024 * 1024
+MAX_UPLOAD = 50 * 1024 * 1024
 os.chdir(ROOT)
 
 DEFAULT_SETTINGS = {
