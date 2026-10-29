@@ -30,6 +30,8 @@ test('topic-specific science distinguishes isotopes, ions, allotropes, geometry 
  assert.match(c('sulfuric-process')[0].formula,/2SO₂ \+ O₂ ⇌ 2SO₃/);
  assert.equal(c('analytical-methods')[0].kind,'chromatography');
  assert.equal(c('carbon')[1].kind,'carbonate');
+ assert.equal(c('ionic-reactions')[0].kind,'precipitate-ions');
+ assert.equal(c('galvanic-cells')[1].kind,'cell-ions');
  assert.match(c('electrolytes')[1].text,/иондар тасымалдайды/);
 });
 test('new illustrations replace only Understanding art and ship in the production build',()=>{
