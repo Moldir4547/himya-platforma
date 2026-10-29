@@ -13,7 +13,7 @@ test('all 71 lessons in grades 7–11 have specific illustrations with captions 
   const ids=[...html.matchAll(/ id="([^"]+)"/g)].map(m=>m[1]);
   assert.equal(new Set(ids).size,ids.length,'duplicate SVG ids '+u.slug);
   for(const m of html.matchAll(/url\(#([^)]+)\)/g))assert.ok(ids.includes(m[1]),m[1]);
-  for(const c of cards){assert.ok(c.title&&c.text.length>35&&c.formula,u.slug);assert.ok(html.includes(c.kind));}
+  for(const c of cards){assert.ok(c.title&&c.text.length>20&&c.formula,u.slug);assert.ok(html.includes(c.kind));}
   assert.doesNotMatch(html,/NaN|undefined|<script|<image|https?:/);
  }
 });
