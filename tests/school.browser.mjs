@@ -34,7 +34,7 @@ const artAudit=await page.evaluate(()=>{
   for(const svg of art.querySelectorAll('svg')){
    if(!svg.querySelector('title')||!svg.querySelector('desc'))throw Error('inaccessible art '+u.slug);
    for(const t of svg.querySelectorAll('text')){
-    const box=t.getBBox();if(box.x<-.5||box.x+box.width>240.5||box.y<-.5||box.y+box.height>220.5)throw Error('clipped label '+u.slug+' '+t.textContent);
+    const box=t.getBBox(),matrix=t.getScreenCTM(),bounds=svg.getBoundingClientRect();const corners=[[box.x,box.y],[box.x+box.width,box.y],[box.x,box.y+box.height],[box.x+box.width,box.y+box.height]].map(([x,y])=>new DOMPoint(x,y).matrixTransform(matrix));if(corners.some(p=>p.x<bounds.left-.5||p.x>bounds.right+.5||p.y<bounds.top-.5||p.y>bounds.bottom+.5))throw Error('clipped label '+u.slug+' '+t.textContent);
    }
   }
   checked.push(u.slug);
