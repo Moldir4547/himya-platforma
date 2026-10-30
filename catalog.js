@@ -2,7 +2,7 @@ import { FILE_ACCEPT, MAX_FILE_SIZE_MB, filterMaterials } from './platform-utils
 
 const e = (value = '') => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
 export const SUBJECTS = ['Химия', 'Жалпы химия', 'Бейорганикалық химия', 'Органикалық химия', 'Аналитикалық химия', 'Физикалық химия'];
-export const CATEGORIES = ['Теория', 'Зертханалық жұмыс', 'Тапсырмалар', 'Оқу бағдарламасы', 'Презентация', 'Қауіпсіздік', 'Басқа'];
+export const CATEGORIES = ['Оқулық', 'Теория', 'Зертханалық жұмыс', 'Тапсырмалар', 'Оқу бағдарламасы', 'Презентация', 'Қауіпсіздік', 'Басқа'];
 const distinct = values => [...new Set(values.filter(Boolean))];
 const options = (values, value = '', empty = 'Барлығы') => `<option value="">${empty}</option>${distinct(values).map(option => `<option value="${e(option)}" ${option === value ? 'selected' : ''}>${e(option)}</option>`).join('')}`;
 const filenameTitle = filename => String(filename || '').replace(/\.[^.]+$/, '').replace(/_/g, ' ').trim();
@@ -41,20 +41,40 @@ export function cards(rows, admin = false) {
   }).join('');
 }
 
+// The public library is for books. Teacher/lesson lists and the admin catalog
+// still use the complete resource collection and the shared cards renderer.
+export function textbookRows(rows = []) {
+  const normalize = value => String(value ?? '').normalize('NFKC').toLocaleLowerCase('kk').replace(/[_–—-]+/g, ' ');
+  const bookName = /(?:^|[^\p{L}])(?:оқулық|оқулығы|оқулықтар|кітап|кітабы|кітаптар|оқу құралы|оқу құралдары|учебник|учебники|учебное пособие|textbook|textbooks)(?=$|[^\p{L}])/u;
+  const otherMaterial = /жұмыс\s*пара(?:ғы|қ)|рабоч(?:ий|ая|ие)\s*(?:лист|тетрад)|worksheet|силлабус|syllabus|презентаци|presentation|(?:^|[^\p{L}])(?:слайд|дәріс|лекция|lecture|pisa|пиза)(?=$|[^\p{L}])/u;
+  return rows.filter(row => {
+    if (row.draft || row.published === false || row.published === 0 || row.is_published === false || row.is_published === 0) return false;
+    const filename = String(row.filename || '').toLowerCase();
+    const extension = filename.match(/\.([a-z0-9]+)$/)?.[1];
+    if (extension ? !['pdf', 'doc', 'docx'].includes(extension) : !['pdf', 'doc'].includes(row.type)) return false;
+    const name = normalize([row.title, row.filename].filter(Boolean).join(' '));
+    if (otherMaterial.test(name)) return false;
+    const category = normalize(row.category).trim();
+    return ['оқулық', 'кітап', 'учебник', 'textbook'].includes(category) || bookName.test(name);
+  });
+}
+
 export function catalogView(rows, filters = {}, admin = false) {
+  rows = admin ? rows : textbookRows(rows);
   const visible = filterMaterials(rows, filters);
-  return `<section class="catalog-head"><div><span class="eyebrow">${admin ? 'Материалдарды басқару' : 'Оқу кітапханасы'}</span><h1>${admin ? 'Материалдар' : 'Оқу кітапханасы'}</h1><p>${admin ? 'Файл қосыңыз, мәліметін өңдеңіз және жариялануын басқарыңыз.' : 'Қажетті материалды тауып, онлайн ашыңыз немесе жүктеп алыңыз.'}</p></div>${admin ? '<a href="/admin/material/new" class="primary-button">+ Материал қосу</a>' : ''}</section>
+  return `<section class="catalog-head"><div><span class="eyebrow">${admin ? 'Материалдарды басқару' : 'Оқу кітапханасы'}</span><h1>${admin ? 'Материалдар' : 'Оқу кітапханасы'}</h1><p>${admin ? 'Файл қосыңыз, мәліметін өңдеңіз және жариялануын басқарыңыз.' : 'Мектеп пен ЖОО оқулықтарын онлайн ашыңыз немесе жүктеп алыңыз.'}</p></div>${admin ? '<a href="/admin/material/new" class="primary-button">+ Материал қосу</a>' : ''}</section>
   <form id="catalog-filters" class="catalog-filters" role="search" aria-label="Материалдарды іздеу және сүзу">
     <label class="search-field">Материал іздеу<input name="query" type="search" value="${e(filters.query)}" placeholder="Мысалы, химиялық байланыс" autocomplete="off" aria-controls="catalog-results"/></label>
-    <label>Категория<select name="category">${options([...CATEGORIES, ...rows.map(row => row.category)], filters.category)}</select></label>
+    <label>Категория<select name="category">${options(admin ? [...CATEGORIES, ...rows.map(row => row.category)] : rows.map(row => row.category), filters.category)}</select></label>
     <label>Пән<select name="subject">${options([...SUBJECTS, ...rows.map(row => row.subject)], filters.subject)}</select></label>
-    <label>Файл түрі<select name="type"><option value="">Барлығы</option>${[['pdf', 'PDF'], ['doc', 'DOC / DOCX'], ['ppt', 'PPT / PPTX'], ['image', 'Сурет'], ['video', 'Видео'], ['audio', 'Аудио'], ['xls', 'Excel'], ['file', 'Басқа']].map(([value, label]) => `<option value="${value}" ${filters.type === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
+    <label>Файл түрі<select name="type"><option value="">Барлығы</option>${[['pdf', 'PDF'], ['doc', 'DOC / DOCX'], ['ppt', 'PPT / PPTX'], ['image', 'Сурет'], ['video', 'Видео'], ['audio', 'Аудио'], ['xls', 'Excel'], ['file', 'Басқа']].filter(([value]) => admin || ['pdf', 'doc', 'file'].includes(value)).map(([value, label]) => `<option value="${value}" ${filters.type === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
     <div class="filter-footer"><span>Нәтижелер бірден жаңарады</span><button type="reset" class="filter-reset">Сүзгілерді тазарту</button></div>
   </form><div id="catalog-results" aria-live="polite" aria-atomic="false">${catalogResults(visible, admin)}</div>`;
 }
 
 export function catalogResults(rows, admin = false) {
-  return `<p class="result-count"><strong>${rows.length}</strong> материал табылды</p><div class="materials-grid">${cards(rows, admin) || `<div class="empty-library"><span class="empty-icon" aria-hidden="true">⌕</span><h2>Материал табылмады</h2><p>Іздеу сөзін қысқартыңыз немесе жоғарыдағы сүзгілерді тазалаңыз.</p>${admin ? '<a class="secondary-button" href="/admin/material/new">+ Материал қосу</a>' : ''}</div>`}</div>`;
+  rows = admin ? rows : textbookRows(rows);
+  return `<p class="result-count"><strong>${rows.length}</strong> ${admin ? 'материал' : 'оқулық'} табылды</p><div class="materials-grid">${cards(rows, admin) || `<div class="empty-library"><span class="empty-icon" aria-hidden="true">⌕</span><h2>${admin ? 'Материал' : 'Оқулық'} табылмады</h2><p>Іздеу сөзін қысқартыңыз немесе жоғарыдағы сүзгілерді тазалаңыз.</p>${admin ? '<a class="secondary-button" href="/admin/material/new">+ Материал қосу</a>' : ''}</div>`}</div>`;
 }
 
 export function materialEditor(item, parents, resources = []) {

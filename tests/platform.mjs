@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MAX_FILE_SIZE,MAX_FILE_SIZE_MB,validateFile,filterMaterials,errorMessage } from '../platform-utils.js';
-import {materialEditor} from '../catalog.js';
+import {materialEditor,textbookRows,catalogView,catalogResults,cards,materialRows} from '../catalog.js';
 import { SupabaseStore } from '../store.js';
 let storage=new Map();globalThis.localStorage={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
 test('file size and extension checks',()=>{for(const name of ['a.pdf','a.doc','a.docx','a.ppt','a.pptx','a.png','a.mp4'])assert.doesNotThrow(()=>validateFile({name,size:40}));for(const file of [null,{name:'a.pdf',size:0},{name:'a.pdf',size:MAX_FILE_SIZE+1},{name:'a.html',size:1},{name:'a.svg',size:100}])assert.throws(()=>validateFile(file));});
@@ -134,4 +134,45 @@ test('textbook uploads accept the former 20 MiB boundary through 50 MiB and show
  assert.throws(()=>validateFile({name:'textbook.pdf',size:MAX_FILE_SIZE+1}),/50 MB/);
  assert.match(materialEditor({},[]),/Ең көбі 50 MB/);
  assert.doesNotMatch(materialEditor({},[]),/20 MB/);
+});
+
+test('library includes identified textbooks and excludes lessons, worksheets, slides, hidden files and drafts',()=>{
+ const rows=[
+  {id:'eight',title:'Химия. 8-сынып — оқулық',filename:'8 сынып.pdf',type:'pdf',category:'Теория',published:true},
+  {id:'seven',title:'Химия 7-сынып оқулығы',filename:'7.pdf',type:'pdf'},
+  {id:'tagged',title:'Жалпы химия',filename:'chemistry.pdf',type:'pdf',category:'Оқулық'},
+  {id:'practicum',title:'ПЖЭХ кітап',filename:'ПЖЭХ кітап.pdf',type:'pdf'},
+  {id:'english',title:'Chemistry textbook',filename:'chemistry.docx',type:'doc'},
+  {id:'russian',title:'Химия. Учебник',filename:'book.pdf',type:'pdf'},
+  {id:'sheet',title:'Оқулыққа қосымша жұмыс парағы',filename:'Жұмыс парағы.pdf',type:'pdf',category:'Тапсырмалар'},
+  {id:'lecture',title:'Дәріс 1. Атом',filename:'lecture.pdf',type:'pdf',description:'Оқулық бойынша'},
+  {id:'syllabus',title:'Силлабус',filename:'syllabus.pdf',type:'pdf'},
+  {id:'slide',title:'Химия оқулық',filename:'slides.pptx',type:'ppt'},
+  {id:'video',title:'Оқулық',filename:'book.mp4',type:'video'},
+  {id:'generic',title:'Атом құрылысы',filename:'atom.pdf',type:'pdf',description:'Оқулық'},
+  {id:'hidden',title:'Химия оқулық',filename:'hidden.pdf',type:'pdf',published:false},
+  {id:'draft',title:'Химия оқулық',filename:'draft.pdf',type:'pdf',draft:true},
+  {id:'library-word',title:'Кітапхана ережесі',filename:'rules.pdf',type:'pdf'},
+ ];
+ const before=JSON.stringify(rows);
+ assert.deepEqual(textbookRows(rows).map(r=>r.id),['eight','seven','tagged','practicum','english','russian']);
+ // Filter/reset result rendering must apply the same rule as initial loading.
+ for(const html of [catalogView(rows),catalogResults(rows),catalogResults(filterMaterials(rows,{query:'Атом'}))]){
+  for(const id of ['sheet','lecture','syllabus','slide','video','generic','hidden','draft','library-word'])assert.ok(!html.includes('data-open-resource="'+id+'"'),id);
+ }
+ assert.match(catalogResults(rows),/6<\/strong> оқулық табылды/);
+ assert.match(catalogResults(filterMaterials(rows,{query:'жоқ'})),/Оқулық табылмады/);
+ assert.doesNotMatch(catalogView(rows),/<option value="ppt"|<option value="video"/);
+ assert.ok(catalogResults(rows,true).includes('data-open-resource="sheet"'));
+ assert.ok(cards(rows).includes('data-open-resource="lecture"'));
+ assert.equal(JSON.stringify(rows),before);
+ assert.match(materialEditor({},[]),/<option value="Оқулық"/);
+});
+test('book names from existing item metadata are retained while teacher files remain available',()=>{
+ const items=[{id:'book',title:'Химия. 8-сынып — оқулық',description:'Толық PDF нұсқасы',is_published:true},{id:'lesson',title:'Атом',description:'Сабақ',is_published:true}];
+ const resources=[{id:'book-file',item_id:'book',filename:'8 сынып.pdf'},{id:'slide-file',item_id:'lesson',filename:'Атом.pptx'}];
+ const rows=materialRows(items,resources,r=>r.filename.endsWith('.pdf')?'pdf':'ppt');
+ assert.deepEqual(textbookRows(rows).map(r=>r.id),['book-file']);
+ assert.equal(rows.length,2);
+ assert.ok(cards(rows).includes('data-open-resource="slide-file"'));
 });
