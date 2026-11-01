@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>№9 зертханалық жұмыс — виртуалды нұсқа</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fa;--card:#fff;--text:#13293d;--muted:#5c7080;--primary:#0b3d5c;--accent:#d9611f;--border:#e3e9ed;--ok:#22c55e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}}
+:root[data-theme="dark"]{--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:22px 14px 60px}
+h1{font-size:1.3rem;margin:0 0 8px}
+.box,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:12px;font-size:.86rem;line-height:1.5;transition:box-shadow .3s,border-color .3s}
+.box b{color:var(--primary)}.mut{color:var(--muted);font-size:.78rem}
+.card.flash{box-shadow:0 0 0 4px rgba(34,197,94,.7),0 0 24px 6px rgba(34,197,94,.45);border-color:var(--ok)}
+.shelf{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.shelf div{display:flex;flex-direction:column;align-items:center;width:68px;font-size:.64rem;text-align:center;color:var(--muted);line-height:1.2}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:.76rem}
+.chk{margin-top:6px;font-size:.82rem}.chk .g{font-weight:700;margin-top:9px;color:var(--primary)}
+.i{display:flex;gap:9px;align-items:center;padding:3px 6px;border-radius:6px;color:var(--muted)}
+.dot{width:16px;height:16px;border-radius:50%;background:#b8c4cc;flex:none;transition:.3s;font-size:11px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
+.i.cur{background:rgba(74,154,216,.12);color:var(--text)}.i.cur .dot{background:#f5a524;box-shadow:0 0 0 3px rgba(245,165,36,.3)}
+.i.done{color:var(--text);background:rgba(34,197,94,.1)}.i.done .dot{background:var(--ok);box-shadow:0 0 12px 4px rgba(34,197,94,.8)}
+.lamps{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.lamp{width:22px;height:22px;border-radius:50%;background:#b8c4cc;border:2px solid rgba(0,0,0,.12);transition:background .4s,box-shadow .4s;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.lamp.cur{background:#f5a524;animation:pl 1.2s ease-in-out infinite}
+.lamp.done{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.3),0 0 14px 4px rgba(34,197,94,.9)}
+.lamp.pop{animation:pop .9s ease-out 2}
+@keyframes pl{50%{box-shadow:0 0 10px 3px rgba(245,165,36,.75)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.8)}100%{transform:scale(1)}}
+#scard{position:relative}
+#ok{position:absolute;left:50%;top:14px;transform:translateX(-50%) scale(.8);display:flex;align-items:center;gap:10px;background:rgba(14,90,45,.95);color:#fff;font-weight:700;padding:10px 18px;border-radius:99px;box-shadow:0 0 0 3px #22c55e,0 0 26px 8px rgba(34,197,94,.75);opacity:0;pointer-events:none;transition:opacity .35s,transform .35s;z-index:3;font-size:.95rem;white-space:nowrap}
+#ok.on{opacity:1;transform:translateX(-50%) scale(1)}
+#ok i{width:20px;height:20px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px 4px #4ade80;display:inline-block}
+#scene{width:100%;height:auto;max-height:54vh;display:block;border-radius:8px}
+.bar{margin-top:8px;font-size:.85rem;min-height:2.6em}
+.st{font-weight:700;color:var(--primary);margin-bottom:4px}.card p{margin:2px 0 8px;color:var(--muted)}
+button{background:var(--primary);color:#fff;border:none;padding:9px 14px;border-radius:8px;font-size:.86rem;cursor:pointer;margin:3px 6px 3px 0}
+button:disabled{opacity:.45;cursor:default}button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+.swb{width:38px;height:38px;padding:0;margin:2px;border-radius:8px;font-weight:700;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6)}.swb:disabled{opacity:1}
+.swb.bad{outline:3px solid #d33}.swb.good{outline:3px solid #22c55e}
+table{border-collapse:collapse;font-size:.8rem;width:100%;margin:6px 0}th,td{border:1px solid var(--border);padding:4px 6px;text-align:center}th{background:var(--bg)}
+.center{text-align:center;margin-top:12px}
+.bz{animation:bz var(--d,1s) ease-in infinite;opacity:0}@keyframes bz{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-26px);opacity:0}}
+.dash{animation:dash .35s linear infinite}@keyframes dash{to{stroke-dashoffset:-22}}
+.fl{transform-box:fill-box;transform-origin:50% 100%;animation:fl .22s ease-in-out infinite alternate}@keyframes fl{to{transform:scale(.88,1.12)}}
+.steam{animation:st 1.6s ease-in infinite;opacity:0}@keyframes st{0%{opacity:0;transform:translateY(6px)}40%{opacity:.85}100%{opacity:0;transform:translateY(-16px)}}
+#rv h3{margin:10px 0 3px;font-size:.92rem;color:var(--primary)}#rv p{margin:3px 0;color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>№9 зертханалық жұмыс · виртуалды нұсқа</h1>
+<div class="box"><b>Тұздардың гидролизі</b><br>
+<b>Жұмыстың мақсаты:</b> тұздардың гидролиздену реакцияларын зерттеу, ортаның pH-ының өзгеруін және гидролиздің температура мен сұйылтуға тәуелді екенін байқау.<br>
+<span class="mut">Нұсқаулықтың 2-тәжірибесінде мырыш ацетаты аталған, бірақ реактивтер тізімінде жоқ; мұнда Zn(CH₃COO)₂ ерітіндісі алынды. (NH₄)₂SO₄, NaNO₂, Na₂S, Na₂SO₃ ерітінділері 1–7 тәжірибелерде қолданылмайды.</span></div>
+<div class="box"><b>Қажет аспаптар мен реактивтер</b><div class="shelf" id="shelf"></div><div class="shelf" id="chips"></div></div>
+<div class="box"><b>Орындалу реті</b> <span class="mut">— орындалған қадам жасыл түспен жанады</span><div class="chk" id="chk"></div></div>
+
+<div class="card" id="scard"><div id="ok"></div><svg id="scene" viewBox="0 0 400 250"></svg><div class="bar" id="say"></div></div>
+<div class="card"><div class="lamps" id="lamps"></div><div class="st" id="stT"></div><p id="stD"></p><div id="acts"></div></div>
+<div class="card" id="scale" style="display:none"><b>Универсал индикатор қағазының түс шкаласы (pH)</b><div id="sw" style="margin-top:6px"></div><div id="pickMsg" style="margin-top:6px"></div></div>
+<div class="card" id="c15" style="display:none"><b>15-кесте</b><table id="t15"><tr><th>Тұз формуласы</th><th>Лакмус түсі</th><th>Реакция ортасы</th><th>pH көрсеткіші</th></tr></table></div>
+<div class="card" id="rv" style="display:none"></div>
+<div class="center"><button class="secondary" onclick="location.reload()">↺ Қайта бастау</button></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),rg=c=>'rgb('+c.map(Math.round).join()+')';
+const mix=(a,va,b,vb)=>a.map((x,i)=>(x*va+b[i]*vb)/((va+vb)||1));
+const wait=(ms,f)=>setTimeout(f,ms),say=s=>$('say').innerHTML=s;
+function tween(ms,fn,done){const t0=performance.now();(function f(now){const p=Math.min(1,(now-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(e,p);p<1?requestAnimationFrame(f):done&&done()})(t0)}
+function seq(fns,done){let i=0;(function n(){i<fns.length?fns[i++](n):done&&done()})()}
+const par=(arr,f,cb)=>seq(arr.map(i=>c=>f(i,c)),cb);
+const CLEAR='#d3eaf5',FE='#c98a2b';
+const UI=[null,'#e8383d','#ee5a3a','#f08a3a','#f2b43c','#f2d93c','#b9d63c','#6dbb4a','#2fa86a','#2a9aa0','#3a6fc4','#4a56b8','#6a48b0','#7a3fa0','#8a3a8c'];
+
+/* ---------- apparatus ---------- */
+let vid=0,SC={};const sc=$('scene');
+function base(){sc.innerHTML='<rect width="400" height="250" fill="#eef4f7"/><rect y="218" width="400" height="32" fill="#cdbb9e"/><rect y="218" width="400" height="3" fill="#b3a083"/>';SC={}}
+function lab(x,y,s,z){const t=el('text',{x,y,'text-anchor':'middle','font-size':z||9,fill:'#13293d'},sc);t.textContent=s;return t}
+function rack(x1,x2,y){el('rect',{x:x1,y,width:x2-x1,height:9,rx:3,fill:'#b08a5b'},sc);[x1+10,x2-18].forEach(x=>el('rect',{x,y:y+9,width:8,height:196-y,fill:'#9c7848'},sc))}
+function tubeSpec(w,h){const p=`M0,0V${h-w/2}a${w/2},${w/2} 0 0 0 ${w},0V0`;return{cl:p+'Z',od:p+`M-3,0H${w+3}`,pts:[[0,h],[1,h-14],[20,12]],hw:w/2,mx:w/2}}
+function ves(x,y,o){const id='v'+(vid++),v={x,y,h:o.pts[0][1],mx:o.mx,hw:o.hw,pv:[o.mx,0],vol:0,rgb:hx(CLEAR),dx:0,dy:0,tilt:0};
+ v.g=el('g',{},sc);el('path',{d:o.cl},el('clipPath',{id},v.g));
+ v.lg=el('g',{},el('g',{'clip-path':`url(#${id})`},v.g));
+ v.liq=el('rect',{x:-300,y:600,width:800,height:600,opacity:.85},v.lg);v.liq.style.fill=rg(v.rgb);
+ v.tb=el('rect',{x:-300,y:600,width:800,height:600,fill:'#fff',opacity:0},v.lg);
+ el('path',{d:o.od,fill:'rgba(200,225,240,.14)',stroke:'#5c7080','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'},v.g);
+ v.ys=q=>{const p=o.pts;let i=0;while(i<p.length-2&&p[i+1][0]<q)i++;return p[i][1]+(q-p[i][0])/(p[i+1][0]-p[i][0])*(p[i+1][1]-p[i][1])};
+ v.upd=()=>{const s=v.vol<=0?600:v.ys(v.vol);v.liq.setAttribute('y',s);v.tb.setAttribute('y',s);v.g.setAttribute('transform',`translate(${v.x+v.dx},${v.y+v.dy}) rotate(${v.tilt},${v.pv[0]},${v.pv[1]})`);v.lg.setAttribute('transform',`rotate(${-v.tilt},${v.pv[0]},${s})`)};
+ v.upd();return v}
+const col=(v,hex,ms)=>{v.liq.style.transition='fill '+(ms||1600)+'ms';v.rgb=hx(hex);v.liq.style.fill=rg(v.rgb)};
+function ppt(v,hex,op,ms,cb){v.tb.setAttribute('fill',hex);tween(ms||1800,e=>v.tb.setAttribute('opacity',op*e),cb)}
+function fade(v,from,ms,cb){tween(ms,e=>v.tb.setAttribute('opacity',from*(1-e)),cb)}
+function pourer(){const p=el('g',{id:'pr',style:'display:none'},sc);el('path',{id:'prS',d:'','stroke-width':2.6,fill:'none','stroke-linecap':'round'},p);el('g',{id:'prC'},p);
+ el('text',{id:'prT',x:14,y:-46,'font-size':9,'font-weight':700,fill:'#13293d',style:'paint-order:stroke;stroke:#eef4f7;stroke-width:3px'},p)}
+function look(mode,hex){const gl='rgba(200,225,240,.4)',s='stroke="#5c7080"';
+ $('prC').innerHTML=mode=='pour'?`<rect x="-7" y="0" width="14" height="48" rx="2" fill="${gl}" ${s} stroke-width="1.6"/><rect id="prL" x="-6" y="1" width="12" height="40" fill="${hex}" opacity=".9"/>`+[10,20,30,40].map(y=>`<line x1="-7" y1="${y}" x2="-2" y2="${y}" ${s} stroke-width=".8"/>`).join('')
+ :mode=='drops'?`<path d="M-2.5,0V30h5V0" fill="${gl}" ${s} stroke-width="1.4"/><path d="M-8,30c0,-9 16,-9 16,0v14c0,6 -16,6 -16,0z" fill="#5a4a42"/><rect x="-1.5" y="1" width="3" height="10" fill="${hex}"/>`
+ :`<rect x="-2.5" y="2" width="5" height="36" rx="2" fill="#9aa6ad"/><ellipse cx="0" cy="3" rx="7" ry="4.5" fill="#9aa6ad"/><circle cx="-2" cy="2" r="1.8" fill="${hex}"/><circle cx="2" cy="4" r="1.6" fill="${hex}"/>`}
+function addTo(v,mL,hex,o,cb){o=o||{};const mode=o.mode||'pour',lx=v.x+v.mx,ly=v.y-(mode=='drops'?14:10);
+ look(mode,o.sc||hex);const P=$('pr'),S=$('prS');P.style.display='';P.setAttribute('transform',`translate(${lx},${ly})`);
+ $('prC').setAttribute('transform',mode=='drops'?'rotate(180)':'rotate(-135)');$('prT').textContent=o.lab||'';$('prT').setAttribute('y',ly<56?-24:-46);
+ S.setAttribute('stroke',o.sc||(mode=='crystals'?'#fff':hex));S.style.filter=mode=='crystals'?'drop-shadow(0 0 1px #5c7080)':'';
+ S.setAttribute('stroke-dasharray',mode=='pour'?'none':mode=='drops'?'2 9':'3 8');S.setAttribute('class',mode=='pour'?'':'dash');
+ const v0=v.vol,c0=v.rgb,c1=hx(hex),cm=o.keep?c0:mix(c0,v0,c1,mL);v.liq.style.transition='none';
+ tween(o.ms||1000,e=>{v.vol=v0+mL*e;v.upd();v.liq.style.fill=rg(c0.map((x,i)=>x+(cm[i]-x)*e));
+  S.setAttribute('d','M0,0V'+Math.max(4,v.y+(v.vol<=0?v.ys(0):v.ys(v.vol))-ly));const L=$('prL');L&&L.setAttribute('height',40*(1-e*.8))},()=>{v.rgb=cm;P.style.display='none';cb&&cb()})}
+function transfer(a,b,mL,cb,ms,up){const dir=b.x<a.x?-1:1,hf=a.hw,lipx=a.x+a.mx+dir*hf*.574,dxT=b.x+b.mx-lipx,dyT=b.y-12-(up||0)-a.y-hf*.819;
+ const v0=a.vol,w0=b.vol,cA=a.rgb,cB=b.rgb,cm=mix(cB,w0,cA,mL),P=$('pr'),S=$('prS');a.liq.style.transition=b.liq.style.transition='none';
+ tween(600,e=>{a.tilt=dir*55*e;a.dx=dxT*e;a.dy=dyT*e;a.upd()},()=>{
+  $('prC').innerHTML='';$('prT').textContent='';P.style.display='';const ly=a.y+dyT+hf*.819;P.setAttribute('transform',`translate(${b.x+b.mx},${ly})`);
+  S.setAttribute('stroke',rg(cA));S.setAttribute('stroke-dasharray','none');S.setAttribute('class','');S.style.filter='';
+  tween(ms||1100,e=>{a.vol=v0-mL*e;b.vol=w0+mL*e;a.upd();b.upd();b.liq.style.fill=rg(cB.map((x,i)=>x+(cm[i]-x)*e));S.setAttribute('d','M0,0V'+Math.max(4,b.y+b.ys(b.vol)-ly))},()=>{
+   b.rgb=cm;P.style.display='none';tween(600,e=>{a.tilt=dir*55*(1-e);a.dx=dxT*(1-e);a.dy=dyT*(1-e);a.upd()},cb)})})}
+function lamp(x,y){const g=el('g',{},sc),E=(t,a,p)=>el(t,a,p||g);
+ E('path',{d:`M${x-16},${y+22}C${x-18},${y+8} ${x-8},${y+2} ${x-5},${y}H${x+5}C${x+8},${y+2} ${x+18},${y+8} ${x+16},${y+22}Z`,fill:'rgba(200,225,240,.5)',stroke:'#5c7080','stroke-width':2});
+ E('rect',{x:x-12,y:y+11,width:24,height:11,fill:'#d6e6ee',opacity:.9});E('rect',{x:x-1.5,y:y-8,width:3,height:9,fill:'#7a6a4a'});
+ const tx=E('text',{x,y:y+36,'text-anchor':'middle','font-size':7,fill:'#13293d'});tx.textContent='спирт шамы';
+ const f=E('g',{style:'opacity:0;transition:opacity .4s'});
+ E('path',{d:`M${x},${y-8}C${x-9},${y-16} ${x-6},${y-30} ${x},${y-44}C${x+6},${y-30} ${x+9},${y-16} ${x},${y-8}Z`,fill:'#9fd0ff',opacity:.6,class:'fl'},f);
+ E('path',{d:`M${x},${y-8}C${x-5},${y-14} ${x-3},${y-22} ${x},${y-30}C${x+3},${y-22} ${x+5},${y-14} ${x},${y-8}Z`,fill:'#ffd86b',class:'fl'},f);
+ return{on:v=>f.style.opacity=v?1:0,remove:()=>g.remove()}}
+function mkBub(cx,y,N,d,w){w=w||6;const g=el('g',{},sc);for(let k=0;k<N;k++)el('circle',{cx:cx-w+k*(2*w/Math.max(N-1,1)),cy:y,r:1.9,fill:'#fff',stroke:'#8fb5cb','stroke-width':.5,class:'bz',style:`--d:${d}s;animation-delay:${(k*d/N).toFixed(2)}s`},g);return g}
+function steam(cx,y,n){const a=[];for(let k=0;k<(n||3);k++)a.push(el('path',{d:`M${cx-10+k*10},${y}q-5,-8 0,-15`,stroke:'#fff','stroke-width':2.6,fill:'none',class:'steam',style:'animation-delay:'+k*.4+'s'},sc));return{stop:()=>a.forEach(p=>p.remove())}}
+function heap(t,hex){const cx=t.x+t.mx,b=t.y+t.h-3;return el('polygon',{points:`${cx-11},${b} ${cx-5},${b-8} ${cx+4},${b-7} ${cx+11},${b}`,fill:hex||'#fff',stroke:'#9aa6ad','stroke-width':.8},sc)}
+function sceneTubes(labs,subs,x0,dx){base();const n=labs.length;x0=x0||400/(n+1);dx=dx||400/(n+1);rack(x0-60,x0+dx*(n-1)+60,142);SC.tb=[];
+ labs.forEach((l,k)=>{const c=x0+dx*k;SC.tb.push(ves(c-14,84,tubeSpec(28,120)));lab(c,236,l,8.5);subs&&subs[k]&&lab(c,246,subs[k],7)});pourer()}
+function sceneHeat(xs,labs,subs,cx,st){base();if(xs.length)rack(Math.min(...xs)-50,Math.max(...xs)+50,142);
+ el('rect',{x:cx-50,y:214,width:110,height:5,rx:2,fill:'#5c7080'},sc);el('rect',{x:cx+50,y:40,width:6,height:176,fill:'#5c7080'},sc);
+ el('line',{x1:cx+50,y1:104,x2:cx+14,y2:104,stroke:'#5c7080','stroke-width':4},sc);SC.lamp=lamp(cx,194);SC.tb=[ves(cx-14,60,tubeSpec(28,120))];
+ el('rect',{x:cx-18,y:98,width:36,height:12,rx:2,fill:'none',stroke:'#5c7080','stroke-width':3},sc);lab(cx,246,st,8);
+ xs.forEach((c,k)=>{SC.tb.push(ves(c-14,84,tubeSpec(28,120)));lab(c,236,labs[k],8.5);subs&&subs[k]&&lab(c,246,subs[k],7)});pourer()}
+const T=()=>SC.tb;
+function dip(t,items,cb){const cx=t.x+t.mx;let k=0;
+ (function nx(){if(k>=items.length){cb&&cb();return}const it=items[k++];
+  const r=el('rect',{x:cx-3.5,y:6,width:7,height:34,rx:1,fill:'#f2ecdc',stroke:'#b9b09a','stroke-width':.6},sc);r.style.transition='fill .9s';
+  const sy=Math.max(10,t.y+(t.vol>0?t.ys(t.vol):t.h)-30);
+  tween(650,e=>r.setAttribute('y',6+(sy-6)*e),()=>wait(350,()=>{r.style.fill=it.hex;wait(900,()=>tween(600,e=>{r.setAttribute('y',sy+(t.y+16-sy)*e);r.setAttribute('x',cx-3.5+(20+it.rx)*e)},nx))}))})()}
+function addRow15(f,l,m,p){$('c15').style.display='';$('t15').insertAdjacentHTML('beforeend','<tr><td>'+f+'</td><td>'+l+'</td><td>'+m+'</td><td>'+p+'</td></tr>')}
+
+/* ---------- step 1: pH picking ---------- */
+const U=[2,5,9,12][Math.floor(Math.random()*4)],UN=1+Math.floor(Math.random()*9);let pickMode=false,pickCb=null,wrong=0;
+function pickPH(n){if(!pickMode)return;const b=document.querySelectorAll('.swb')[n-1];
+ if(n===U){pickMode=false;b.classList.add('good');document.querySelectorAll('.swb').forEach(x=>x.disabled=true);
+  const med=U<7?'қышқылдық':U>7?'сілтілік':'бейтарап';
+  say('✓ <b>pH = '+U+'</b>. Сутек иондарының концентрациясы: [H⁺] = <b>10<sup>−'+U+'</sup> моль/л</b>; [OH⁻] = 10<sup>−'+(14-U)+'</sup> моль/л. Орта: <b>'+med+'</b>.');wait(1400,pickCb)}
+ else{wrong++;b.classList.add('bad');wait(900,()=>b.classList.remove('bad'));$('pickMsg').textContent='Түс сәйкес келмейді. Қағаздың түсін шкаладағы түстермен қайта салыстырыңыз.'+(wrong>=2?' Кеңес: қызыл — өте қышқылдық, сары — әлсіз қышқылдық, жасыл — бейтарап, көк/күлгін — сілтілік.':'')}}
+
+/* ---------- steps ---------- */
+const mk=(g,t,d,acts,o)=>Object.assign({g,t,d,acts},o);
+const A=(l,run,o)=>Object.assign({l,run},o);
+const LT={n:'#8e5fbf',b:'#3a5bd6',r:'#d63a3a',z:'#b05098'};
+const D2=[{f:'Na₂CO₃',lit:LT.b,ln:'көк',med:'сілтілік',pt:'11 (pH &gt; 7)',ph:11},{f:'CuSO₄',lit:LT.r,ln:'қызыл',med:'қышқылдық',pt:'4 (pH &lt; 7)',ph:4},
+ {f:'Zn(CH₃COO)₂',lit:LT.z,ln:'қызғылт-күлгін',med:'әлсіз қышқылдық',pt:'6 (pH &lt; 7)',ph:6},{f:'NaCl',lit:LT.n,ln:'күлгін (өзгермейді)',med:'бейтарап',pt:'7 (pH = 7)',ph:7}];
+const steps=[
+mk(0,'1. Ерітінді ортасын анықтау (pH)','Оқытушыдан белгісіз ерітіндіні алып, универсал индикатор қағазының көмегімен pH-ын анықтаймыз және [H⁺] есептейміз.',[
+ A('Оқытушыдан ерітінді алу',cb=>addTo(T()[0],3,CLEAR,{lab:'ерітінді №'+UN+' · 3 мл'},cb),{pre:()=>sceneTubes(['ерітінді №'+UN],['(оқытушыдан)'])}),
+ A('Индикатор қағазын батыру',cb=>dip(T()[0],[{hex:UI[U],rx:0}],()=>{$('scale').style.display='';$('sw').innerHTML=UI.slice(1).map((c,i)=>'<button class="swb" style="background:'+c+'" onclick="pickPH('+(i+1)+')" disabled>'+(i+1)+'</button>').join('');say('Қағаздың түсі өзгерді. Оны шкаладағы түспен салыстырыңыз.');cb()}),{needs:[0]}),
+ A('Түсті шкала бойынша pH таңдау',cb=>{pickMode=true;pickCb=cb;document.querySelectorAll('.swb').forEach(x=>x.disabled=false);say('Қағаз түсіне сәйкес келетін шкаладағы ұяшықты басыңыз.')},{needs:[1]})]),
+mk(1,'2. Гидролизге ұшыраған тұздар ерітінділерінің ортасы','Төрт сынауыққа Na₂CO₃, CuSO₄, Zn(CH₃COO)₂, NaCl ерітінділерін құйып, универсал индикатор қағазымен орта реакциясын анықтаймыз (15-кесте); лакмус түсі pH бойынша жазылады.',[
+ A('Төрт сынауыққа ерітінділерді құю',cb=>{const cs=[CLEAR,'#4aa3df',CLEAR,CLEAR];par([0,1,2,3],(i,c)=>addTo(T()[i],3,cs[i],{lab:D2[i].f+' · 3 мл',ms:800},c),cb)},{pre:()=>sceneTubes(['Na₂CO₃','CuSO₄','Zn(CH₃COO)₂','NaCl'],['2 н','0,5 н','ерітінді','2 н'],70,86)}),
+ A('Универсал индикатор қағазын батыру',cb=>seq(D2.map((d,i)=>c=>dip(T()[i],[{hex:UI[d.ph],rx:0}],()=>{addRow15(d.f,d.ln,d.med,d.pt);c()})),()=>{say('Na₂CO₃ — сілтілік (күшті негіз + әлсіз қышқыл), CuSO₄ — қышқылдық (әлсіз негіз + күшті қышқыл), Zn(CH₃COO)₂ — екеуі де әлсіз: орта бейтарапқа жақын, әлсіз қышқылдық, NaCl — гидролизденбейді, бейтарап.');cb()}),{needs:[0]})]),
+mk(2,'3. Гидролиз өнімдерінің қасиеті (FeCl₃ + Mg)','Сынауыққа FeCl₃ ерітіндісін құйып, индикатор қағазына әсерін тексереміз, содан соң аздап магний ұнтағын саламыз.',[
+ A('FeCl₃ құйып, индикатор қағазымен тексеру',cb=>addTo(T()[0],3,FE,{lab:'FeCl₃ 2 н · 3 мл'},()=>dip(T()[0],[{hex:UI[1],rx:0}],()=>{say('Универсал қағаз <b>қызыл</b> (pH ≈ 1): орта қышқылдық. 1-саты: FeCl₃ + H₂O ⇌ FeOHCl₂ + HCl; Fe³⁺ + H₂O ⇌ FeOH²⁺ + H⁺.');cb()})),{pre:()=>sceneTubes(['FeCl₃ (2 н)'],['+ Mg ұнтағы'])}),
+ A('Mg ұнтағын салу',cb=>addTo(T()[0],.05,'#9aa3aa',{mode:'crystals',sc:'#9aa3aa',keep:1,lab:'Mg ұнтағы',ms:1100},()=>{const t=T()[0],h=heap(t,'#9aa3aa'),g=mkBub(t.x+14,t.y+t.h-12,8,.5,8);
+  say('<b>Сутек (H₂)</b> көпіршіктері бөлінуде: гидролиз нәтижесінде түзілген H⁺ магниймен әрекеттеседі: Mg + 2H⁺ = Mg²⁺ + H₂↑.');ppt(t,'#8b4a1e',.35,5000,()=>{g.remove();h.remove();say('Қышқылдық азайған сайын гидролиз тереңдеп, ерітінді <b>қоңыр Fe(OH)₃</b> лайымен лайланады. Бөлінген газ — сутек.');cb()})}),{needs:[0]})]),
+mk(3,'4. Гидролиз дәрежесіне температураның әсері','Сынауыққа 3 мл FeCl₃ және 3 мл CH₃COONa ерітінділерін қосамыз, содан соң қайнағанша қыздырамыз.',[
+ A('FeCl₃ + CH₃COONa',cb=>addTo(T()[0],3,FE,{lab:'FeCl₃ · 3 мл'},()=>addTo(T()[0],3,CLEAR,{lab:'CH₃COONa · 3 мл'},()=>{col(T()[0],'#a8301a',2200);say('Реакция <b>жүреді</b>: ерітінді қою қызыл-қоңыр түске боялды (темір (III) ацетаты).');wait(2300,cb)})),{pre:()=>sceneHeat([],[],[],200,'FeCl₃ + CH₃COONa')}),
+ A('Қайнағанша қыздыру',cb=>{SC.lamp.on(1);const t=T()[0],g=mkBub(t.x+14,t.y+t.h-12,6,.6,7),s=steam(t.x+14,t.y-2,3);say('Ерітінді қыздырылуда…');col(t,'#d98a3d',3800);
+  ppt(t,'#7a3a1a',.8,3800,()=>{g.remove();s.stop();SC.lamp.on(0);say('<b>Қоңыр-қызыл тұнба</b> — Fe(OH)₃ (негіздік ацетаттар) түзілді, сірке қышқылының иісі шықты: қыздырғанда гидролиз толық жүреді.');wait(1000,cb)})},{needs:[0]})]),
+mk(4,'5. Ерітіндіні сұйылтудың гидролиз дәрежесіне әсері','Сынауыққа 1 мл SbCl₃ ерітіндісін құйып, тұнба түзілгенше тамшылатып дистилденген су қосамыз.',[
+ A('SbCl₃ құю',cb=>addTo(T()[0],1,CLEAR,{lab:'SbCl₃ 0,5 н · 1 мл'},cb),{pre:()=>sceneTubes(['SbCl₃'],['+ H₂O (тамшылап)'])}),
+ A('Су тамшылату',cb=>addTo(T()[0],1.4,CLEAR,{mode:'drops',lab:'H₂O (тамшылап)',ms:3500},()=>ppt(T()[0],'#ffffff',.9,2500,()=>{say('Сұйылтқанда <b>ақ тұнба SbOCl</b> түзілді: SbCl₃ + H₂O ⇌ Sb(OH)Cl₂ + HCl (1-саты); сұйылтудан 2-саты күшейіп, Sb(OH)₂Cl → SbOCl + H₂O. Ерітінді келесі тәжірибеге сақталды.');cb()})),{needs:[0]})]),
+mk(5,'6 (а). Гидролиздің қайтымдылығы (HCl және су)','5-тәжірибедегі тұнбаға ол ерігенше HCl қосамыз, содан соң қайтадан су құямыз.',[
+ A('HCl қосу (тұнба ерігенше)',cb=>{fade(T()[0],.9,3500);addTo(T()[0],1.6,CLEAR,{mode:'drops',lab:'2 н HCl (тамшылап)',ms:3500},()=>{say('Тұнба <b>ерiдi</b>: [H⁺] артты, гидролиз тепе-теңдігі солға ығысты: SbOCl + 2HCl ⇌ SbCl₃ + H₂O.');wait(1000,cb)})}),
+ A('Су құю',cb=>addTo(T()[0],3,CLEAR,{lab:'H₂O · 3 мл'},()=>ppt(T()[0],'#ffffff',.9,2200,()=>{say('Су құйғанда <b>тұнба қайта түзілді</b>: сұйылтқанда тепе-теңдік оңға ығысады. Гидролиз — қайтымды процесс.');cb()})),{needs:[0]})]),
+mk(5,'6 (ә). CH₃COONa гидролизі және фенолфталеин','CH₃COONa ерітіндісіне 2–3 тамшы фенолфталеин тамызып, екі сынауыққа бөлеміз; біріншісін қыздырамыз, екіншісін сұйылтып, бастапқы ерітіндімен салыстырамыз.',[
+ A('CH₃COONa + фенолфталеин',cb=>addTo(T()[0],6,CLEAR,{lab:'CH₃COONa 2 н · 6 мл'},()=>addTo(T()[0],.1,'#d6286a',{mode:'drops',keep:1,lab:'фенолфталеин · 2–3 тамшы',ms:900},()=>{col(T()[0],'#f3b6cf',1500);say('Ерітінді <b>ақшыл-қызғылт</b>: CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻ — орта сілтілік.');wait(1600,cb)})),{pre:()=>sceneHeat([130],['№2 (салыстыру)'],['сұйылтылады'],300,'№1 (қыздырылады)')}),
+ A('Екі сынауыққа бөлу',cb=>transfer(T()[0],T()[1],3,()=>{say('Ерітінді екі сынауыққа бөлінді.');cb()}),{needs:[0]}),
+ A('Біріншісін қыздыру',cb=>{SC.lamp.on(1);const t=T()[0],g=mkBub(t.x+14,t.y+t.h-12,5,.6,6);col(t,'#e0508a',3000);say('Қыздырылуда…');
+  wait(3300,()=>{say('Қыздырғанда түс <b>қоюланды</b> (№2-мен салыстырыңыз): гидролиз эндотермиялық, температура артқанда тепе-теңдік оңға ығысады, [OH⁻] артады.');wait(1800,()=>{g.remove();SC.lamp.on(0);col(t,'#f3b6cf',3500);wait(3600,()=>{say('Суығанда түс <b>бастапқы күйіне қайтты</b>: гидролиз қайтымды.');cb()})})})},{needs:[1]}),
+ A('Екіншісін сұйылту',cb=>addTo(T()[1],5,CLEAR,{lab:'H₂O · 5 мл'},()=>{col(T()[1],'#fbe3ec',2200);wait(2300,()=>{say('Сұйылтқанда түс <b>солғындады</b> (бастапқымен салыстырғанда): гидролиз дәрежесі артады, бірақ [OH⁻] абсолют мәні азаяды.');cb()})}),{needs:[1]})]),
+mk(6,'7. Гидролизге толық ұшырау (AlCl₃ + Na₂CO₃)','AlCl₃ ерітіндісіне Na₂CO₃ ерітіндісін қосамыз, қыздырып сүземіз. Тұнбаның карбонат емес, Al(OH)₃ екенін дәлелдейміз.',[
+ A('AlCl₃ + Na₂CO₃',cb=>addTo(T()[0],3,CLEAR,{lab:'AlCl₃ 2 н · 3 мл'},()=>addTo(T()[0],3,CLEAR,{lab:'Na₂CO₃ 2 н · 3 мл'},()=>{const t=T()[0],g=mkBub(t.x+14,t.y+t.h-14,7,.55,8);ppt(t,'#ffffff',.9,2600,()=>wait(900,()=>{g.remove();say('<b>Ақ желатин тәрізді тұнба</b> Al(OH)₃ түзілді және <b>CO₂</b> көпіршіктері бөлінді.');cb()}))})),
+  {pre:()=>{sceneHeat([240,180,120],['сүзінді','тұнба + HCl','тұнба + NaOH'],['','',''],340,'AlCl₃ + Na₂CO₃');
+   SC.fun=el('g',{transform:'translate(240,84)',style:'opacity:0;transition:opacity .5s'},sc);el('path',{d:'M-24,-38L24,-38L5,-4V8H-5V-4Z',fill:'rgba(200,225,240,.45)',stroke:'#5c7080','stroke-width':1.8,'stroke-linejoin':'round'},SC.fun);
+   el('path',{d:'M-20,-36L0,-6L20,-36',fill:'none',stroke:'#b9b09a','stroke-width':1.2,'stroke-dasharray':'3 2'},SC.fun);SC.res=el('path',{d:'M-9,-14L9,-14L3,-6H-3Z',fill:'#fff',stroke:'#9aa6ad','stroke-width':.8,opacity:0},SC.fun);$('pr').parentNode.appendChild($('pr'))}}),
+ A('Қыздыру',cb=>{SC.lamp.on(1);const t=T()[0],g=mkBub(t.x+14,t.y+t.h-14,6,.6,7),s=steam(t.x+14,t.y-2,3);say('Қыздырылуда…');wait(3500,()=>{g.remove();s.stop();SC.lamp.on(0);say('Қыздырғанда тұнба толығырақ түзілді.');cb()})},{needs:[0]}),
+ A('Сүзу',cb=>{SC.fun.style.opacity=1;transfer(T()[0],T()[1],6,()=>{T()[0].tb.setAttribute('opacity',0);SC.res.setAttribute('opacity',1);say('Тұнба <b>сүзгіде қалды</b>, сүзінді мөлдір.');cb()},1600,34)},{needs:[1]}),
+ A('Тұнбаны HCl-ға салу',cb=>addTo(T()[2],3,CLEAR,{lab:'2 н HCl · 3 мл'},()=>{const h=heap(T()[2]);SC.res.setAttribute('opacity',.45);tween(3200,e=>h.setAttribute('opacity',1-e),()=>{h.remove();say('Тұнба <b>газ бөлмей ерідi</b>: CO₂ жоқ, демек тұнба карбонат емес. Al(OH)₃ + 3HCl = AlCl₃ + 3H₂O.');cb()})}),{needs:[2]}),
+ A('Тұнбаны NaOH-қа салу',cb=>addTo(T()[3],3,CLEAR,{lab:'2 н NaOH · 3 мл'},()=>{const h=heap(T()[3]);tween(3200,e=>{h.setAttribute('opacity',1-e);SC.res.setAttribute('opacity',.45*(1-e))},()=>{h.remove();say('Тұнба сілтіде де <b>ерiдi</b> → <b>Al(OH)₃ амфотерлі гидроксид</b>: Al(OH)₃ + NaOH = Na[Al(OH)₄].');cb()})}),{needs:[2]})]),
+mk(6,'Құбылыс және қорытынды','Барлық тәжірибенің құбылысын және гидролиз теңдеулерін көреміз.',[A('Қорытындыны ашу',cb=>{reveal();cb()})])
+];
+function reveal(){const rv=$('rv');rv.style.display='';rv.innerHTML=`<b style="font-size:1rem">Құбылыс және қорытынды (теңдеулер)</b>
+<h3>1. pH</h3><p>pH = −lg[H⁺]; [H⁺][OH⁻] = 10⁻¹⁴; pH + pOH = 14. pH &lt; 7 — қышқылдық, pH = 7 — бейтарап, pH &gt; 7 — сілтілік орта.</p>
+<h3>2. Тұз типтері және орта</h3><p><b>Na₂CO₃</b> (күшті негіз + әлсіз қышқыл), аніон бойынша: CO₃²⁻ + H₂O ⇌ HCO₃⁻ + OH⁻; Na₂CO₃ + H₂O ⇌ NaHCO₃ + NaOH → pH &gt; 7.<br>
+<b>CuSO₄</b> (әлсіз негіз + күшті қышқыл), катион бойынша: Cu²⁺ + H₂O ⇌ CuOH⁺ + H⁺; 2CuSO₄ + 2H₂O ⇌ (CuOH)₂SO₄ + H₂SO₄ → pH &lt; 7.<br>
+<b>Zn(CH₃COO)₂</b> (әлсіз негіз + әлсіз қышқыл), екі ион бойынша: Zn²⁺ + H₂O ⇌ ZnOH⁺ + H⁺; CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻; орта қышқыл мен негіздің әлсіздік дәрежесіне байланысты, бейтарапқа жақын (шамамен әлсіз қышқылдық).<br>
+<b>NaCl</b> (күшті негіз + күшті қышқыл) гидролизденбейді, pH = 7.</p>
+<h3>3. FeCl₃ және Mg</h3><p>FeCl₃ + H₂O ⇌ FeOHCl₂ + HCl; Fe³⁺ + H₂O ⇌ FeOH²⁺ + H⁺ — орта қышқылдық, индикатор қағазы қызарады. Mg + 2HCl = MgCl₂ + H₂↑; Mg + 2H⁺ = Mg²⁺ + H₂↑ — бөлінген газ сутек.</p>
+<h3>4. Температураның әсері</h3><p>Fe(CH₃COO)₃ + H₂O ⇌ FeOH(CH₃COO)₂ + CH₃COOH<br>FeOH(CH₃COO)₂ + H₂O ⇌ Fe(OH)₂CH₃COO + CH₃COOH<br>Fe(OH)₂CH₃COO + H₂O ⇌ Fe(OH)₃↓ + CH₃COOH<br>Жиынтығы: Fe³⁺ + 3CH₃COO⁻ + 3H₂O ⇌ Fe(OH)₃↓ + 3CH₃COOH. Гидролиз — эндотермиялық, қыздырғанда тепе-теңдік оңға ығысып, Fe(OH)₃ тұнбасы түзіледі.</p>
+<h3>5. Сұйылтудың әсері</h3><p>SbCl₃ + H₂O ⇌ Sb(OH)Cl₂ + HCl (1-саты); Sb(OH)Cl₂ + H₂O ⇌ Sb(OH)₂Cl + HCl (2-саты); Sb(OH)₂Cl → SbOCl↓ + H₂O. Жиынтығы: SbCl₃ + H₂O ⇌ SbOCl↓ + 2HCl. Сұйылтқанда гидролиз дәрежесі артады.</p>
+<h3>6. Гидролиздің қайтымдылығы</h3><p>(а) HCl қосқанда [H⁺] артып, тепе-теңдік солға ығысады — SbOCl ериді; су қосқанда тепе-теңдік оңға ығысады — тұнба қайта түзіледі.<br>(ә) CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻ (CH₃COONa + H₂O ⇌ CH₃COOH + NaOH): орта сілтілік, фенолфталеин қызғылт. Қыздырғанда [OH⁻] артады, түс қоюланады; суығанда қайтады. Сұйылтқанда гидролиз дәрежесі артады, бірақ [OH⁻] азаяды — түс солғындайды.</p>
+<h3>7. Толық гидролиз</h3><p>2AlCl₃ + 3Na₂CO₃ + 3H₂O = 2Al(OH)₃↓ + 3CO₂↑ + 6NaCl<br>2Al³⁺ + 3CO₃²⁻ + 3H₂O = 2Al(OH)₃↓ + 3CO₂↑<br>Al₂(CO₃)₃ сулы ерітіндіде өмір сүрмейді: Al₂(CO₃)₃ + 6H₂O = 2Al(OH)₃ + 3H₂CO₃ (H₂CO₃ → CO₂ + H₂O). Тұнба қышқылда газ бөлмей еріді (карбонат болса CO₂ бөлінер еді) және сілтіде де еріді — бұл Al(OH)₃.</p>
+<p class="mut">Ескерту: pH мәндері шамамен алынған; түстер мен көрсеткіштер модельденген.</p>`}
+
+/* ---------- engine ---------- */
+let cur=0,busy=false;
+const G=['1. Ерітінді ортасын анықтау','2. Гидролизге ұшыраған тұздардың ортасы','3. Гидролиз өнімдерінің қасиеті','4. Температураның әсері','5. Сұйылтудың әсері','6. Гидролиздің қайтымдылығы','7. Толық гидролиз'];
+function refresh(){const s=steps[cur];s.acts.forEach((x,i)=>{$('ac'+i).disabled=!!x.done||busy||(x.needs||[]).some(j=>!s.acts[j].done)})}
+function show(){const s=steps[cur];$('li'+cur).classList.add('cur');$('lp'+cur).classList.add('cur');$('stT').textContent=(cur+1)+'/'+steps.length+' · '+s.t;$('stD').textContent=s.d;
+ $('acts').innerHTML='';s.acts.forEach((x,i)=>{const b=document.createElement('button');b.id='ac'+i;b.textContent=x.l;b.onclick=()=>act(i);$('acts').appendChild(b)});refresh()}
+function act(i){const s=steps[cur],x=s.acts[i];if(x.pre&&!x.pd){x.pd=1;x.pre()}busy=true;refresh();
+ x.run(()=>{x.done=1;busy=false;if(s.acts.every(a=>a.done))complete();else refresh()})}
+function complete(){const li=$('li'+cur);li.classList.remove('cur');li.classList.add('done');const lp=$('lp'+cur);lp.classList.remove('cur');lp.classList.add('done','pop');li.querySelector('.dot').textContent='✓';
+ const ok=$('ok');ok.innerHTML='<i></i>✓ '+(cur+1)+'-қадам орындалды';ok.classList.add('on');wait(2200,()=>ok.classList.remove('on'));
+ $('scard').classList.add('flash');wait(1000,()=>$('scard').classList.remove('flash'));cur++;
+ if(cur<steps.length)show();else{$('stT').textContent='✓ Барлық қадам орындалды';$('stD').textContent='Төменде қорытынды көрсетілген.';$('acts').innerHTML='';$('rv').scrollIntoView({behavior:'smooth'})}}
+(function init(){
+ const bottle=(c,solid)=>`<svg viewBox="0 0 24 34" width="24" height="33"><rect x="9" y="1" width="6" height="6" fill="#8a97a1"/><path d="M8,7h8l3,6v18a2,2 0 0 1-2,2H7a2,2 0 0 1-2-2V13z" fill="rgba(200,225,240,.35)" stroke="#5c7080" stroke-width="1.5"/><rect x="6" y="${solid?22:18}" width="12" height="${solid?9:13}" fill="${c}"/></svg>`;
+ const rs=[['HCl 2 н',CLEAR],['NaOH 2 н',CLEAR],['(NH₄)₂SO₄ 2 н',CLEAR],['AlCl₃ 2 н',CLEAR],['FeCl₃ 2 н',FE],['CuSO₄ 0,5 н','#4aa3df'],['NaNO₂ 2 н',CLEAR],['Na₂S 2 н',CLEAR],['Na₂SO₃ 2 н',CLEAR],['CH₃COONa 2 н',CLEAR],['Na₂CO₃ 2 н',CLEAR],['NaCl 2 н',CLEAR],['SbCl₃ 0,5 н',CLEAR],['Zn(CH₃COO)₂',CLEAR],['фенолфталеин',CLEAR],['Mg ұнтағы','#9aa3aa',1]];
+ $('shelf').innerHTML=rs.map(r=>'<div>'+bottle(r[1],r[2])+r[0]+'</div>').join('');
+ $('chips').innerHTML=['цилиндр 10 мл','спирт шамы','воронка','шыны таяқша','штатив және сынауықтар','сүзгі қағазы','универсал индикатор қағазы'].map(x=>'<span class="chip">'+x+'</span>').join('');
+ let h='';steps.forEach((s,i)=>{if(i==0||steps[i-1].g!=s.g)h+='<div class="g">'+G[s.g]+'</div>';h+='<div class="i" id="li'+i+'"><span class="dot"></span>'+(i+1)+'. '+s.t+'</div>'});$('chk').innerHTML=h;
+ $('lamps').innerHTML=steps.map((s,i)=>'<span class="lamp" id="lp'+i+'" title="'+(i+1)+'. '+s.t+'">'+(i+1)+'</span>').join('');
+ sceneTubes(['ерітінді №'+UN],['(оқытушыдан)']);steps[0].acts[0].pd=1;show()})();
+</script>
+</body>
+</html>

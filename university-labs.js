@@ -5,6 +5,7 @@ export const UNIVERSITY_LABS = [
  {slug:'zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau',file:'university-lab-metal.html',title:'Металдың эквиваленттік массасын анықтау',description:'Аспапты құрастырып, герметикалығын тексеріңіз. Металды өлшеп, бөлінген сутек көлемі арқылы эквиваленттік массасын есептеңіз.',note:'Авторлық HTML файлда №3 деп белгіленген. Платформада осы тақырып №4 зертханалық сабаққа сәйкес келеді.'}
  ,{slug:'reaction-rate-equilibrium',file:'university-lab-kinetics.html',title:'Химиялық реакция жылдамдығы және химиялық тепе-теңдік',description:'Концентрация мен температураның әсерін, кейін тепе-теңдіктің ығысуын қадаммен бақылаңыз.',note:'Жүктелген авторлық HTML нұсқа · №5.',matchTopic:'kinetics'}
  ,{slug:'solution-preparation',file:'university-lab-solutions.html',title:'Әртүрлі концентрациялы ерітінділер дайындау',description:'Концентрлі ерітіндіден сұйылту, құрғақ тұздан ерітінді дайындау, масса мен көлемді есептеу және ареометрмен тығыздықты өлшеу.',note:'Жүктелген авторлық HTML нұсқа · №6.',matchTopic:'solutions'}
+ ,{slug:'salts-hydrolysis',file:'university-lab-hydrolysis.html',title:'Тұздардың гидролизі',description:'Индикатор арқылы pH анықтаңыз, тұз ерітінділерінің ортасын салыстырыңыз және температура, сұйылту мен қышқыл қосудың гидролизге әсерін бақылаңыз.',note:'Жүктелген авторлық HTML нұсқа · №9.',matchTopic:'hydrolysis'}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
 export function labForPath(path,title=''){
@@ -15,6 +16,7 @@ export function labForPath(path,title=''){
  // never the printed laboratory number, and only inside this lab course.
  if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='kinetics');
  if(clean.startsWith(course+'/')&&/ерітінді/iu.test(title)&&/дайында/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='solutions');
+ if(clean.startsWith(course+'/')&&/гидролиз/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='hydrolysis');
 }
 export function bindUniversityLabs(root,pathname=location.pathname){
  const path=pathname.replace(/^\/himya-platforma(?=\/|$)/,'').replace(/\/$/,'');
