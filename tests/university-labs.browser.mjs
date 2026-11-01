@@ -20,6 +20,7 @@ assert.equal(labForPath(base+'/rate-only','Реакция жылдамдығы')
 assert.equal(labForPath(base+'/teacher-created-topic','№7 Әртүрлі концентрациялы ерітінділер дайындау').file,'university-lab-solutions.html');
 assert.equal(labForPath('/mektep/topic','Ерітінділер дайындау'),undefined);
 assert.equal(labForPath(base+'/properties','Ерітінділердің қасиеттері'),undefined);
+assert.equal(labForPath(base+'/zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-sutegindik-korsetkish-tuzdar-gidrolizi').file,'university-lab-hydrolysis.html');
 assert.equal(labForPath(base+'/teacher-created-hydrolysis','№9 Тұздардың гидролизі').file,'university-lab-hydrolysis.html');
 assert.equal(labForPath('/universitet/darister/hydrolysis','Тұздардың гидролизі'),undefined);
 assert.equal(labForPath(base+'/number-9','№9 Басқа зертхана'),undefined);
