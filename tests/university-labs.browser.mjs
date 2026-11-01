@@ -20,6 +20,10 @@ assert.equal(labForPath(base+'/rate-only','Реакция жылдамдығы')
 assert.equal(labForPath(base+'/teacher-created-topic','№7 Әртүрлі концентрациялы ерітінділер дайындау').file,'university-lab-solutions.html');
 assert.equal(labForPath('/mektep/topic','Ерітінділер дайындау'),undefined);
 assert.equal(labForPath(base+'/properties','Ерітінділердің қасиеттері'),undefined);
+assert.equal(labForPath(base+'/zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-sutegindik-korsetkish-tuzdar-gidrolizi').file,'university-lab-hydrolysis.html');
+assert.equal(labForPath(base+'/teacher-created-hydrolysis','№9 Тұздардың гидролизі').file,'university-lab-hydrolysis.html');
+assert.equal(labForPath('/universitet/darister/hydrolysis','Тұздардың гидролизі'),undefined);
+assert.equal(labForPath(base+'/number-9','№9 Басқа зертхана'),undefined);
 for(const lab of UNIVERSITY_LABS)assert.match(readFileSync(new URL('../'+lab.file,import.meta.url),'utf8'),/<html lang="kk">/);
 });
 test('teacher simulations run in responsive isolated embeds',async()=>{
@@ -28,7 +32,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -40,7 +44,7 @@ const context=await browser.newContext({viewport:{width,height:900}}),page=await
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://127.0.0.1:'+server.address().port+'/');
 await page.locator('.university-html-lab').last().waitFor();
-assert.equal(await page.locator('.university-html-lab').count(),5);
+assert.equal(await page.locator('.university-html-lab').count(),6);
 assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
@@ -75,6 +79,20 @@ const expected={Mg:12.1525,Zn:32.69,Fe:27.9225}[metal];
 assert.ok(Math.abs(value-expected)/expected<0.12,'equivalent mass is consistent with selected metal');
 assert.match(await frame.locator('#res').textContent(),{Mg:/Магнийдің/,Zn:/Мырыштың/,Fe:/Темірдің/}[metal]);
 assert.equal(await frame.locator('#metal').isDisabled(),true);
+}else if(lab.file.includes('hydrolysis')){
+await frame.getByRole('button',{name:'Оқытушыдан ерітінді алу',exact:true}).click();
+await frame.getByRole('button',{name:'Индикатор қағазын батыру',exact:true}).click();
+await frame.getByRole('button',{name:'Түсті шкала бойынша pH таңдау',exact:true}).click();
+await frame.locator('.swb').nth(0).click();
+assert.match(await frame.locator('#pickMsg').textContent(),/Түс сәйкес келмейді/);
+for(const value of [2,5,9,12]){
+ await frame.locator('.swb').nth(value-1).click();
+ if(await frame.locator('.swb.good').count())break;
+}
+await frame.locator('#li0.done').waitFor();
+assert.equal(await frame.locator('#li1.cur').count(),1);
+assert.equal(await frame.locator('#shelf > div').count(),16);
+assert.doesNotMatch(await frame.locator('#scene').innerHTML(),/NaN|undefined/);
 }else if(lab.file.includes('solutions')){
 const given=await frame.locator('#stD').textContent(),match=given.match(/ω₁ = ([\d,]+) %, ρ₁ = ([\d,]+) г\/мл/);
 assert.ok(match,'displayed starting concentration and density');
@@ -118,4 +136,43 @@ assert.equal(await page.locator('.resource-list').textContent(),'Мұғалім 
 assert.deepEqual(errors,[]);
 await context.close();
 }}finally{await browser.close();await new Promise(r=>server.close(r));}
+});
+
+test('hydrolysis: all experiments finish, precipitate geometry is finite, and restart clears steps',async()=>{
+ const html=readFileSync(new URL('../university-lab-hydrolysis.html',import.meta.url),'utf8');
+ const server=http.createServer((req,res)=>{res.setHeader('Content-Type','text/html; charset=utf-8');res.end(html);});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const browser=await chromium.launch();
+ try{
+  const page=await browser.newPage({viewport:{width:390,height:900}}),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.clock.install();
+  await page.goto('http://127.0.0.1:'+server.address().port);
+  let actions=0;
+  while(!/Барлық қадам орындалды/.test(await page.locator('#stT').textContent())){
+   assert.ok(++actions<45,'all steps must be reachable');
+   const button=page.locator('#acts button:enabled').first(),label=await button.textContent();
+   await button.click();
+   if(label==='Түсті шкала бойынша pH таңдау'){
+    await page.locator('.swb').nth(0).click();
+    assert.match(await page.locator('#pickMsg').textContent(),/Түс сәйкес келмейді/);
+    for(const value of [2,5,9,12]){
+     await page.locator('.swb').nth(value-1).click();
+     if(await page.locator('.swb.good').count())break;
+    }
+    assert.equal(await page.locator('.swb.good').count(),1);
+   }
+   await page.clock.runFor(30000);
+   assert.doesNotMatch(await page.locator('#scene').innerHTML(),/NaN|undefined/);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
+  }
+  assert.equal(await page.locator('#chk .done').count(),9);
+  assert.equal(await page.locator('#t15 tr').count(),5);
+  assert.match(await page.locator('#rv').textContent(),/2Al³⁺ \+ 3CO₃²⁻/);
+  assert.match(await page.locator('#say').textContent(),/Al\(OH\)₃ \+ NaOH = Na\[Al\(OH\)₄\]/);
+  assert.deepEqual(errors,[]);
+  await page.getByRole('button',{name:'↺ Қайта бастау',exact:true}).click();
+  await page.locator('#li0.cur').waitFor();
+  assert.equal(await page.locator('#chk .done').count(),0);
+ }finally{await browser.close();await new Promise(r=>server.close(r));}
 });

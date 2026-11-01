@@ -18,6 +18,7 @@ const files = [
   "university-lab-classes.html",
   "university-lab-kinetics.html",
   "university-lab-solutions.html",
+  "university-lab-hydrolysis.html",
   "university-control-data.js",
   "registration.js",
   "bond-practice.js",
