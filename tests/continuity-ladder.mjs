@@ -15,6 +15,6 @@ test('eight continuity routes have valid school anchors, explicit progression an
  const html=continuityView();
  assert.match(html,/сараптамасы әлі жасалмаған/);
  assert.match(html,/KazNEB/);
- assert.match(html,/мазмұны әзірге осы салыстыруға енгізілмеген/);
+ assert.match(html,/Баешова/);assert.match(html,/оның барлық тарауы бойынша салыстыру әлі жасалмаған/);
  assert.match(teacherHome({}),/Білім баспалдағын ашу/);
 });
