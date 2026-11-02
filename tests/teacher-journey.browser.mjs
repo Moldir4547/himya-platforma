@@ -71,6 +71,7 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   await page.getByRole('button',{name:'Басып шығару',exact:true}).click();
   assert.equal(await page.locator('[data-tj-print-value=goal]').textContent(),answer);
   assert.equal(await page.evaluate(()=>window.printed),true);
+  assert.match(await page.locator('.tj-plan-topic').textContent(),/Химиялық байланыс/);
   await context.addCookies([{name:'actor',value:'other',url:base}]);await page.reload();
   await page.locator('[data-tj-plan]').waitFor();
   assert.equal(await page.locator('textarea[name=goal]').inputValue(),'');
@@ -87,7 +88,8 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
    assert.equal(await page.locator('[data-tj-topic="bond"]').getAttribute('aria-pressed'),'true');
   }
   await context.addCookies([{name:'actor',value:'admin',url:base}]);await page.reload();await page.locator('.tj-audit').waitFor();
-  await page.locator('.tj-audit>summary').click();
+  await page.locator('[data-tj-open-audit]').click();
+  assert.equal(await page.locator('.tj-audit').evaluate(e=>e.open),true);
   assert.equal(await page.locator('[data-tj-audit-row]').count(),71);
   await page.locator('[data-tj-grade]').selectOption('8');
   assert.equal(await page.locator('[data-tj-audit-row]:visible').count(),16);
