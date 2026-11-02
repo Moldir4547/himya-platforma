@@ -11,6 +11,8 @@ const files = [
   "catalog.js",
   "platform-utils.js",
   "learning.js",
+  "teacher-journey.js",
+  "teacher-journey.css",
   "university-control.js",
   "university-labs.js",
   "university-lab-co2.html",
