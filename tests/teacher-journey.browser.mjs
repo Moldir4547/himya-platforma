@@ -69,7 +69,7 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
    await page.locator('[data-tj-answer="1"]').click();
    await page.locator('.tj-correct').waitFor();
    assert.match(await page.locator('.tj-correct a').getAttribute('href'),/^\/himya-platforma\/mektep\//);
-   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,topic.id+' '+width);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,topic.id+' '+width+' '+JSON.stringify(await page.evaluate(()=>Array.from(document.querySelectorAll('.tj-page *')).filter(e=>e.getBoundingClientRect().right>innerWidth+1).slice(0,8).map(e=>({tag:e.tagName,cls:e.className,text:e.textContent.slice(0,60),right:e.getBoundingClientRect().right})))));
   }
   await page.locator('[data-tj-topic="bond"]').click();
   await page.locator('#tj-tab-school').press('End');
