@@ -13,7 +13,7 @@ test('five teacher tracks connect real school lessons with university depth, exp
  assert.match(TEACHING_TRACKS.find(t=>t.id==='solutions').why,/100 г/);
  assert.match(TEACHING_TRACKS.find(t=>t.id==='redox').why,/Fe²⁺ → Fe³⁺ \+ e⁻/);
  const home=teacherHome({user:null});
- assert.match(home,/Химияны терең түсініңіз/);assert.match(home,/Оқушыға түсінікті жеткізіңіз/);
+ assert.match(home,/Мектептен — ЖОО-ға/);assert.match(home,/Химияны бірге тереңдетейік/);
  assert.ok(home.includes(JOURNEY_PATH));assert.equal((home.match(/class="direction-card /g)||[]).length,3);
 });
 test('coverage audit uses real grade/topic files and excludes unpublished, wrong grade, orphan and unrelated documents',()=>{

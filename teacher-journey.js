@@ -50,9 +50,359 @@ const STAGES=[['school','Мектеп','Тірек білім'],['university','�
 function molecule(){
  return '<svg class="tj-molecule" viewBox="0 0 320 250" role="img" aria-label="Су молекуласының шартты шар-өзек моделі: бір оттек және екі сутек атомы"><defs><radialGradient id="tj-oxygen" cx=".3" cy=".25" r=".8"><stop stop-color="#ffdfc9"/><stop offset=".5" stop-color="#e68668"/><stop offset="1" stop-color="#9d4a41"/></radialGradient><radialGradient id="tj-hydrogen" cx=".3" cy=".25" r=".8"><stop stop-color="white"/><stop offset=".6" stop-color="#d9f1ed"/><stop offset="1" stop-color="#6baca7"/></radialGradient></defs><ellipse cx="160" cy="210" rx="106" ry="15" fill="#204b48" opacity=".08"/><ellipse cx="160" cy="126" rx="127" ry="88" fill="none" stroke="#b6d7d1" stroke-dasharray="3 8"/><path d="M160 98L89 164M160 98L231 164" stroke="#7aaca5" stroke-width="15" stroke-linecap="round"/><path d="M160 94L87 160M160 94L229 160" stroke="#e9f6ee" stroke-width="4" stroke-linecap="round"/><circle cx="160" cy="98" r="46" fill="url(#tj-oxygen)"/><circle cx="89" cy="164" r="31" fill="url(#tj-hydrogen)"/><circle cx="231" cy="164" r="31" fill="url(#tj-hydrogen)"/><g font-family="system-ui,sans-serif" text-anchor="middle" font-weight="700" fill="#244742"><text x="160" y="108" font-size="28" fill="white">O</text><text x="89" y="172" font-size="23">H</text><text x="231" y="172" font-size="23">H</text></g><text x="160" y="242" text-anchor="middle" font-size="13" fill="#496a64">H₂O · шартты оқу моделі</text></svg>';
 }
+
+export const CONTINUITY_LADDERS = [
+ {
+  "id": "bond",
+  "title": "Химиялық байланыс",
+  "symbol": "H₂O",
+  "lecture": "7–8",
+  "change": "Байланыс түрін атаудан молекуланың құрылымы мен қасиетін әртүрлі модель арқылы түсіндіруге өтеміз.",
+  "shared": "Атомдар арасындағы байланыс пен зат қасиеттерінің байланысын түсіндіру.",
+  "difference": "Гибридтену 10-сыныпта да қарастырылады. ЖОО-да ВБӘ мен МОӘ-ні салыстырып, модельдің түсіндіру мүмкіндігін талдаймыз.",
+  "gap": "Электрондық конфигурацияны білмесе, орбитальдардың толуын және байланыс ретін түсіндіру қиындайды.",
+  "steps": [
+   [
+    8,
+    "bonding",
+    "Байланысты ажырату",
+    "Иондық, коваленттік байланыс пен кристалдық торды ажыратамын.",
+    "NaCl мен H₂O байланысын салыстыру."
+   ],
+   [
+    10,
+    "bonding-geometry",
+    "Пішін мен полярлық",
+    "Электрон жұптары, гибридтену және геометрияны байланыстырамын.",
+    "CO₂ сызықтық, H₂O бұрыштық: молекула полярлығы неге өзгеше?"
+   ],
+   [
+    "bridge",
+    "/sabaktastyk-kopiri/himiyalyk-bailanys",
+    "Модельді тексеру",
+    "Байланыс полярлығы мен молекула полярлығын шатастырмаймын.",
+    "Полярлы байланыстары бар CO₂ неліктен полярсыз?"
+   ],
+   [
+    "uni",
+    "7–8",
+    "ВБӘ және МОӘ",
+    "Локалданған байланыс моделін молекулалық орбитальдармен салыстырамын.",
+    "O₂ парамагниттілігін МО диаграммасындағы жұптаспаған электрондармен түсіндіру."
+   ]
+  ]
+ },
+ {
+  "id": "atom",
+  "title": "Атом құрылысы",
+  "symbol": "1s²",
+  "lecture": "4–5",
+  "change": "Ядро мен электрондарды санаудан электрон күйін кванттық модельмен сипаттауға өтеміз.",
+  "shared": "Атом құрылысын элементтің қасиеттерімен байланыстыру.",
+  "difference": "Орбиталь мен электрондық конфигурация мектепте басталады; ЖОО-да квант сандарының физикалық мәні мен модельдің негізін тереңдетеміз.",
+  "gap": "Ион мен изотопты шатастыру электрондық конфигурация мен элемент табиғатын қате түсіндіруге әкеледі.",
+  "steps": [
+   [
+    7,
+    "structure-isotopes",
+    "Атомның құрамы",
+    "Протон, нейтрон, электрон сандарын анықтаймын.",
+    "Na және Na⁺ үшін не өзгереді?"
+   ],
+   [
+    10,
+    "atomic-orbitals",
+    "Электрондық конфигурация",
+    "Орбитальдар мен толтыру ережелерін қолданамын.",
+    "Na: 1s²2s²2p⁶3s¹; Na⁺ үшін конфигурацияны жазу."
+   ],
+   [
+    "bridge",
+    "/mektep/teoriya/10-synyp/atomic-orbitals",
+    "Қабаттан орбитальға",
+    "Қабат моделінің қолданылу шегін түсіндіремін.",
+    "Орбиталь неліктен электронның айналу жолы емес?"
+   ],
+   [
+    "uni",
+    "4–5",
+    "Кванттық модель",
+    "Электрон күйін квант сандарымен сипаттап, рұқсат етілген мәндерді негіздеймін.",
+    "n = 2 болса, l қандай мән қабылдайды және қандай орбитальдар болады?"
+   ]
+  ]
+ },
+ {
+  "id": "equivalent",
+  "title": "Моль және эквивалент",
+  "symbol": "n = m/M",
+  "lecture": "1–2",
+  "change": "Зат мөлшерін есептеуден реакцияға тәуелді эквиваленттік факторды таңдауға өтеміз.",
+  "shared": "Реакциядағы заттардың сандық қатынасын анықтау.",
+  "difference": "Моль — бөлшектер санына байланысты шама. Эквивалент реакциядағы протон не электрон алмасуына тәуелді; ол мольдің орнына жүретін тұрақты қасиет емес.",
+  "gap": "Теңдеуді теңестірмей есептеу және реакцияны көрсетпей эквивалент табу.",
+  "steps": [
+   [
+    8,
+    "mole-avogadro",
+    "Зат мөлшері",
+    "Масса мен молярлық масса арқылы зат мөлшерін табамын.",
+    "98 г H₂SO₄ үшін n = 1 моль."
+   ],
+   [
+    10,
+    "stoichiometry",
+    "Стехиометриялық қатынас",
+    "Теңестірілген теңдеудегі коэффициенттерді қолданамын.",
+    "1 моль H₂SO₄ толық бейтараптануға қанша NaOH қажет?"
+   ],
+   [
+    "bridge",
+    "/sabaktastyk-kopiri/ekvivalent-ugymy",
+    "Реакцияны салыстыру",
+    "Толық және жартылай бейтараптануды ажыратамын.",
+    "NaHSO₄ және Na₂SO₄ түзілгенде z неліктен өзгереді?"
+   ],
+   [
+    "uni",
+    "1–2",
+    "Эквивалент заңы",
+    "Нақты реакция үшін z және Mэкв = M/z таңдауын негіздеймін.",
+    "H₂SO₄ толық бейтараптанса 49 г/моль; бір протон бойынша — 98 г/моль."
+   ]
+  ]
+ },
+ {
+  "id": "solutions",
+  "title": "Ерітінділер",
+  "symbol": "c = n/V",
+  "lecture": "11",
+  "change": "Массалық үлестен концентрацияларды түрлендіруге және ерітінді даярлауды жоспарлауға өтеміз.",
+  "shared": "Ерітінді құрамын сандық сипаттау және қажетті құрамдағы ерітінді алу.",
+  "difference": "ЖОО-да бірнеше концентрация түрін, өлшем бірлігін және көлем мен тығыздық туралы деректердің жеткіліктілігін салыстырамыз.",
+  "gap": "Еріткіш массасын ерітінді массасымен, ал миллилитрді литрмен шатастыру.",
+  "steps": [
+   [
+    8,
+    "solutions",
+    "Массалық үлес",
+    "Еріген зат пен ерітіндінің массасын ажыратамын.",
+    "10 г тұз + 90 г су: w = 10%."
+   ],
+   [
+    11,
+    "titration",
+    "Концентрацияны анықтау",
+    "Ерітіндінің құрамын титрлеу нәтижесімен байланыстырамын.",
+    "Эквиваленттік нүкте мен индикатор түсінің өзгеруін ажырату."
+   ],
+   [
+    "bridge",
+    "/sabaktastyk-kopiri/eritindiler",
+    "Деректің жеткіліктілігі",
+    "Массалық үлестен молярлық концентрацияға өтуге қандай дерек керегін анықтаймын.",
+    "10%-дық ерітіндінің молярлық концентрациясына неге тығыздық қажет?"
+   ],
+   [
+    "uni",
+    "11",
+    "Ерітінді даярлау",
+    "Молярлық, мольдік үлес және эквиваленттік концентрацияны ажыратамын.",
+    "250 мл 0,10 моль/л NaCl үшін 1,46 г тұз алып, ерітінді көлемін белгіге жеткізу."
+   ]
+  ]
+ },
+ {
+  "id": "redox",
+  "title": "Тотығу-тотықсыздану",
+  "symbol": "e⁻",
+  "lecture": "15",
+  "change": "Электрондық баланстан орта әсері мен электродтық үдерістерді түсіндіруге өтеміз.",
+  "shared": "Электрон беру мен қосып алуды ажырату; теңдеуде масса мен зарядты сақтау.",
+  "difference": "Электрохимия мектепте де бар. ЖОО деңгейінде жартылай реакциялар мен ортаны ескеріп, электродтық үдерісті негіздейміз.",
+  "gap": "Тотығу дәрежесін барлық қосылыста нақты заряд деп қабылдау немесе заряд балансын тексермеу.",
+  "steps": [
+   [
+    9,
+    "redox",
+    "Электрондық баланс",
+    "Тотығу дәрежесінің өзгерісін анықтаймын.",
+    "Fe²⁺ → Fe³⁺ + e⁻: тотығу."
+   ],
+   [
+    10,
+    "galvanic-cells",
+    "Электродтардағы үдеріс",
+    "Тотығу мен тотықсыздануды электродтармен байланыстырамын.",
+    "Гальваникалық элементте электрондар сыртқы тізбекпен қалай өтеді?"
+   ],
+   [
+    "bridge",
+    "/sabaktastyk-kopiri/totygu-totyksyzdanu",
+    "Орта және заряд",
+    "Жартылай реакцияда атом санын да, зарядты да тексеремін.",
+    "Қышқыл ортада MnO₄⁻ → Mn²⁺ ауысуын теңестіру."
+   ],
+   [
+    "uni",
+    "15",
+    "Электродтық үдерістер",
+    "Ортаға тәуелді реакцияны ион-электрондық әдіспен негіздеймін.",
+    "MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O: екі балансты тексеру."
+   ]
+  ]
+ },
+ {
+  "id": "periodic",
+  "title": "Периодтық заң",
+  "symbol": "Z",
+  "lecture": "6",
+  "change": "Кестедегі орнын табудан қасиеттің өзгерісін атом құрылысы арқылы негіздеуге өтеміз.",
+  "shared": "Элементтер қасиеттерінің периодтылығын атом құрылысымен байланыстыру.",
+  "difference": "Жоғары сыныпта басталған түсіндіруді ЖОО-да иондану энергиясы, электронға жақындық және электртерістілік арқылы тереңдетеміз.",
+  "gap": "Қасиет өзгерісін тек жаттау; радиус пен ядро зарядының ықпалын байланыстырмау.",
+  "steps": [
+   [
+    7,
+    "periodic-table",
+    "Элементтің орны",
+    "Топ пен периодты анықтаймын.",
+    "Na мен K қай топта орналасқан?"
+   ],
+   [
+    10,
+    "periodic-properties",
+    "Қасиет заңдылығы",
+    "Периодтық өзгерісті электрондық құрылыммен байланыстырамын.",
+    "Бір периодта атом радиусы жалпы неге кемиді?"
+   ],
+   [
+    "bridge",
+    "/mektep/teoriya/10-synyp/periodic-properties",
+    "Ережені негіздеу",
+    "Ортақ үрдіс пен ерекшеліктерді ажыратамын.",
+    "Қасиет тек протон санына тәуелді деп айту жеткілікті ме?"
+   ],
+   [
+    "uni",
+    "6",
+    "Құрылымнан қасиетке",
+    "Иондану энергиясын, электронға жақындықты және электртерістілікті салыстырамын.",
+    "Атомнан электрон жұлу энергиясы мен байланыстағы электронды тарту қабілетінің айырмасын түсіндіру."
+   ]
+  ]
+ },
+ {
+  "id": "equilibrium",
+  "title": "Кинетика және тепе-теңдік",
+  "symbol": "⇌",
+  "lecture": "9–10",
+  "change": "Жылдамдық факторларын атаудан реакция жылдамдығы, бағыты және тепе-теңдігін ажыратуға өтеміз.",
+  "shared": "Реакция жағдайларының жылдамдық пен өнім құрамына ықпалын түсіндіру.",
+  "difference": "Тепе-теңдік константасы мен Гиббс энергиясы 10-сыныпта да бар; ЖОО-да бұл ұғымдарды жүйелі түрде қолданып, тәжірибе нәтижесін талдаймыз.",
+  "gap": "Катализатор тепе-теңдікті ығыстырады немесе өздігінен жүретін реакция міндетті түрде жылдам деп ойлау.",
+  "steps": [
+   [
+    9,
+    "reaction-rate",
+    "Жылдамдық факторлары",
+    "Температура, концентрация және катализатор әсерін сипаттаймын.",
+    "Бірдей металдың ұнтағы мен кесегі неге әртүрлі жылдамдықпен әрекеттеседі?"
+   ],
+   [
+    10,
+    "industrial-equilibrium",
+    "Динамикалық тепе-теңдік",
+    "Тура және кері реакция жылдамдықтарын, тепе-теңдік құрамын ажыратамын.",
+    "Катализатор тепе-теңдікке жетуді тездетеді; берілген температурада K-ны өзгертпейді."
+   ],
+   [
+    "bridge",
+    "/mektep/teoriya/10-synyp/industrial-equilibrium",
+    "Жылдамдық пен бағыт",
+    "Кинетикалық және термодинамикалық тұжырымдарды ажыратамын.",
+    "Реакция энергетикалық тиімді болса да, неге баяу жүруі мүмкін?"
+   ],
+   [
+    "uni",
+    "9–10",
+    "Тәжірибені талдау",
+    "Энергетика, кинетика және тепе-теңдікті біріктіріп, бақылауды негіздеймін.",
+    "Температура өзгергенде жылдамдық пен тепе-теңдік құрамын бөлек талдау."
+   ]
+  ]
+ },
+ {
+  "id": "acidbase",
+  "title": "Қышқылдар және pH",
+  "symbol": "pH",
+  "lecture": "12–13",
+  "change": "Индикатор түсінен диссоциация мен гидролиз тепе-теңдігін есептеуге өтеміз.",
+  "shared": "Ерітінді ортасын анықтау және қышқыл-негіздік қасиетін түсіндіру.",
+  "difference": "pH мектептің 11-сыныбында қарастырылады. ЖОО-да иондық тепе-теңдік пен есептеу шарттарын терең талдаймыз.",
+  "gap": "Барлық тұз ерітіндісін бейтарап деп санау; қышқылдың күші мен концентрациясын теңестіру.",
+  "steps": [
+   [
+    7,
+    "acids-indicators",
+    "Ортаны байқау",
+    "Индикатор арқылы қышқыл және сілтілік ортаны ажыратамын.",
+    "Индикатор түсі ерітіндінің ортасы туралы не айтады?"
+   ],
+   [
+    11,
+    "acid-base-ph",
+    "pH және теория",
+    "Қышқыл-негіз ұғымдары мен pH-ты қолданамын.",
+    "Күшті және әлсіз қышқылдың айырмасы концентрацияға ғана байланысты ма?"
+   ],
+   [
+    "bridge",
+    "/mektep/teoriya/9-synyp/salt-hydrolysis",
+    "Тұздан ортаға",
+    "Тұз иондарының сумен әрекеттесуін қарастырамын.",
+    "CH₃COONa ерітіндісі неліктен сілтілік орта береді?"
+   ],
+   [
+    "uni",
+    "12–13",
+    "Иондық тепе-теңдік",
+    "Диссоциацияны, судың иондық көбейтіндісін және гидролизді байланыстырамын.",
+    "25 °C-та сұйылтылған идеал жуықтауда [H⁺] = 10⁻³ моль/л болса, pH ≈ 3."
+   ]
+  ]
+ }
+];
+function chemistryArt(){
+ return '<svg class="cb-chem-art" viewBox="0 0 440 330" role="img" aria-label="Химиядағы білімнің күрделенуі: бөлшек, молекула, тәжірибе және орбитальдық модель"><defs><radialGradient id="cb-orb"><stop stop-color="#fff"/><stop offset=".35" stop-color="#c4b5fd"/><stop offset="1" stop-color="#6945c3"/></radialGradient><linearGradient id="cb-glass" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#b5e8ed" stop-opacity=".3"/></linearGradient></defs><circle cx="225" cy="153" r="145" fill="#eae2ff"/><circle cx="360" cy="80" r="59" fill="#ffddbd"/><path d="M24 286H116V238H213V182H310V125H410" fill="none" stroke="#fff" stroke-width="28" stroke-linejoin="round"/><g fill="#f0ab52"><circle cx="48" cy="245" r="17"/><circle cx="80" cy="222" r="13"/><circle cx="78" cy="255" r="11"/></g><g stroke="#7c69c6" stroke-width="9"><path d="M151 167L125 196M151 167L183 195"/></g><circle cx="151" cy="167" r="25" fill="#ef766e"/><g fill="#fff" stroke="#b6a0df" stroke-width="2"><circle cx="125" cy="196" r="15"/><circle cx="183" cy="195" r="15"/></g><path d="M244 65H272M250 66V116L222 163Q216 179 232 181H287Q304 179 297 163L266 116V66" fill="url(#cb-glass)" stroke="#386d80" stroke-width="3"/><path d="M238 139H282L295 165Q300 176 286 176H233Q222 175 227 164Z" fill="#2db8ba" opacity=".8"/><g fill="#fff"><circle cx="251" cy="153" r="4"/><circle cx="269" cy="165" r="3"/></g><g transform="translate(352 70) rotate(-35)"><ellipse cx="-21" rx="26" ry="17" fill="url(#cb-orb)"/><ellipse cx="21" rx="26" ry="17" fill="url(#cb-orb)"/><circle r="5" fill="#ffad54"/></g><g font-family="system-ui" font-weight="700" fill="#413366" font-size="13"><text x="22" y="318">БӨЛШЕК</text><text x="114" y="270">ҚҰРЫЛЫМ</text><text x="220" y="214">ТӘЖІРИБЕ</text><text x="321" y="155">МОДЕЛЬ</text></g><g fill="#7356bc"><circle cx="64" cy="105" r="4"/><circle cx="395" cy="245" r="5"/></g><text x="39" y="65" fill="#9861b5" font-size="22" font-family="serif">ΔG</text><text x="326" y="292" fill="#3b8190" font-size="25" font-family="serif">⇌</text></svg>';
+}
+function ladderPanel(id){
+ const t=CONTINUITY_LADDERS.find(t=>t.id===id)||CONTINUITY_LADDERS[0];
+ return '<header class="cb-ladder-heading"><div><span class="tj-eyebrow">БІР ҰҒЫМНЫҢ ДАМУЫ</span><h3 tabindex="-1">'+esc(t.title)+'</h3></div><span class="cb-formula" aria-hidden="true">'+esc(t.symbol)+'</span></header><p class="cb-change">'+esc(t.change)+'</p><ol class="cb-staircase">'+t.steps.map((s,i)=>{
+ const unit=Number.isInteger(s[0])?SCHOOL_UNITS.find(u=>u.grade===s[0]&&u.slug===s[1]):null;
+ const label=unit?s[0]+'-сынып':s[0]==='bridge'?'Өтпелі қадам':'ЖОО · 1-курс';
+ const href=unit?unit.path:s[0]==='bridge'?s[1]:'/universitet/teoriya';
+ return '<li class="cb-step cb-step-'+i+'"><span class="cb-step-number">0'+(i+1)+'</span><span class="cb-level">'+label+'</span><h4>'+esc(s[2])+'</h4><p>'+esc(s[3])+'</p><div class="cb-step-example"><b>Мысал</b><p>'+esc(s[4])+'</p></div><a href="'+href+'">'+(unit?'Мектеп тақырыбы':s[0]==='bridge'?'Өтпелі материал':'Дәрістер бөлімі')+' →</a><small>'+(unit?esc(unit.book+' · '+unit.paras):s[0]==='bridge'?'Екі деңгейді байланыстыруға арналған авторлық тапсырма':'Силлабус · дәріс '+esc(t.lecture))+'</small></li>';
+ }).join('')+'</ol><div class="cb-comparison"><h4>Оқу бағыты қалай өзгереді?</h4><dl><div><dt>Ортақ негіз</dt><dd>'+esc(t.shared)+'</dd></div><div><dt>Күрделенуі</dt><dd>'+esc(t.difference)+'</dd></div><div><dt>Ықтимал өтпелі қиындық</dt><dd>'+esc(t.gap)+'</dd></div></dl></div><details class="cb-evidence"><summary>Салыстырудың деректері мен шегі</summary><p>Мектеп қадамдары платформадағы оқулық тақырыптарына байланыстырылған. ЖОО қадамы «6В01524 — Химия IP» силлабусындағы «Бейорганикалық химияның теориялық негіздері» пәнінің '+esc(t.lecture)+'-дәрістеріне сүйенеді.</p><p>Баспалдақ пен күтілетін әрекеттер — авторлық әдістемелік салыстыру. Олар ресми оқу мақсаттарының сөзбе-сөз көшірмесі емес. Мақсат кодтары бойынша сәйкестік сараптамасы әлі жасалмаған. Тақырыптың қайталануы толық сабақтастықты, ал оқушының төмен ұпайы сабақтастықтың жоқтығын өздігінен дәлелдемейді.</p><a href="/universitet/sillabus">Силлабусты қарау →</a> <a href="/materials">Оқулықтар →</a> <a href="https://kazneb.kz/ru/bookView/view?brId=1716037&amp;simple=true" target="_blank" rel="noopener noreferrer">А. К. Баешова · Жалпы химия (2011) · KazNEB ↗</a><p>Қосымша дерек: А. К. Баешова, «Жалпы химия (зертханалық жұмыстардың жинағы)», 2011. Қаралған 3–4-беттерде теорияны тәжірибемен байланыстыру және бақылауды, реакция теңдеуін, қорытындыны тіркеу тәртібі берілген. Бұл жинақ тәжірибелік дәлелмен жұмыс істеуге негіз болады; оның барлық тарауы бойынша салыстыру әлі жасалмаған.</p></details>';
+}
+export function continuityView(){
+ return '<section class="cb-continuity" id="continuity-ladder" aria-labelledby="cb-continuity-title"><header class="cb-section-head"><div><span class="tj-eyebrow">CHEMBRIDGE · САБАҚТАСТЫҚ КАРТАСЫ</span><h2 id="cb-continuity-title">Таныс ұғым. Жаңа тереңдік.</h2><p>Тақырыпты таңдаңыз: мектептегі негізден ЖОО-дағы ғылыми түсіндіруге дейін көтеріліңіз.</p></div><span class="cb-count">8 тақырып<br><b>4 қадам</b></span></header><div class="cb-topic-picker" role="group" aria-label="Салыстыратын тақырып">'+CONTINUITY_LADDERS.map((t,i)=>'<button type="button" data-cb-topic="'+t.id+'" aria-pressed="'+(i===0)+'" aria-controls="cb-ladder-panel">'+esc(t.title)+'</button>').join('')+'</div><div id="cb-ladder-panel" data-cb-panel>'+ladderPanel('bond')+'</div><p class="cb-selection-status" data-cb-status role="status" aria-live="polite"></p><p class="cb-reading-note">Қадамдар — оқу мазмұнының дамуы. Бұл жеке ұпай немесе автоматты ғылыми қорытынды емес.</p></section>';
+}
+function bindContinuity(root){
+ const section=root.querySelector('.cb-continuity');if(!section)return;
+ section.querySelectorAll('[data-cb-topic]').forEach(button=>button.addEventListener('click',()=>{
+  const id=button.dataset.cbTopic;
+  section.querySelectorAll('[data-cb-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+  section.querySelector('[data-cb-panel]').innerHTML=ladderPanel(id);
+  const prefix=location.pathname.startsWith('/himya-platforma/')||location.pathname==='/himya-platforma'?'/himya-platforma':'';
+  if(prefix)section.querySelectorAll('[data-cb-panel] a[href^="/"]').forEach(a=>a.setAttribute('href',prefix+a.getAttribute('href')));
+  section.querySelector('[data-cb-status]').textContent=CONTINUITY_LADDERS.find(t=>t.id===id).title+': төрт қадам көрсетілді.';
+ }));
+}
+
 export function teacherHome(state,continueHtml=''){
- return '<div class="tj-home"><section class="learn-home chembridge-home tj-hero"><div class="tj-hero-copy"><span class="tj-eyebrow">ХИМИЯ МҰҒАЛІМІНЕ АРНАЛҒАН ОҚУ ОРТАСЫ</span><h1>Химияны терең түсініңіз.<br><em>Оқушыға түсінікті жеткізіңіз.</em></h1><p>Мектептен басталған білім ЖОО-да қалай күрделенеді? ChemBridge осы байланысты түсініп, оны өз сабағыңызда қолдануға көмектеседі.</p><div class="tj-actions"><a class="tj-primary" href="'+JOURNEY_PATH+'">Мұғалім жолын ашу <span aria-hidden="true">↗</span></a><a class="tj-text-link" href="/topics">Оқуды бастау →</a></div><div class="tj-audience"><span>Болашақ мұғалім</span><span>Практикант</span><span>Химияны тереңдетіп оқитын білім алушы</span></div></div><aside class="tj-hero-visual" aria-label="Мектептен сабақ беруге дейін"><div class="tj-visual-label"><span>БІР ТАҚЫРЫП</span><b>Үш қырынан түсіну</b></div>'+molecule()+'<div class="tj-mini-path"><span><b>01</b> Мектептегі негіз</span><span><b>02</b> ЖОО-дағы тереңдік</span><span><b>03</b> Өз сабағыңыз</span></div></aside></section>'+continueHtml+
- '<section class="tj-home-story"><div><span class="tj-eyebrow">БІЛІМНЕН — ТҮСІНДІРУГЕ</span><h2>Тек жауабын білу жеткіліксіз.<br>Оның себебін түсіндіре алу маңызды.</h2></div><p>Мысалы, оқушы «су қайнағанда молекула ыдырай ма?» деп сұрайды. Сіз молекулааралық әсер мен молекула ішіндегі байланысты ажыратып, жасына сай модельмен дәлелдейсіз.</p><a class="tj-story-link" href="'+JOURNEY_PATH+'?topic=bond">Осы мысалмен жұмыс істеу →</a></section>'+
+ return '<div class="tj-home"><section class="learn-home chembridge-home tj-hero"><div class="tj-hero-copy"><span class="tj-eyebrow">МЕКТЕП–ЖОО ЖҮЙЕСІНДЕ ҮЗДІКСІЗ ХИМИЯЛЫҚ БІЛІМ</span><h1>Мектептен — ЖОО-ға.<br><em>Химияны бірге тереңдетейік.</em></h1><p>Атомнан орбитальға, мольден эквивалентке. Бір ұғымның мектепте қалай басталып, университетте қалай күрделенетінін білім баспалдағымен зерттеңіз.</p><div class="tj-actions"><a class="tj-primary" href="#continuity-ladder">Білім баспалдағын ашу <span aria-hidden="true">↗</span></a><a class="tj-text-link" href="'+JOURNEY_PATH+'">Салыстыру және жоспар →</a><a class="tj-text-link" href="/topics">Оқуды бастау →</a></div><div class="tj-audience"><span>Болашақ мұғалім</span><span>Практикант</span><span>Химияны тереңдетіп оқитын білім алушы</span></div></div><aside class="tj-hero-visual" aria-label="Мектептен сабақ беруге дейін"><div class="tj-visual-label"><span>САБАҚТАСТЫҚ БАСПАЛДАҒЫ</span><b>Білім қалай күрделенеді?</b></div>'+chemistryArt()+'<div class="tj-mini-path"><span><b>01</b> Мектептегі негіз</span><span><b>02</b> ЖОО-дағы тереңдік</span><span><b>03</b> Ғылыми негіздеу</span></div></aside></section>'+continueHtml+continuityView()+
+ '<section class="tj-home-story"><div><span class="tj-eyebrow">БІЛІМНЕН — ТҮСІНДІРУГЕ</span><h2>Бір тақырыпты қайталау ма,<br>әлде жаңа деңгейге көтерілу ме?</h2></div><p>Мектеп пен ЖОО тақырыптарының ортақ негізін, жаңадан қосылатын модельді және өтпелі қиындықты салыстырыңыз. Кейін осы байланысты оқушыға түсіндіруге дайындалыңыз.</p><a class="tj-story-link" href="'+JOURNEY_PATH+'?topic=bond">Осы мысалмен жұмыс істеу →</a></section>'+
  '<section class="home-directions tj-directions" aria-labelledby="directions-title"><header><span class="tj-eyebrow">ҮШ БӨЛІМ — БІР ОҚУ ЖОЛЫ</span><h2 id="directions-title">Өзіңізге қажет бөлімді таңдаңыз</h2></header><div class="direction-cards">'+[
  ['school','01','Мектеп','Оқушының бастапқы түсінігін таныңыз. 7–11-сынып теориясын, сызбалар мен тапсырмаларды қараңыз.','Сыныпты таңдау','/mektep'],
  ['university','02','Университет','Таныс ұғымды тереңдетіңіз. Дәрістерді, зертханаларды және ағымдық бақылауды пайдаланыңыз.','ЖОО модулін ашу','/universitet'],
@@ -96,11 +446,12 @@ export function createTeacherJourney({state,render}){
   if(!state.user)return '<section class="tj-page"><h1>Мұғалім жолы</h1><p>Жеке жұмысқа өту үшін аккаунтыңызға кіріңіз.</p><a href="/login?next='+encodeURIComponent(JOURNEY_PATH)+'">Жүйеге кіру →</a></section>';
   const requested=new URLSearchParams(location.search).get('topic');if(TEACHING_TRACKS.some(t=>t.id===requested)&&topic!==requested){topic=requested;stage='school';status='';}else if(!topic)topic=TEACHING_TRACKS[0].id;
   const t=current(),plan=readPlan(),selected=answers[t.id],files=teacherEntries(state.items||[],state.allResources||[]).filter(e=>e.area==='university'&&t.terms.some(term=>(e.row.title+' '+e.row.filename).toLocaleLowerCase('kk').includes(term)));
-  return '<div class="tj-page" data-teacher-journey><a class="tj-back" href="/">← Басты бет</a><header class="tj-page-head"><span class="tj-eyebrow">МЕКТЕП → ЖОО → ПЕДАГОГИКАЛЫҚ ПРАКТИКА</span><h1>Білгеніңізді түсіндіре алатын<br><em>мұғалімге айналыңыз.</em></h1><p>Бір тақырыпты үш қырынан зерттеңіз: тірек білімін анықтаңыз, терең түсініңіз және оқушыға түсіндіру тәсілін құрыңыз.</p>'+(state.user.role==='admin'?'<button class="tj-audit-jump" type="button" data-tj-open-audit aria-controls="teacher-content-audit">Материалдарды толықтыру картасы ↓</button>':'')+'</header><div class="tj-workspace"><aside class="tj-topics"><h2>Тақырыпты таңдаңыз</h2>'+TEACHING_TRACKS.map((tr,i)=>'<button type="button" data-tj-topic="'+tr.id+'" aria-pressed="'+(tr.id===t.id)+'"><span>0'+(i+1)+'</span><b>'+tr.title+'</b><small>'+tr.grade+'-сыныптан басталады</small></button>').join('')+'<a href="/kabinet">Жеке нәтижелерім →</a></aside><div class="tj-content"><section class="tj-compare"><span class="tj-eyebrow">САБАҚТАСТЫҚТЫ ТҮСІН</span><h2 tabindex="-1">'+t.title+'</h2><div class="tj-stage-tabs" role="tablist" aria-label="Түсіндіру деңгейі">'+STAGES.map(([key,title,sub])=>'<button role="tab" type="button" id="tj-tab-'+key+'" data-tj-stage="'+key+'" aria-controls="tj-stage-panel" aria-selected="'+(stage===key)+'" tabindex="'+(stage===key?0:-1)+'"><b>'+title+'</b><span>'+sub+'</span></button>').join('')+'</div><div id="tj-stage-panel" role="tabpanel" aria-labelledby="tj-tab-'+stage+'"><p class="tj-stage-main">'+esc(t[stage])+'</p>'+(stage==='teach'?'<div class="tj-proof"><b>Түсінгенін қалай білемін?</b><p>'+t.evidence+'</p></div>':'')+'<p class="tj-model-limit"><b>Модель шегі:</b> '+t.boundary+'</p><div class="tj-resource-links"><a href="'+SCHOOL_PATH(t)+'#understand">Мектеп теориясы ↗</a><a href="'+t.bridge+'">Тереңдетіп оқу ↗</a><a href="/universitet">ЖОО материалдары ↗</a></div></div>'+(files.length?'<details class="tj-related"><summary>ЖОО-да жүктелген сәйкес материалдар · '+files.length+'</summary>'+files.map(e=>'<p><a href="'+esc(e.item.path)+'">'+esc(e.row.title||e.row.filename)+'</a></p>').join('')+'</details>':'')+'</section>'+
+  return '<div class="tj-page" data-teacher-journey><a class="tj-back" href="/">← Басты бет</a><header class="tj-page-head"><span class="tj-eyebrow">МЕКТЕП → ӨТПЕЛІ ҚАДАМ → ЖОО</span><h1>Химиялық білімнің<br><em>сабақтастығын зерттеңіз.</em></h1><p>Алдымен білім баспалдағындағы күрделенуді салыстырыңыз. Төменде бес тақырып бойынша түсіндіруді тексеріп, өз сабағыңыздың жоспарын құра аласыз.</p>'+(state.user.role==='admin'?'<button class="tj-audit-jump" type="button" data-tj-open-audit aria-controls="teacher-content-audit">Материалдарды толықтыру картасы ↓</button>':'')+'</header>'+continuityView()+'<div class="tj-workspace"><aside class="tj-topics"><h2>Тақырыпты таңдаңыз</h2>'+TEACHING_TRACKS.map((tr,i)=>'<button type="button" data-tj-topic="'+tr.id+'" aria-pressed="'+(tr.id===t.id)+'"><span>0'+(i+1)+'</span><b>'+tr.title+'</b><small>'+tr.grade+'-сыныптан басталады</small></button>').join('')+'<a href="/kabinet">Жеке нәтижелерім →</a></aside><div class="tj-content"><section class="tj-compare"><span class="tj-eyebrow">САБАҚТАСТЫҚТЫ ТҮСІН</span><h2 tabindex="-1">'+t.title+'</h2><div class="tj-stage-tabs" role="tablist" aria-label="Түсіндіру деңгейі">'+STAGES.map(([key,title,sub])=>'<button role="tab" type="button" id="tj-tab-'+key+'" data-tj-stage="'+key+'" aria-controls="tj-stage-panel" aria-selected="'+(stage===key)+'" tabindex="'+(stage===key?0:-1)+'"><b>'+title+'</b><span>'+sub+'</span></button>').join('')+'</div><div id="tj-stage-panel" role="tabpanel" aria-labelledby="tj-tab-'+stage+'"><p class="tj-stage-main">'+esc(t[stage])+'</p>'+(stage==='teach'?'<div class="tj-proof"><b>Түсінгенін қалай білемін?</b><p>'+t.evidence+'</p></div>':'')+'<p class="tj-model-limit"><b>Модель шегі:</b> '+t.boundary+'</p><div class="tj-resource-links"><a href="'+SCHOOL_PATH(t)+'#understand">Мектеп теориясы ↗</a><a href="'+t.bridge+'">Тереңдетіп оқу ↗</a><a href="/universitet">ЖОО материалдары ↗</a></div></div>'+(files.length?'<details class="tj-related"><summary>ЖОО-да жүктелген сәйкес материалдар · '+files.length+'</summary>'+files.map(e=>'<p><a href="'+esc(e.item.path)+'">'+esc(e.row.title||e.row.filename)+'</a></p>').join('')+'</details>':'')+'</section>'+
   '<section class="tj-check"><span class="tj-eyebrow">ҚАТЕ ТҮСІНІКТІ АНЫҚТА</span><h2>'+t.question+'</h2><p>Алдымен өз жауабыңызды таңдаңыз. Кейін оны оқушыға қалай түсіндіретініңізді ойлаңыз.</p><div class="tj-options">'+t.options.map((o,i)=>'<button type="button" data-tj-answer="'+i+'" aria-pressed="'+(selected===i)+'">'+esc(o)+'</button>').join('')+'</div><div data-tj-feedback role="status">'+(Number.isInteger(selected)?'<p class="'+(selected===t.answer?'tj-correct':'tj-incorrect')+'"><b>'+(selected===t.answer?'Дұрыс. ':'Қайта қарастырыңыз. ')+'</b>'+t.why+' <a href="'+SCHOOL_PATH(t)+'#understand">Теорияға оралу →</a></p>':'')+'</div><small>Бұл — түсіндіруге дайындық. Ресми тест ұпайын жеке сабақтағы «Тест» бөлімінде жинайсыз.</small></section>'+
   '<section class="tj-planner"><span class="tj-eyebrow">ӨЗ САБАҒЫҢЫЗҒА АЙНАЛДЫРЫҢЫЗ</span><h2>Менің түсіндіру жоспарым</h2><p class="tj-plan-topic">Тақырып: <strong>'+esc(t.title)+'</strong></p><p class="tj-draft-note">Жоба осы браузерде, өз аккаунтыңыз үшін сақталады. Оқытушыға беру үшін басып шығаруға болады.</p><form data-tj-plan>'+FIELDS.map(([key,label,help])=>'<label>'+label+'<span>'+help+'</span><textarea name="'+key+'" maxlength="2400" rows="3">'+esc(plan[key])+'</textarea><span class="tj-print-value" data-tj-print-value="'+key+'"></span></label>').join('')+'<fieldset><legend>Жоспарды тексеріңіз</legend>'+PLAN_CRITERIA.map((c,i)=>'<label class="tj-criterion"><input type="checkbox" name="criterion-'+i+'" '+(plan.criteria[i]?'checked':'')+'>'+c+'</label>').join('')+'</fieldset><label>Рефлексия<span>Қай тұсын түсіндіру қиын болды? Келесі жолы нені өзгертесіз?</span><textarea name="reflection" maxlength="1200" rows="3">'+esc(plan.reflection)+'</textarea><span class="tj-print-value" data-tj-print-value="reflection"></span></label><div class="tj-plan-actions"><button type="button" data-tj-save>Жобаны осы браузерде сақтау</button><button type="button" data-tj-print>Басып шығару</button></div><p data-tj-plan-status role="status">'+esc(status)+'</p></form></section></div></div>'+(state.user.role==='admin'?auditView(state):'')+'</div>';
  }
  function bind(root){
+  bindContinuity(root);
   if(!root.querySelector('[data-teacher-journey]'))return;
   const user=owner();let dirty=false;
   root.querySelector('[data-tj-plan]')?.addEventListener('input',()=>{dirty=true;root.querySelector('[data-tj-plan-status]').textContent='Жоба өзгерді. Сақтау батырмасын басыңыз.';});
