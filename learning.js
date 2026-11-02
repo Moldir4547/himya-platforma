@@ -1,3 +1,4 @@
+import {teacherHome,createTeacherJourney,bindTeacherEntry,JOURNEY_PATH} from './teacher-journey.js';
 import {bindUniversityLabs} from './university-labs.js';
 import {createUniversityControl} from './university-control.js';
 import { LEVELS, questionsFor, grade } from "./redox-data.js";
@@ -23,6 +24,7 @@ export function schoolPracticeView(item){
 export function createLearning({ store, state, navigate, render, shell }) {
   const universityControl = createUniversityControl({store,state,render,shell});
   const api = learningApi(store);
+  const teacherJourney = createTeacherJourney({state,render});
   let game = null,
     rows = null,
     rowsUser = null,
@@ -166,6 +168,8 @@ export function createLearning({ store, state, navigate, render, shell }) {
       });
   }
   function bind(root) {
+    teacherJourney.bind(root);
+    bindTeacherEntry(root);
     universityControl.bind(root);
     bindUniversityLabs(root);
     root.querySelectorAll("[data-bridge-option]").forEach((button) => {
@@ -329,17 +333,12 @@ export function createLearning({ store, state, navigate, render, shell }) {
       .map(row => state.items.find(item => item.id === row.item_id && item.is_published && item.path?.startsWith('/') && !item.path.startsWith('//'))).find(Boolean);
     return recent ? `<aside class="continue-learning"><div><span>Тоқтаған жеріңізден жалғастырыңыз</span><strong>${esc(recent.title)}</strong></div><a class="primary-button" href="${esc(recent.path)}">Сабақты жалғастыру →</a></aside>` : '';
   }
-  function startView() {
-    return `<section class="learn-home chembridge-home"><div><span class="learn-kicker">ChemBridge · Мектеп–ЖОО сабақтастығы</span><h1>Мектептен ЖОО-ға —<br><span>үздіксіз химиялық білім.</span></h1><p>Мектепте алған химиялық біліміңізді ЖОО-да тереңдетіңіз. Сабақтастық көпірі арқылы теорияны тәжірибемен ұштастырып, оқу жолыңыздағы жетістіктерді бақылаңыз.</p><div class="learn-actions"><a class="primary-button" href="/topics">Оқуды бастау →</a><a href="${state.user ? '/kabinet' : '/register'}">${state.user ? 'Жеке кабинет →' : 'Аккаунт жасау →'}</a></div></div></section>${continueView()}<section class="home-directions" aria-labelledby="directions-title"><header><span class="eyebrow">Үш оқу бағыты</span><h2 id="directions-title">Өзіңізге қажет бөлімді таңдаңыз</h2></header><div class="direction-cards">${[
-      ['school','01','Мектеп','7–11-сыныптар бойынша химияны меңгеру.','Сыныпты таңдау','/mektep'],
-      ['university','02','Университет','ЖОО пәндері бойынша химиялық білімді тереңдету.','Пәнді таңдау','/universitet'],
-      ['bridge','03','Сабақтастық көпірі','Мектептік білімнен университеттік тапсырмаларға біртіндеп өту.','Көпірден бастау','/sabaktastyk-kopiri']
-    ].map(([tone,n,title,copy,action,href])=>`<article class="direction-card ${tone}"><span class="direction-number" aria-hidden="true">${n}</span><h3>${title}</h3><p>${copy}</p><a href="${href}">${action} <span aria-hidden="true">→</span></a></article>`).join('')}</div></section><section class="orientation-panel" aria-labelledby="start-guide-title"><h2 id="start-guide-title">Неден бастаймын?</h2><ol class="start-guide"><li><strong>Бағытыңызды таңдаңыз</strong><span>Мектеп, университет немесе сабақтастық көпірі.</span></li><li><strong>Сабақты меңгеріңіз</strong><span>Теорияны оқып, сызбалар мен материалдарды қараңыз.</span></li><li><strong>Біліміңізді тексеріңіз</strong><span>Тапсырманы орындап, түсіндірмені оқыңыз. Нәтиже сабақта және жеке кабинетте көрінеді.</span></li></ol>${state.user ? '' : '<p class="orientation-note">Сабақтарды ашу және нәтижені сақтау үшін <a href="/login">аккаунтыңызға кіріңіз</a> немесе <a href="/register">тіркеліңіз</a>.</p>'}</section>`;
-  }
+  function startView() { return teacherHome(state,continueView()); }
   return {
     callback: api.callback,
     bind,
     route(p) {
+      if(p===JOURNEY_PATH)return shell(teacherJourney.view());
       const controlPage=universityControl.route(p);if(controlPage!==null)return controlPage;
       if (game?.owner && game.owner !== state.user?.id) game = null;
       if (p === "/learn/redox") return shell(intro());
