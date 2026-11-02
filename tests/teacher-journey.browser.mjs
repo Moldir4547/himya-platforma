@@ -4,7 +4,7 @@ import http from 'node:http';
 import {readFileSync,mkdirSync} from 'node:fs';
 import {chromium} from 'playwright';
 import {DEFAULT_CONTENT} from '../data.js';
-import {JOURNEY_PATH,TEACHING_TRACKS} from '../teacher-journey.js';
+import {JOURNEY_PATH,TEACHING_TRACKS,CONTINUITY_LADDERS} from '../teacher-journey.js';
 const root=new URL('../',import.meta.url);
 test('real app teacher journey: home, five comparisons, draft isolation, feedback, print and admin coverage on desktop/phone',async()=>{
  const writes=[],resources=[
@@ -36,7 +36,21 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   assert.equal(await page.locator('.direction-card').count(),3);
   assert.equal(await page.locator('.teacher-home-entry').count(),1);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
-  await page.getByRole('link',{name:'Мұғалім жолын ашу',exact:false}).click();
+  
+  assert.equal(await page.locator('.cb-chem-art').count(),1);
+  assert.equal(await page.locator('[data-cb-topic]').count(),8);
+  for(const track of CONTINUITY_LADDERS){
+   await page.locator('[data-cb-topic="'+track.id+'"]').click();
+   assert.equal(await page.locator('[data-cb-topic="'+track.id+'"]').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('.cb-step').count(),4);
+   assert.ok((await page.locator('.cb-comparison').textContent()).includes(track.difference));
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,track.id+' home '+width);
+   for(const href of await page.locator('.cb-step a').evaluateAll(as=>as.map(a=>a.getAttribute('href'))))assert.ok(href.startsWith('/himya-platforma/'),href);
+  }
+  await page.locator('[data-cb-topic="atom"]').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await page.locator('[data-cb-topic="atom"]').getAttribute('aria-pressed'),'true');
+  await page.getByRole('link',{name:'Салыстыру және жоспар',exact:false}).click();
   await page.waitForLoadState('networkidle');
   assert.equal(await page.locator('[data-tj-plan]').count(),0);
   await context.addCookies([{name:'actor',value:'learner',url:base}]);
@@ -62,6 +76,8 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   assert.equal(await page.locator('#tj-tab-teach').getAttribute('aria-selected'),'true');
   const answer='<img src=x onerror="alert(1)"> Оқушы молекуланы түсіндіреді.';
   await page.locator('textarea[name=goal]').fill(answer);
+  await page.locator('[data-cb-topic="solutions"]').click();
+  assert.equal(await page.locator('textarea[name=goal]').inputValue(),answer,'topic comparison must preserve unsaved plan');
   await page.getByRole('button',{name:'Жобаны осы браузерде сақтау',exact:true}).click();
   await page.locator('[data-tj-plan-status]').filter({hasText:'сақталды'}).waitFor();
   await page.reload();await page.locator('[data-tj-plan]').waitFor();
