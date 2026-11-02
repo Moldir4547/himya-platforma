@@ -38,6 +38,9 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   
   assert.equal(await page.locator('.cb-chem-art').count(),1);
+  await page.getByRole('link',{name:'Білім баспалдағын ашу',exact:false}).click();
+  assert.equal(new URL(page.url()).hash,'#continuity-ladder');
+  await page.locator('#continuity-ladder').waitFor();
   assert.equal(await page.locator('[data-cb-topic]').count(),8);
   for(const track of CONTINUITY_LADDERS){
    await page.locator('[data-cb-topic="'+track.id+'"]').click();
