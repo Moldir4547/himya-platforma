@@ -24,7 +24,7 @@ export function schoolPracticeView(item){
 export function createLearning({ store, state, navigate, render, shell }) {
   const universityControl = createUniversityControl({store,state,render,shell});
   const api = learningApi(store);
-  const teacherJourney = createTeacherJourney({state,render});
+  const teacherJourney = createTeacherJourney({state,render,store});
   let game = null,
     rows = null,
     rowsUser = null,
