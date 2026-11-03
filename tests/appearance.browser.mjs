@@ -29,7 +29,7 @@ test('responsive reading, persistent day/night control and wide tables across re
   page.on('pageerror',e=>errors.push(e.message));
   await context.addCookies([{name:'member',value:'yes',url:base}]);
   const mode=()=>page.locator('html').getAttribute('data-theme');
-  const open=async route=>{await page.goto(base+'/himya-platforma'+route);try{await page.locator('[data-appearance-toggle]').waitFor({timeout:10000});}catch{throw Error(JSON.stringify({route,errors,body:(await page.locator('body').innerText()).slice(0,1000)}));}await page.waitForLoadState('networkidle');};
+  const open=async route=>{await page.goto(base+'/himya-platforma'+route);try{await page.locator('[data-appearance-toggle]').waitFor({timeout:10000});}catch{throw Error(JSON.stringify({route,errors,url:page.url()}));}await page.waitForLoadState('networkidle');};
   async function fits(label){
    const info=await page.evaluate(()=>({fits:document.documentElement.scrollWidth<=innerWidth+1,bad:Array.from(document.querySelectorAll('#app *')).filter(e=>e.getBoundingClientRect().right>innerWidth+1).slice(0,6).map(e=>({tag:e.tagName,cls:e.className,right:e.getBoundingClientRect().right}))}));
    assert.equal(info.fits,true,label+' '+JSON.stringify(info.bad));
@@ -37,6 +37,7 @@ test('responsive reading, persistent day/night control and wide tables across re
   for(const selected of ['light','dark']){
    await open('/');if(await mode()!==selected)await page.locator('[data-appearance-toggle]').click();
    for(const route of routes){
+    console.log('READING_ROUTE',width,selected,route);
     await open(route);
     assert.equal(await mode(),selected,route);
     assert.equal(await page.locator('[data-appearance-toggle]').count(),1);
