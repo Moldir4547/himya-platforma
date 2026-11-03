@@ -46,7 +46,7 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
    await page.locator('[data-cb-topic="'+track.id+'"]').click();
    assert.equal(await page.locator('[data-cb-topic="'+track.id+'"]').getAttribute('aria-pressed'),'true');
    assert.equal(await page.locator('.cb-step').count(),4);
-   assert.ok((await page.locator('.cb-comparison').textContent()).includes(track.difference));
+   assert.ok((await page.locator('.cb-comparison').textContent()).includes('Мақсаттардың үйлесуі'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,track.id+' home '+width);
    for(const href of await page.locator('.cb-step a').evaluateAll(as=>as.map(a=>a.getAttribute('href'))))assert.ok(href.startsWith('/himya-platforma/'),href);
   }

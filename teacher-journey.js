@@ -1,3 +1,4 @@
+import {curriculumReviewView,createContinuityPractice} from './continuity-assessment.js';
 import {SCHOOL_UNITS} from './school-curriculum.js';
 import {matchesTopic} from './school-materials.js';
 import {teacherEntries} from './teacher-materials.js';
@@ -30,7 +31,7 @@ export const TEACHING_TRACKS=[
   boundary:'Эквивалентті түсіндіру алдында нақты реакция мен оның жүру дәрежесін көрсету қажет.'},
  {id:'solutions',title:'Ерітінді және концентрация',grade:8,schoolSlug:'solutions',terms:['ерітінді','концентрация','ерігіштік'],bridge:'/sabaktastyk-kopiri/eritindiler',question:'10 г NaCl мен 90 г судан алынған ерітіндідегі тұздың массалық үлесі қандай?',
   school:'Массалық үлесте еріген зат массасын ерітіндінің толық массасына бөлеміз. Еру мен ерігіштік шегін ажыратамыз.',
-  university:'Массалық үлес, молярлық концентрация және ерітінді тығыздығы арасындағы байланысты қолданамыз. Сұйылтуда еріген зат мөлшерінің сақталу шартын тексереміз.',
+  university:'Молярлық концентрация мектепте де бар. ЖОО-да концентрация түрлерін, тығыздықты және ерітінді даярлауды байланыстырамыз. Сұйылтуда еріген зат мөлшерінің сақталу шартын тексереміз.',
   teach:'10 г тұз бен 90 г су моделін көрсетіңіз. «Неге 10-ды 90-ға емес, 100-ге бөлеміз?» деген сұрақ қойыңыз. Кейін көлем берілмесе, молярлық концентрацияны бірден таба алмайтынын талқылаңыз.',
   evidence:'Оқушы еріткіш пен ерітінді массасын шатастырмайды; студент молярлық концентрацияға қандай қосымша дерек қажет екенін атайды.',
   options:['11,1%','10%','90%'],answer:1,
@@ -177,7 +178,7 @@ export const CONTINUITY_LADDERS = [
   "title": "Ерітінділер",
   "symbol": "c = n/V",
   "lecture": "11",
-  "change": "Массалық үлестен концентрацияларды түрлендіруге және ерітінді даярлауды жоспарлауға өтеміз.",
+  "change": "Мектептегі массалық үлес пен молярлық концентрациядан концентрация түрлерін салыстыруға және ерітінді даярлауға өтеміз.",
   "shared": "Ерітінді құрамын сандық сипаттау және қажетті құрамдағы ерітінді алу.",
   "difference": "ЖОО-да бірнеше концентрация түрін, өлшем бірлігін және көлем мен тығыздық туралы деректердің жеткіліктілігін салыстырамыз.",
   "gap": "Еріткіш массасын ерітінді массасымен, ал миллилитрді литрмен шатастыру.",
@@ -383,17 +384,19 @@ function ladderPanel(id){
  const label=unit?s[0]+'-сынып':s[0]==='bridge'?'Өтпелі қадам':'ЖОО · 1-курс';
  const href=unit?unit.path:s[0]==='bridge'?s[1]:'/universitet/teoriya';
  return '<li class="cb-step cb-step-'+i+'"><span class="cb-step-number">0'+(i+1)+'</span><span class="cb-level">'+label+'</span><h4>'+esc(s[2])+'</h4><p>'+esc(s[3])+'</p><div class="cb-step-example"><b>Мысал</b><p>'+esc(s[4])+'</p></div><a href="'+href+'">'+(unit?'Мектеп тақырыбы':s[0]==='bridge'?'Өтпелі материал':'Дәрістер бөлімі')+' →</a><small>'+(unit?esc(unit.book+' · '+unit.paras):s[0]==='bridge'?'Екі деңгейді байланыстыруға арналған авторлық тапсырма':'Силлабус · дәріс '+esc(t.lecture))+'</small></li>';
- }).join('')+'</ol><div class="cb-comparison"><h4>Оқу бағыты қалай өзгереді?</h4><dl><div><dt>Ортақ негіз</dt><dd>'+esc(t.shared)+'</dd></div><div><dt>Күрделенуі</dt><dd>'+esc(t.difference)+'</dd></div><div><dt>Ықтимал өтпелі қиындық</dt><dd>'+esc(t.gap)+'</dd></div></dl></div><details class="cb-evidence"><summary>Салыстырудың деректері мен шегі</summary><p>Мектеп қадамдары платформадағы оқулық тақырыптарына байланыстырылған. ЖОО қадамы «6В01524 — Химия IP» силлабусындағы «Бейорганикалық химияның теориялық негіздері» пәнінің '+esc(t.lecture)+'-дәрістеріне сүйенеді.</p><p>Баспалдақ пен күтілетін әрекеттер — авторлық әдістемелік салыстыру. Олар ресми оқу мақсаттарының сөзбе-сөз көшірмесі емес. Мақсат кодтары бойынша сәйкестік сараптамасы әлі жасалмаған. Тақырыптың қайталануы толық сабақтастықты, ал оқушының төмен ұпайы сабақтастықтың жоқтығын өздігінен дәлелдемейді.</p><a href="/universitet/sillabus">Силлабусты қарау →</a> <a href="/materials">Оқулықтар →</a> <a href="https://kazneb.kz/ru/bookView/view?brId=1716037&amp;simple=true" target="_blank" rel="noopener noreferrer">А. К. Баешова · Жалпы химия (2011) · KazNEB ↗</a><p>Қосымша дерек: А. К. Баешова, «Жалпы химия (зертханалық жұмыстардың жинағы)», 2011. Қаралған 3–4-беттерде теорияны тәжірибемен байланыстыру және бақылауды, реакция теңдеуін, қорытындыны тіркеу тәртібі берілген. Бұл жинақ тәжірибелік дәлелмен жұмыс істеуге негіз болады; оның барлық тарауы бойынша салыстыру әлі жасалмаған.</p></details>';
+ }).join('')+'</ol>'+curriculumReviewView(t);
 }
 export function continuityView(){
- return '<section class="cb-continuity" id="continuity-ladder" aria-labelledby="cb-continuity-title"><header class="cb-section-head"><div><span class="tj-eyebrow">CHEMBRIDGE · САБАҚТАСТЫҚ КАРТАСЫ</span><h2 id="cb-continuity-title">Таныс ұғым. Жаңа тереңдік.</h2><p>Тақырыпты таңдаңыз: мектептегі негізден ЖОО-дағы ғылыми түсіндіруге дейін көтеріліңіз.</p></div><span class="cb-count">8 тақырып<br><b>4 қадам</b></span></header><div class="cb-topic-picker" role="group" aria-label="Салыстыратын тақырып">'+CONTINUITY_LADDERS.map((t,i)=>'<button type="button" data-cb-topic="'+t.id+'" aria-pressed="'+(i===0)+'" aria-controls="cb-ladder-panel">'+esc(t.title)+'</button>').join('')+'</div><div id="cb-ladder-panel" data-cb-panel>'+ladderPanel('bond')+'</div><p class="cb-selection-status" data-cb-status role="status" aria-live="polite"></p><p class="cb-reading-note">Қадамдар — оқу мазмұнының дамуы. Бұл жеке ұпай немесе автоматты ғылыми қорытынды емес.</p></section>';
+ return '<section class="cb-continuity" id="continuity-ladder" aria-labelledby="cb-continuity-title"><header class="cb-section-head"><div><span class="tj-eyebrow">CHEMBRIDGE · САБАҚТАСТЫҚ КАРТАСЫ</span><h2 id="cb-continuity-title">Таныс ұғым. Жаңа тереңдік.</h2><p>Тақырыпты таңдаңыз: мектептегі негізден ЖОО-дағы ғылыми түсіндіруге дейін көтеріліңіз.</p></div><span class="cb-count">8 тақырып<br><b>4 қадам</b></span></header><div class="cb-topic-picker" role="group" aria-label="Салыстыратын тақырып">'+CONTINUITY_LADDERS.map((t,i)=>'<button type="button" data-cb-topic="'+t.id+'" aria-pressed="'+(i===0)+'" aria-controls="cb-ladder-panel">'+esc(t.title)+'</button>').join('')+'</div><div id="cb-ladder-panel" data-cb-panel>'+ladderPanel('bond')+'</div><div data-cb-practice></div><p class="cb-selection-status" data-cb-status role="status" aria-live="polite"></p><p class="cb-reading-note">Құжаттар бойынша сабақтастық пен осы әрекеттегі нәтиже бөлек көрсетіледі. Тапсырма ұпайы бағдарламалардың сәйкестік пайызы емес.</p></section>';
 }
-function bindContinuity(root){
+function bindContinuity(root,state,store){
  const section=root.querySelector('.cb-continuity');if(!section)return;
+ const practice=createContinuityPractice({section,state,ladders:CONTINUITY_LADDERS,store});practice.show('bond');
  section.querySelectorAll('[data-cb-topic]').forEach(button=>button.addEventListener('click',()=>{
   const id=button.dataset.cbTopic;
   section.querySelectorAll('[data-cb-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
   section.querySelector('[data-cb-panel]').innerHTML=ladderPanel(id);
+  practice.show(id);
   const prefix=location.pathname.startsWith('/himya-platforma/')||location.pathname==='/himya-platforma'?'/himya-platforma':'';
   if(prefix)section.querySelectorAll('[data-cb-panel] a[href^="/"]').forEach(a=>a.setAttribute('href',prefix+a.getAttribute('href')));
   section.querySelector('[data-cb-status]').textContent=CONTINUITY_LADDERS.find(t=>t.id===id).title+': төрт қадам көрсетілді.';
@@ -435,7 +438,7 @@ export function planKey(owner,topic){return 'chembridge.teaching-plan.v1:'+encod
 export function sanitizePlan(value={}){
  return Object.fromEntries(FIELDS.map(([key])=>[key,typeof value?.[key]==='string'?value[key].slice(0,2400):'']).concat([['reflection',typeof value?.reflection==='string'?value.reflection.slice(0,1200):''],['criteria',PLAN_CRITERIA.map((_,i)=>value?.criteria?.[i]===true)]]));
 }
-export function createTeacherJourney({state,render}){
+export function createTeacherJourney({state,render,store}){
  let topic='',stage='school',answers={},status='',activeOwner=null;
  const current=()=>TEACHING_TRACKS.find(t=>t.id===topic)||TEACHING_TRACKS[0];
  const owner=()=>state.user?.id;
@@ -451,7 +454,7 @@ export function createTeacherJourney({state,render}){
   '<section class="tj-planner"><span class="tj-eyebrow">ӨЗ САБАҒЫҢЫЗҒА АЙНАЛДЫРЫҢЫЗ</span><h2>Менің түсіндіру жоспарым</h2><p class="tj-plan-topic">Тақырып: <strong>'+esc(t.title)+'</strong></p><p class="tj-draft-note">Жоба осы браузерде, өз аккаунтыңыз үшін сақталады. Оқытушыға беру үшін басып шығаруға болады.</p><form data-tj-plan>'+FIELDS.map(([key,label,help])=>'<label>'+label+'<span>'+help+'</span><textarea name="'+key+'" maxlength="2400" rows="3">'+esc(plan[key])+'</textarea><span class="tj-print-value" data-tj-print-value="'+key+'"></span></label>').join('')+'<fieldset><legend>Жоспарды тексеріңіз</legend>'+PLAN_CRITERIA.map((c,i)=>'<label class="tj-criterion"><input type="checkbox" name="criterion-'+i+'" '+(plan.criteria[i]?'checked':'')+'>'+c+'</label>').join('')+'</fieldset><label>Рефлексия<span>Қай тұсын түсіндіру қиын болды? Келесі жолы нені өзгертесіз?</span><textarea name="reflection" maxlength="1200" rows="3">'+esc(plan.reflection)+'</textarea><span class="tj-print-value" data-tj-print-value="reflection"></span></label><div class="tj-plan-actions"><button type="button" data-tj-save>Жобаны осы браузерде сақтау</button><button type="button" data-tj-print>Басып шығару</button></div><p data-tj-plan-status role="status">'+esc(status)+'</p></form></section></div></div>'+(state.user.role==='admin'?auditView(state):'')+'</div>';
  }
  function bind(root){
-  bindContinuity(root);
+  bindContinuity(root,state,store);
   if(!root.querySelector('[data-teacher-journey]'))return;
   const user=owner();let dirty=false;
   root.querySelector('[data-tj-plan]')?.addEventListener('input',()=>{dirty=true;root.querySelector('[data-tj-plan-status]').textContent='Жоба өзгерді. Сақтау батырмасын басыңыз.';});

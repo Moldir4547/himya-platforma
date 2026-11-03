@@ -13,8 +13,8 @@ test('eight continuity routes have valid school anchors, explicit progression an
   assert.equal(t.steps[2][0],'bridge');assert.equal(t.steps[3][0],'uni');
  }
  const html=continuityView();
- assert.match(html,/сараптамасы әлі жасалмаған/);
+ assert.match(html,/8\.1\.4\.1/);assert.match(html,/тәуелсіз сарапшы растаған жоқ/);
  assert.match(html,/KazNEB/);
- assert.match(html,/Баешова/);assert.match(html,/оның барлық тарауы бойынша салыстыру әлі жасалмаған/);
+ assert.match(html,/Баешова/);assert.match(html,/барлық тарауы бойынша салыстыру әлі жасалмаған/);
  assert.match(teacherHome({}),/Білім баспалдағын ашу/);
 });
