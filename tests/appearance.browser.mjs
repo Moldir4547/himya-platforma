@@ -71,6 +71,13 @@ test('responsive reading, persistent day/night control and wide tables across re
   await page.evaluate(()=>{const section=document.createElement('section');section.id='reading-fixture';section.innerHTML='<table><caption>Күрделі салыстыру кестесі</caption><tbody><tr>'+Array.from({length:8},(_,i)=>'<th>Шама '+i+'</th>').join('')+'</tr><tr>'+Array.from({length:8},(_,i)=>'<td>'+('Өлшем_'+i+'_').repeat(10)+'</td>').join('')+'</tr></tbody></table>';document.querySelector('.site-shell').append(section);});
   await page.locator('#reading-fixture .mobile-table-scroll').waitFor();assert.equal(await page.locator('#reading-fixture td').count(),8);await fits('wide table');
   if(width<768){const wrap=page.locator('#reading-fixture .mobile-table-scroll');await wrap.focus();assert.equal(await wrap.getAttribute('tabindex'),'0');assert.equal(await wrap.evaluate(e=>e.scrollWidth>e.clientWidth),true);}
+  
+  if(await mode()!=='dark')await page.locator('[data-appearance-toggle]').click();
+  await page.evaluate(()=>{const fixture=document.createElement('section');fixture.id='night-colour-fixture';fixture.innerHTML='<div class="file-viewer"><header>Құжат үлгісі</header><div class="viewer-canvas"><p>Оқу құжатының анық мәтіні</p></div><footer>Құжат</footer></div><div class="school-feedback correct">Дұрыс жауап</div><div class="school-feedback incorrect">Қате жауап</div>';document.querySelector('.site-shell').append(fixture);});
+  const colours=await page.locator('#night-colour-fixture').evaluate(el=>({paper:getComputedStyle(el.querySelector('.viewer-canvas')).backgroundColor,text:getComputedStyle(el.querySelector('.viewer-canvas p')).color,good:getComputedStyle(el.querySelector('.correct')).backgroundColor,bad:getComputedStyle(el.querySelector('.incorrect')).backgroundColor,surface:getComputedStyle(document.documentElement).getPropertyValue('--sheet').trim()}));
+  assert.equal(colours.paper,'rgb(245, 247, 250)','document source paper stays light in night mode');
+  assert.equal(colours.text,'rgb(23, 46, 73)','document text remains dark on paper');
+  assert.notEqual(colours.good,colours.bad,'correct and incorrect feedback retain distinct backgrounds');
   assert.deepEqual(errors,[]);await context.close();
  }
  const system=await browser.newContext({colorScheme:'dark',viewport:{width:390,height:900}}),p=await system.newPage();
