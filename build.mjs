@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
 const files = [
   "index.html",
+  "appearance.js",
+  "appearance.css",
   "virtual-lab.html",
   "404.html",
   ".nojekyll",
