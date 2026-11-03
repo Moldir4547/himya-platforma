@@ -42,7 +42,7 @@
   }
   document.querySelectorAll('table').forEach(table=>{
    if(table.closest('.mobile-table-scroll,[contenteditable="true"],svg')||table.getAttribute('role')==='presentation')return;
-   if(table.parentElement?.matches('.tj-table,.analytics-table-wrap,.table-wrap,.table-scroll')){table.parentElement.classList.add('reading-table-scroll');return;}
+   if(table.parentElement?.matches('.tj-table,.analytics-table-wrap,.table-wrap,.table-scroll')){const parent=table.parentElement;parent.classList.add('reading-table-scroll');if(!parent.hasAttribute('tabindex'))parent.tabIndex=0;return;}
    const wrap=document.createElement('div');wrap.className='mobile-table-scroll';wrap.tabIndex=0;wrap.setAttribute('role','region');wrap.setAttribute('aria-label',(table.caption?.textContent?.trim()||'Кесте — көлденең айналдыруға болады').slice(0,140));
    table.before(wrap);wrap.append(table);if((table.rows[0]?.cells.length||0)>3)wrap.classList.add('wide-table');
    overflow(wrap);resize?.observe(wrap);

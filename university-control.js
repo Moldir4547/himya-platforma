@@ -32,7 +32,7 @@ export function createUniversityControl({store,state,render,shell}){
  function adopt(a){attempt=a;if(a?.server_now)offset=Date.parse(a.server_now)-Date.now();draft=[...(a?.answers||Array(30).fill(-1))];
   if(a&&!a.finished_at&&remainingSeconds(a.deadline,now())>0){try{const cached=JSON.parse(localStorage.getItem(key(a.id)));if(Array.isArray(cached)&&cached.length===30&&cached.every((v,i)=>Number.isInteger(v)&&v>=-1&&v<4))draft=cached;}catch{}}
  }
- function load(){if(loaded||loading||!state.user)return;loading=true;const uid=owner;
+ function load(){if(loaded||loading||error||!state.user)return;loading=true;const uid=owner;
   store.listCurrentControlAttempts().then(async rows=>{if(state.user?.role==='admin'){const analytics=await store.getAnalytics();if(owner===uid)state.analytics=analytics;}else if(rows?.[0]&&!rows[0].finished_at){rows=[await store.startCurrentControl(false),...rows.slice(1)];}return rows;}).then(rows=>{if(owner!==uid||state.user?.id!==uid)return;historyRows=rows||[];if(state.user.role!=='admin')adopt(historyRows[0]||null);loaded=true;error='';}).catch(e=>{if(owner===uid)error='Нәтижелер жүктелмеді: '+e.message;}).finally(()=>{if(owner===uid){loading=false;render();}});
  }
  function updateProgress(row){if(!row)return;const i=state.progress.findIndex(r=>r.item_id===row.item_id);if(i<0)state.progress.push(row);else state.progress[i]=row;}
