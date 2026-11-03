@@ -76,3 +76,9 @@ html[data-theme=dark] #app .file-viewer footer a{background:var(--sheet-2)!impor
 html[data-theme=dark] #app .file-viewer .viewer-canvas{background:#f5f7fa!important;color:#172e49!important}
 html[data-theme=dark] #app .file-viewer .viewer-canvas :is(p,small,li,dt,dd,label,legend,summary,h1,h2,h3,h4,h5,h6,td,th,caption){color:#172e49!important}
 html[data-theme=dark] #app .file-viewer .viewer-canvas th{background:#e8eef5!important}
+
+html[data-theme=dark] #app :is(.school-notes article,.school-visual,.school-worksheet,.ws-subtypes,.knowledge-controls article,.control-clock,.school-path blockquote,.university-html-lab,.author-section,.practice-entry-grid>a,.continuity-details,.topic-section,.quiz-question,.lab-visual,.lab-workbench aside,.lab-finish,.bm-section aside,.cg-bench,.cg-procedure .current,.cg-scene-caption,.cg-installed span,.cg-step-dot,.rich-editor,.rich-toolbar,.file-drop,.course-builder,.friendly-editor,.editor-section-header,.advanced-settings,.design-admin,.theme-color,.more-menu,.answer-options button span,.resource-icon,.lms-unit-index,.quiz-title>span,.quiz-card legend>span){background:var(--sheet)!important;color:var(--ink)!important;border-color:var(--edge)!important}
+html[data-theme=dark] #app table tbody tr{background:var(--sheet)!important}
+html[data-theme=dark] #app table tbody tr:nth-child(even){background:#223147!important}
+html[data-theme=dark] #app .file-viewer .viewer-canvas table tbody tr{background:white!important}
+html[data-theme=dark] #app .cg-procedure .complete .cg-step-dot{background:#286b4c!important;color:white!important}

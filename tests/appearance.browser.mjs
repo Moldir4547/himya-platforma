@@ -43,6 +43,12 @@ test('responsive reading, persistent day/night control and wide tables across re
     assert.equal(await page.locator('[data-appearance-toggle]').count(),1);
     await fits(width+' '+selected+' '+route);
     const box=await page.locator('[data-appearance-toggle]').boundingBox();assert.ok(box.width>=44&&box.height>=44);
+    if(route.includes('/structure-isotopes')&&!route.includes('#lab')&&selected==='dark'){
+     for(const el of await page.locator('.school-notes article,.school-visual,.school-panel').all()){
+      const bg=await el.evaluate(e=>getComputedStyle(e).backgroundColor);
+      assert.notEqual(bg,'rgb(255, 255, 255)','reading surface must follow dark mode');
+     }
+    }
     if(route==='/'){
      const contrast=await page.locator('.cp-prompt').evaluate(el=>{
       const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);
