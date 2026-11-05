@@ -54,7 +54,7 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
    assert.ok((await page.locator('.cb-depth-summary').textContent()).includes(track.difference));
    assert.ok((await page.locator('.cb-comparison').textContent()).includes('Мақсаттардың үйлесуі'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,track.id+' home '+width);
-   for(const href of await page.locator('.cb-step a').evaluateAll(as=>as.map(a=>a.getAttribute('href'))))assert.ok(href.startsWith('/himya-platforma/'),href);
+   for(const href of await page.locator('.cb-step a').evaluateAll(as=>as.map(a=>a.getAttribute('href')))){assert.ok(href.startsWith('/himya-platforma/'),href);assert.equal(href.split('/himya-platforma').length-1,1,'base path occurs exactly once: '+href);}
   }
   await page.locator('[data-cb-topic="atom"]').focus();
   await page.keyboard.press('Enter');

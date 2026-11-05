@@ -409,7 +409,7 @@ function bindContinuity(root,state,store){
   section.querySelector('[data-cb-panel]').innerHTML=ladderPanel(id);
   practice.show(id);
   const prefix=location.pathname.startsWith('/himya-platforma/')||location.pathname==='/himya-platforma'?'/himya-platforma':'';
-  if(prefix)section.querySelectorAll('[data-cb-panel] a[href^="/"]').forEach(a=>a.setAttribute('href',prefix+a.getAttribute('href')));
+  if(prefix)section.querySelectorAll('[data-cb-panel] a[href^="/"]').forEach(a=>{const href=a.getAttribute('href');if(!href.startsWith(prefix+'/'))a.setAttribute('href',prefix+href);});
   section.querySelector('[data-cb-status]').textContent=CONTINUITY_LADDERS.find(t=>t.id===id).title+': төрт қадам көрсетілді.';
  }));
 }
