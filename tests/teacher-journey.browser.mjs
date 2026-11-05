@@ -38,7 +38,9 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
   
   assert.equal(await page.locator('.cb-chem-art').count(),1);
+  assert.equal(await page.locator('.cb-continuity').count(),0,'full map moved off homepage');
   await page.getByRole('link',{name:'Білім баспалдағын ашу',exact:false}).click();
+  await page.waitForURL('**/sabaktastyk-kopiri#continuity-ladder');
   assert.equal(new URL(page.url()).hash,'#continuity-ladder');
   await page.locator('#continuity-ladder').waitFor();
   assert.equal(await page.locator('[data-cb-topic]').count(),8);
@@ -46,6 +48,8 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
    await page.locator('[data-cb-topic="'+track.id+'"]').click();
    assert.equal(await page.locator('[data-cb-topic="'+track.id+'"]').getAttribute('aria-pressed'),'true');
    assert.equal(await page.locator('.cb-step').count(),4);
+   assert.equal(await page.locator('.cb-depth-grid article').count(),3);
+   assert.ok((await page.locator('.cb-depth-summary').textContent()).includes(track.difference));
    assert.ok((await page.locator('.cb-comparison').textContent()).includes('Мақсаттардың үйлесуі'));
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,track.id+' home '+width);
    for(const href of await page.locator('.cb-step a').evaluateAll(as=>as.map(a=>a.getAttribute('href'))))assert.ok(href.startsWith('/himya-platforma/'),href);
