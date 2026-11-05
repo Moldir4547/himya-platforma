@@ -21,7 +21,7 @@ test('responsive reading, persistent day/night control and wide tables across re
  });
  await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch();
- const routes=['/','/mektep','/mektep/teoriya/7-synyp','/mektep/teoriya/7-synyp/structure-isotopes','/mektep/teoriya/7-synyp/structure-isotopes#lab','/universitet','/universitet/teoriya','/universitet/sillabus','/universitet/agymdyk-bakylau','/universitet/bilim-kartasy','/sabaktastyk-kopiri/himiyalyk-bailanys','/sabaktastyk-kopiri/ekvivalent-ugymy','/mugalim-materialdary','/materials','/kabinet','/login','/register'];
+ const routes=['/','/sabaktastyk-kopiri','/mektep','/mektep/teoriya/7-synyp','/mektep/teoriya/7-synyp/structure-isotopes','/mektep/teoriya/7-synyp/structure-isotopes#lab','/universitet','/universitet/teoriya','/universitet/sillabus','/universitet/agymdyk-bakylau','/universitet/bilim-kartasy','/sabaktastyk-kopiri/himiyalyk-bailanys','/sabaktastyk-kopiri/ekvivalent-ugymy','/mugalim-materialdary','/materials','/kabinet','/login','/register'];
  try{
  for(const width of [320,390,768,844,1101,1440]){
   const height=width===844?430:980;
@@ -49,7 +49,7 @@ test('responsive reading, persistent day/night control and wide tables across re
       assert.notEqual(bg,'rgb(255, 255, 255)','reading surface must follow dark mode');
      }
     }
-    if(route==='/'){
+    if(route==='/sabaktastyk-kopiri'){
      const contrast=await page.locator('.cp-prompt').evaluate(el=>{
       const rgb=s=>s.match(/[\d.]+/g).slice(0,3).map(Number);
       const lum=a=>a.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((n,v,i)=>n+v*[.2126,.7152,.0722][i],0);

@@ -1,4 +1,4 @@
-import {teacherHome,createTeacherJourney,bindTeacherEntry,JOURNEY_PATH} from './teacher-journey.js';
+import {bridgeModuleView,teacherHome,createTeacherJourney,bindTeacherEntry,JOURNEY_PATH} from './teacher-journey.js';
 import {bindUniversityLabs} from './university-labs.js';
 import {createUniversityControl} from './university-control.js';
 import { LEVELS, questionsFor, grade } from "./redox-data.js";
@@ -338,6 +338,7 @@ export function createLearning({ store, state, navigate, render, shell }) {
     callback: api.callback,
     bind,
     route(p) {
+      if(p==='/sabaktastyk-kopiri')return shell(bridgeModuleView());
       if(p===JOURNEY_PATH)return shell(teacherJourney.view());
       const controlPage=universityControl.route(p);if(controlPage!==null)return controlPage;
       if (game?.owner && game.owner !== state.user?.id) game = null;

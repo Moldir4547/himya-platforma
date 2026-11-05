@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CONTINUITY_LADDERS,continuityView,teacherHome} from '../teacher-journey.js';
+import {bridgeModuleView,CONTINUITY_LADDERS,continuityView,teacherHome} from '../teacher-journey.js';
 import {SCHOOL_UNITS} from '../school-curriculum.js';
 test('eight continuity routes have valid school anchors, explicit progression and source limits',()=>{
  assert.equal(CONTINUITY_LADDERS.length,8);
@@ -17,4 +17,8 @@ test('eight continuity routes have valid school anchors, explicit progression an
  assert.match(html,/KazNEB/);
  assert.match(html,/Баешова/);assert.match(html,/барлық тарауы бойынша салыстыру әлі жасалмаған/);
  assert.match(teacherHome({}),/Білім баспалдағын ашу/);
+ assert.doesNotMatch(teacherHome({}),/data-cb-topic/);
+ assert.match(bridgeModuleView(),/Сабақтастық көпірі/);
+ assert.match(bridgeModuleView(),/Нақты не күрделенеді/);
+ assert.match(bridgeModuleView(),/Жаңа деңгейдің айырмасы/);
 });

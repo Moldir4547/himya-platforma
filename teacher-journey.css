@@ -106,3 +106,15 @@
 .cp-result{margin-top:25px}.cp-score{font-weight:800;font-size:2.8rem;line-height:1.2;margin:18px 0;color:#69429a}.cp-score small{font-size:.9rem;font-weight:600}.cp-result h5{font-size:1rem;margin:24px 0 8px}.cp-result p,.cp-result li{line-height:1.9;font-size:.9rem}.cp-result ul{padding-left:20px}.cp-result li{margin:12px 0}
 .cp-overview{margin-top:24px;padding-top:18px;border-top:1px solid #e6ddec}.cp-overview summary{cursor:pointer;font-size:.87rem;font-weight:700;line-height:1.8;min-height:44px}.cp-overview ul{list-style:none;padding:0}.cp-overview li{display:flex;gap:14px;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee7f5;font-size:.8rem;line-height:1.7}.cp-overview li b{white-space:nowrap}
 @media(max-width:600px){.cp-practice{padding:20px 14px}.cp-progress-head{align-items:start}.cp-progress-head h4{font-size:1.05rem}.cp-practice form h4,.cp-result h4{font-size:1.15rem}.cp-prompt{font-size:.95rem}.cp-options>label{padding:12px}.cp-feedback{padding:14px}.cp-source-list{display:grid}.cp-scene{height:195px}.cp-overview li{flex-wrap:wrap}.cp-model-tile{min-height:125px;padding:15px}}
+
+/* Compare the same concept across levels without a horizontally scrolling matrix. */
+.cb-depth{margin:28px 0;padding:24px;border:1px solid var(--edge);border-radius:20px;background:var(--sheet);color:var(--ink)}
+.cb-depth h4{font-size:clamp(22px,3vw,30px);margin:0 0 20px}
+.cb-depth-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.cb-depth-grid article{min-width:0;border-top:5px solid #4588bb;padding:18px;border-radius:12px;background:var(--paper)}
+.cb-depth-grid article:nth-child(2){border-color:#30977a}.cb-depth-grid article:nth-child(3){border-color:#9571bd}
+.cb-depth h5{font-size:20px;margin:12px 0}.cb-depth p,.cb-depth dd{line-height:1.7;overflow-wrap:anywhere}
+.cb-depth-summary{display:grid;gap:14px;margin-top:24px}.cb-depth-summary>div{border-top:1px solid var(--edge);padding-top:14px}
+.cb-depth dt{font-weight:800}.cb-depth dd{margin:6px 0 0}
+.cb-module .cb-continuity{margin-top:24px}
+@media(max-width:800px){.cb-depth-grid{grid-template-columns:1fr}.cb-depth{padding:16px}}
