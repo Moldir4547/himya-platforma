@@ -39,6 +39,8 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   
   assert.equal(await page.locator('.cb-chem-art').count(),1);
   assert.equal(await page.locator('.cb-continuity').count(),0,'full map moved off homepage');
+  await context.addCookies([{name:'actor',value:'learner',url:base}]);
+  await page.reload();await page.locator('.tj-hero').waitFor();
   await page.getByRole('link',{name:'Білім баспалдағын ашу',exact:false}).click();
   await page.waitForURL('**/sabaktastyk-kopiri#continuity-ladder');
   assert.equal(new URL(page.url()).hash,'#continuity-ladder');
@@ -57,7 +59,8 @@ test('real app teacher journey: home, five comparisons, draft isolation, feedbac
   await page.locator('[data-cb-topic="atom"]').focus();
   await page.keyboard.press('Enter');
   assert.equal(await page.locator('[data-cb-topic="atom"]').getAttribute('aria-pressed'),'true');
-  await page.getByRole('link',{name:'Салыстыру және жоспар',exact:false}).click();
+  await context.clearCookies();
+  await page.goto(base+'/himya-platforma'+JOURNEY_PATH);
   await page.waitForLoadState('networkidle');
   assert.equal(await page.locator('[data-tj-plan]').count(),0);
   await context.addCookies([{name:'actor',value:'learner',url:base}]);

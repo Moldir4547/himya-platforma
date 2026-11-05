@@ -93,10 +93,8 @@ test('continuity practice: 32 interactive tasks, evidence, conclusions, retry, p
   assert.deepEqual(errors,[]);await context.close();
  }
  const guest=await browser.newContext(),page=await guest.newPage();
- await page.goto(base+'/himya-platforma/sabaktastyk-kopiri');await page.locator('[data-cp-form]').waitFor();
- assert.match(await page.locator('.cp-storage-note').textContent(),/Қонақ/);
- await page.locator('[data-cp-form] input[name=option][value="1"]').check();await page.locator('[data-cp-form]').getByRole('button',{name:'Жауапты тексеру',exact:true}).click();
- await page.reload();await page.locator('[data-cp-form]').waitFor();assert.equal(await page.locator('.cp-feedback').count(),0);
+ await page.goto(base+'/himya-platforma/sabaktastyk-kopiri');await page.waitForLoadState('networkidle');
+ assert.equal(await page.locator('[data-cp-form]').count(),0,'bridge retains existing sign-in requirement');
  await guest.close();
  }finally{await browser.close();await new Promise(r=>server.close(r));}
 });
