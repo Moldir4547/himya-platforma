@@ -118,3 +118,15 @@
 .cb-depth dt{font-weight:800}.cb-depth dd{margin:6px 0 0}
 .cb-module .cb-continuity{margin-top:24px}
 @media(max-width:800px){.cb-depth-grid{grid-template-columns:1fr}.cb-depth{padding:16px}}
+
+/* Book-based microlearning: explicit page references, keyboard-visible remediation. */
+.cb-step[id]{scroll-margin-top:90px}
+.cb-step[id]:focus{outline:3px solid var(--accent,#7654b2);outline-offset:4px}
+.cb-micro-reading{margin:12px 0;border-block:1px solid var(--line,#d9d2e6);padding:10px 0}
+.cb-micro-reading summary,.cb-book-source summary{cursor:pointer;font-weight:650;line-height:1.5}
+.cb-book-reading p{font-size:.94rem;line-height:1.65}
+.cb-book-formula{padding:12px;margin:12px 0;border-radius:12px;background:var(--surface-soft,#eee8f7);color:var(--text,#292139);font-weight:700;overflow-wrap:anywhere}
+.cb-book-source{font-size:.84rem;overflow-wrap:anywhere}
+.cb-book-source ul{padding-left:18px}
+.cb-book-source li{margin-bottom:10px}
+.cb-book-source small{display:block;line-height:1.5}
