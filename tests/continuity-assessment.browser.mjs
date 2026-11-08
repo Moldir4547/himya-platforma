@@ -47,7 +47,12 @@ test('continuity practice: 32 interactive tasks, evidence, conclusions, retry, p
     await page.locator('[data-cp-form]').getByRole('button',{name:'Жауапты тексеру',exact:true}).click();
     await page.locator('.cp-feedback').waitFor();
     assert.equal(await page.locator('.cp-wrong').count(),wrongFirst&&i===0?1:0);
-    assert.match(await page.locator('.cp-feedback a').getAttribute('href'),/^\/himya-platforma\//);
+    const back=page.locator('.cp-feedback a');
+    assert.equal(await back.getAttribute('href'),'#cb-reading-'+topic+'-'+i);
+    await back.click();
+    assert.equal(await page.locator('#cb-reading-'+topic+'-'+i+' .cb-micro-reading').evaluate(e=>e.open),true);
+    assert.equal(await page.evaluate(()=>document.activeElement.id),'cb-reading-'+topic+'-'+i);
+    assert.equal(await page.locator('.cp-feedback').count(),1,'reading preserves submitted answer');
     assert.equal(await page.locator('.cb-step.cp-step-done').count(),i+1);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,topic+' '+width+' '+i);
     await page.locator('[data-cp-next]').click();

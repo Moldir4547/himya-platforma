@@ -1,3 +1,4 @@
+import {readingId} from './bridge-book.js';
 const esc=(s='')=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const REVIEW_VERSION='2026-11-03.v1';
 export const SOURCE_DOCUMENTS={"7":{"title":"Күнтізбелік жоспар 7 сынып","filename":"Күнтізбелік_жоспар_7_сынып.docx","resource":"3d3af43c-102c-4d18-a756-4cebd3d42214","section":"II–III тоқсан"},"8":{"title":"Күнтізбелік жоспар 8 сынып","filename":"Күнтізбелік_жоспар_8_сынып_2024_2025_жыл.docx","resource":"e3c93a5a-3879-4a96-afce-17e1a01865d5","section":"II–III тоқсан"},"9":{"title":"Күнтізбелік жоспар 9 сынып","filename":"Күнтізбелік_жоспар_9_сынып.docx","resource":"0ceaf4b0-2b7c-473d-a099-f90a43cc5a9f","section":"I–II тоқсан"},"10":{"title":"Күнтізбелік жоспар 10 сынып","filename":"Күнтізбелік_жоспар_10_сынып_2024_2025_жыл.docx","resource":"a9203cef-764c-43b7-96a0-d2ce81e0904d","section":"Жаратылыстану-математика бағыты · I–III тоқсан"},"11":{"title":"Күнтізбелік жоспар 11 сынып","filename":"Күнтізбелік_жоспар_11_сынып.docx","resource":"45da0389-6a0f-44ac-9c2f-e5aa7dc986ff","section":"III тоқсан · Қышқыл және негіз ерітінділері"},"uni":{"title":"6В01524 Химия IP СИЛЛАБУС 2026","filename":"6В01524 Химия IP СИЛЛАБУС 2026.docx","resource":"8ebbe9d5-01ea-486e-b831-df4267041912","section":"Бейорганикалық химияның теориялық негіздері · 1-семестр · 2026–2027"}};
@@ -64,7 +65,7 @@ export function createContinuityPractice({section,state,ladders,store}){
  }
  function save(){if(!owner)return;const value=read(current),key=practiceKey(owner,current);memory.set(key,value);try{localStorage.setItem(key,JSON.stringify(value));notice='Әрекет осы браузерде аккаунтыңыз үшін сақталды.';}catch{notice='Әрекет браузерге сақталмады. Нәтиже бетте тұр; жаңартқанда жоғалуы мүмкін.';}}
  function links(){if(prefix)section.querySelectorAll('a[href^="/"]').forEach(a=>{const h=a.getAttribute('href');if(!h.startsWith(prefix+'/'))a.setAttribute('href',prefix+h);});}
- function theory(t,i){const s=t.steps[i],unit=Number.isInteger(s[0])?'/mektep/teoriya/'+s[0]+'-synyp/'+s[1]:s[0]==='bridge'?s[1]:'/universitet/teoriya';return unit;}
+ function theory(t,i){return '#'+readingId(t.id,i);}
  function overview(){return '<details class="cp-overview"><summary>Осы әрекеттердегі тақырып нәтижелері</summary><ul>'+ladders.map(t=>{const r=practiceResult(t.id,read(t.id));return '<li><span>'+esc(t.title)+'</span><b>'+(r.finished?r.score+'/4 · аяқталды':r.answered+'/4 жауап')+'</b></li>';}).join('')+'</ul></details>';}
  function render(){
   if(identity()!==owner)return;
@@ -101,6 +102,13 @@ export function createContinuityPractice({section,state,ladders,store}){
  });
  section.addEventListener('change',event=>{if(event.target.matches('[data-cp-scenario]')){scenario=Number(event.target.value);render();}});
  section.addEventListener('click',async event=>{
+  const review=event.target.closest('a[href^="#cb-reading-"]');
+  if(review&&section.contains(review)){
+   event.preventDefault();event.stopPropagation();
+   const target=section.querySelector(review.getAttribute('href'));
+   if(target){const reading=target.querySelector('.cb-micro-reading');if(reading)reading.open=true;target.scrollIntoView({block:'start'});target.focus({preventScroll:true});}
+   return;
+  }
   const b=event.target.closest('button');if(!b||!section.contains(b)||identity()!==owner)return;
   if(b.hasAttribute('data-cp-next')){const run=read(current);if(run.answers.length<=run.index)return;run.index++;if(run.index===4){run.finished=true;run.ended=new Date().toISOString();run.best=Math.max(run.best,practiceResult(current,run).score);}save();render();section.querySelector('[data-cp-practice] h4,[data-cp-result] h4,[data-cp-form] h4')?.focus();}
   if(b.hasAttribute('data-cp-retry')){const old=read(current);runs.set(current,sanitizeRun(current,{attempt:old.attempt+1,best:Math.max(old.best,practiceResult(current,old).score)}));scenario=0;save();render();}

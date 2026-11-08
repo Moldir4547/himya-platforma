@@ -1,3 +1,4 @@
+import {bookReading,readingId} from './bridge-book.js';
 import {curriculumReviewView,createContinuityPractice} from './continuity-assessment.js';
 import {SCHOOL_UNITS} from './school-curriculum.js';
 import {matchesTopic} from './school-materials.js';
@@ -394,7 +395,7 @@ function ladderPanel(id){
  const unit=Number.isInteger(s[0])?SCHOOL_UNITS.find(u=>u.grade===s[0]&&u.slug===s[1]):null;
  const label=unit?s[0]+'-сынып':s[0]==='bridge'?'Өтпелі қадам':'ЖОО · 1-курс';
  const href=unit?unit.path:s[0]==='bridge'?s[1]:'/universitet/teoriya';
- return '<li class="cb-step cb-step-'+i+'"><span class="cb-step-number">0'+(i+1)+'</span><span class="cb-level">'+label+'</span><h4>'+esc(s[2])+'</h4><p>'+esc(s[3])+'</p><div class="cb-step-example"><b>Мысал</b><p>'+esc(s[4])+'</p></div><a href="'+href+'">'+(unit?'Мектеп тақырыбы':s[0]==='bridge'?'Өтпелі материал':'Дәрістер бөлімі')+' →</a><small>'+(unit?esc(unit.book+' · '+unit.paras):s[0]==='bridge'?'Екі деңгейді байланыстыруға арналған авторлық тапсырма':'Силлабус · дәріс '+esc(t.lecture))+'</small></li>';
+ return '<li class="cb-step cb-step-'+i+'" id="'+readingId(t.id,i)+'" tabindex="-1"><span class="cb-step-number">0'+(i+1)+'</span><span class="cb-level">'+label+'</span><h4>'+esc(s[2])+'</h4><p>'+esc(s[3])+'</p><details class="cb-micro-reading"><summary>Қысқа түсіндірме · 30 секунд</summary>'+bookReading(t.id,i)+'</details><div class="cb-step-example"><b>Мысал</b><p>'+esc(s[4])+'</p></div><a href="'+href+'">'+(unit?'Мектеп тақырыбы':s[0]==='bridge'?'Өтпелі материал':'Дәрістер бөлімі')+' →</a><small>'+(unit?esc(unit.book+' · '+unit.paras):s[0]==='bridge'?'Екі деңгейді байланыстыруға арналған авторлық тапсырма':'Силлабус · дәріс '+esc(t.lecture))+'</small></li>';
  }).join('')+'</ol>'+depthComparison(t)+curriculumReviewView(t);
 }
 export function continuityView(){
