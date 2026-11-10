@@ -37,3 +37,41 @@ test('microlearning provides verified print/PDF references and unique remediatio
  for(let i=0;i<4;i++)assert.ok(html.includes('id="'+readingId('bond',i)+'"'));
  assert.match(html,/Пірәлиев/);assert.match(html,/Кітап: 84-бет/);assert.match(html,/PDF: 81-бет/);
 });
+
+
+test('all eight comparisons cite checked school and university interior pages and distinguish consolidation',async()=>{
+ const {TEXTBOOK_COMPARISONS:c,EVIDENCE_BOOKS,stepEvidence,textbookComparison,evidenceOverview}=await import('../bridge-evidence.js');
+ assert.deepEqual(Object.keys(c),CONTINUITY_LADDERS.map(t=>t.id));
+ const expected={
+  bond:[[128],[56,59],[84]],atom:[[49],[25,32],[46,49,50]],
+  equivalent:[[55],[92],[20]],solutions:[[142],[60],[149,150]],
+  redox:[[69],[181],[206,207]],periodic:[[80,84],[42],[74,75]],
+  equilibrium:[[56],[159],[129,130]],acidbase:[[68],[45,49],[164,165]]
+ };
+ for(const [id,t] of Object.entries(c)){
+  assert.deepEqual(['school','upper','university'].map(k=>t[k].refs[0].pages),expected[id]);
+  for(const key of ['school','upper','university']){
+   assert.ok(t[key].claim.length>30);
+   for(const ref of t[key].refs){
+    assert.ok(EVIDENCE_BOOKS[ref.book]);
+    assert.match(ref.paragraph,/§\d/);
+    assert.equal(ref.pages.length,ref.pdf.length);
+    for(let i=0;i<ref.pages.length;i++){assert.ok(Number.isInteger(ref.pages[i])&&ref.pages[i]>0);assert.equal(ref.pages[i]-ref.pdf[i],ref.book==='uni'?3:0);}
+    assert.ok(textbookComparison(id).includes('Кітап: '+ref.pages.join(', ')+'-бет'));
+    assert.ok(textbookComparison(id).includes('PDF: '+ref.pdf.join(', ')+'-бет'));
+   }
+  }
+  for(const step of [0,1,3])assert.match(stepEvidence(id,step),/Дәлелі: параграф және бет/);
+  assert.equal(stepEvidence(id,2),'','author bridge is not passed off as a textbook excerpt');
+  assert.ok(t.conclusion.length>80);assert.ok(t.overlap.length>60);
+  assert.match(textbookComparison(id),/Авторлық өтпелі тапсырма/);
+ }
+ assert.deepEqual(Object.entries(c).filter(([,v])=>v.kind==='consolidation').map(([k])=>k),['periodic','equilibrium']);
+ assert.match(c.atom.overlap,/Квант/);assert.match(c.redox.overlap,/мектептің/);
+ assert.match(c.acidbase.university.claim,/белсенділік/);
+ assert.match(evidenceOverview(CONTINUITY_LADDERS),/барлық оқулықтың толық сараптамасы емес/);
+ assert.match(evidenceOverview(CONTINUITY_LADDERS),/сабақтастықтың пайызы/);
+ const html=continuityView();assert.match(html,/data-cb-evidence="bond"/);
+ assert.equal((html.match(/class="cb-step-source"/g)||[]).length,3);
+ assert.match(html,/8 тақырып бойынша жалпы қорытынды/);
+});
