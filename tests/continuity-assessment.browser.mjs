@@ -1,3 +1,4 @@
+import {TEXTBOOK_COMPARISONS} from '../bridge-evidence.js';
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -60,10 +61,28 @@ test('continuity practice: 32 interactive tasks, evidence, conclusions, retry, p
    await page.locator('[data-cp-result]').waitFor();
    assert.match(await page.locator('.cp-score').textContent(),wrongFirst?/3/:/4/);
    assert.ok((await page.locator('[data-cp-result]').textContent()).includes(CURRICULUM_REVIEW[topic].verdict));
+   assert.equal(await page.locator('[data-cp-book-conclusion]').textContent(),TEXTBOOK_COMPARISONS[topic].conclusion);
    if(wrongFirst)assert.equal(await page.locator('[data-cp-result] li a').count(),1);
   }
   for(const topic of Object.keys(PRACTICE_TASKS)){
    await page.locator('[data-cb-topic="'+topic+'"]').click();
+   const evidence=page.locator('[data-cb-evidence="'+topic+'"]');
+   assert.ok((await evidence.textContent()).includes(TEXTBOOK_COMPARISONS[topic].conclusion));
+   await evidence.locator('.cb-evidence-detail > summary').click();
+   assert.equal(await evidence.locator('.cb-evidence-grid article').count(),3);
+   for(const level of ['school','upper','university'])for(const ref of TEXTBOOK_COMPARISONS[topic][level].refs){
+    assert.ok((await evidence.locator('.cb-evidence-detail').textContent()).includes('Кітап: '+ref.pages.join(', ')+'-бет'));
+    assert.ok((await evidence.locator('.cb-evidence-detail').textContent()).includes('PDF: '+ref.pdf.join(', ')+'-бет'));
+   }
+   await evidence.locator('.cb-evidence-task > summary').click();
+   await evidence.locator('.cb-evidence-task details > summary').click();
+   assert.ok((await evidence.locator('.cb-evidence-task').textContent()).includes(TEXTBOOK_COMPARISONS[topic].answer));
+   for(const source of await page.locator('.cb-step-source > summary').all())await source.click();
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'open citations '+topic+' '+width);
+   await page.locator('.cb-evidence-overview > summary').click();
+   assert.equal(await page.locator('.cb-evidence-overview tbody tr').count(),8);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'overview '+width);
+   await page.locator('.cb-evidence-overview > summary').click();
    await complete(topic,topic==='atom');
    if(topic==='bond'){
     await page.locator('.cp-goals summary').click();
