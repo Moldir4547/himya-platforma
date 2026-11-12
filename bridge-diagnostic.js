@@ -5,8 +5,8 @@ export const diagnosticKey=owner=>'chembridge.diagnostic.'+DIAGNOSTIC_VERSION+'.
 export function questionSet(topic,phase){return (DIAGNOSTIC_BANK[topic]||[]).map(pair=>pair[phase==='baseline'?0:1]);}
 export function gradeDiagnostic(topic,phase,answers){
  const qs=questionSet(topic,phase);
- if(qs.length!==3||!Array.isArray(answers)||answers.length!==3)return null;
- if(answers.some((a,i)=>!Number.isInteger(a)||a<0||a>=qs[i].options.length))return null;
+ if(!['baseline','followup'].includes(phase)||qs.length!==3||!Array.isArray(answers)||answers.length!==3)return null;
+ if(qs.some((q,i)=>!Number.isInteger(answers[i])||answers[i]<0||answers[i]>=q.options.length))return null;
  return answers.map((a,i)=>({correct:a===qs[i].answer,tag:qs[i].tag,step:qs[i].step}));
 }
 const stamp=s=>typeof s==='string'&&Number.isFinite(Date.parse(s))?s:null;

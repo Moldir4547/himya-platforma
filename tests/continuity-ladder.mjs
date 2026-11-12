@@ -103,4 +103,6 @@ test('paired diagnostics separate dimensions, preserve initial answers and expor
  const invalid=sanitizeDiagnostic({...raw,topics:{bond:{baseline:{...a,answers:[99,null,0]},followups:[b]}}});
  assert.equal(invalid.topics.bond.baseline.ended,null);assert.equal(invalid.topics.bond.followups.length,0);
  assert.equal(gradeDiagnostic('unknown','baseline',[0,0,0]),null);
+ assert.equal(gradeDiagnostic('bond','invalid',[0,0,0]),null);
+ assert.equal(gradeDiagnostic('bond','baseline',new Array(3)),null);
 });
