@@ -16,6 +16,8 @@ const files = [
   "teacher-journey.js",
   "bridge-book.js",
   "bridge-evidence.js",
+  "bridge-diagnostic.js",
+  "bridge-diagnostic-data.js",
   "continuity-assessment.js",
   "teacher-journey.css",
   "university-control.js",

@@ -1,3 +1,4 @@
+import {createBridgeDiagnostic} from './bridge-diagnostic.js';
 import {stepEvidence,textbookComparison,evidenceOverview} from './bridge-evidence.js';
 import {bookReading,readingId} from './bridge-book.js';
 import {curriculumReviewView,createContinuityPractice} from './continuity-assessment.js';
@@ -400,16 +401,17 @@ function ladderPanel(id){
  }).join('')+'</ol>'+textbookComparison(t.id)+depthComparison(t)+curriculumReviewView(t);
 }
 export function continuityView(){
- return '<section class="cb-continuity" id="continuity-ladder" aria-labelledby="cb-continuity-title"><header class="cb-section-head"><div><span class="tj-eyebrow">CHEMBRIDGE · САБАҚТАСТЫҚ КАРТАСЫ</span><h2 id="cb-continuity-title">Мектептен ЖОО-ға: білімнің күрделену картасы</h2><p>Тақырыпты таңдаңыз: мектептегі негізден ЖОО-дағы ғылыми түсіндіруге дейін көтеріліңіз.</p></div><span class="cb-count">8 тақырып<br><b>4 қадам</b></span></header>'+evidenceOverview(CONTINUITY_LADDERS)+'<div class="cb-topic-picker" role="group" aria-label="Салыстыратын тақырып">'+CONTINUITY_LADDERS.map((t,i)=>'<button type="button" data-cb-topic="'+t.id+'" aria-pressed="'+(i===0)+'" aria-controls="cb-ladder-panel">'+esc(t.title)+'</button>').join('')+'</div><div id="cb-ladder-panel" data-cb-panel>'+ladderPanel('bond')+'</div><div data-cb-practice></div><p class="cb-selection-status" data-cb-status role="status" aria-live="polite"></p><p class="cb-reading-note">Құжаттар бойынша сабақтастық пен осы әрекеттегі нәтиже бөлек көрсетіледі. Тапсырма ұпайы бағдарламалардың сәйкестік пайызы емес.</p></section>';
+ return '<section class="cb-continuity" id="continuity-ladder" aria-labelledby="cb-continuity-title"><header class="cb-section-head"><div><span class="tj-eyebrow">CHEMBRIDGE · САБАҚТАСТЫҚ КАРТАСЫ</span><h2 id="cb-continuity-title">Мектептен ЖОО-ға: білімнің күрделену картасы</h2><p>Тақырыпты таңдаңыз: мектептегі негізден ЖОО-дағы ғылыми түсіндіруге дейін көтеріліңіз.</p></div><span class="cb-count">8 тақырып<br><b>4 қадам</b></span></header>'+evidenceOverview(CONTINUITY_LADDERS)+'<div class="cb-topic-picker" role="group" aria-label="Салыстыратын тақырып">'+CONTINUITY_LADDERS.map((t,i)=>'<button type="button" data-cb-topic="'+t.id+'" aria-pressed="'+(i===0)+'" aria-controls="cb-ladder-panel">'+esc(t.title)+'</button>').join('')+'</div><div data-cb-diagnostic></div><div id="cb-ladder-panel" data-cb-panel>'+ladderPanel('bond')+'</div><div data-cb-practice></div><p class="cb-selection-status" data-cb-status role="status" aria-live="polite"></p><p class="cb-reading-note">Құжаттар бойынша сабақтастық пен осы әрекеттегі нәтиже бөлек көрсетіледі. Тапсырма ұпайы бағдарламалардың сәйкестік пайызы емес.</p></section>';
 }
 function bindContinuity(root,state,store){
  const section=root.querySelector('.cb-continuity');if(!section)return;
  const practice=createContinuityPractice({section,state,ladders:CONTINUITY_LADDERS,store});practice.show('bond');
+ const diagnostic=createBridgeDiagnostic({section,state,ladders:CONTINUITY_LADDERS});diagnostic.show('bond');
  section.querySelectorAll('[data-cb-topic]').forEach(button=>button.addEventListener('click',()=>{
   const id=button.dataset.cbTopic;
   section.querySelectorAll('[data-cb-topic]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
   section.querySelector('[data-cb-panel]').innerHTML=ladderPanel(id);
-  practice.show(id);
+  practice.show(id);diagnostic.show(id);
   const prefix=location.pathname.startsWith('/himya-platforma/')||location.pathname==='/himya-platforma'?'/himya-platforma':'';
   if(prefix)section.querySelectorAll('[data-cb-panel] a[href^="/"]').forEach(a=>{const href=a.getAttribute('href');if(!href.startsWith(prefix+'/'))a.setAttribute('href',prefix+href);});
   section.querySelector('[data-cb-status]').textContent=CONTINUITY_LADDERS.find(t=>t.id===id).title+': төрт қадам көрсетілді.';
