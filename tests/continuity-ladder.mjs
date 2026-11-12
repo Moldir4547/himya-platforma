@@ -75,3 +75,34 @@ test('all eight comparisons cite checked school and university interior pages an
  assert.equal((html.match(/class="cb-step-source"/g)||[]).length,3);
  assert.match(html,/8 тақырып бойынша жалпы қорытынды/);
 });
+
+
+test('paired diagnostics separate dimensions, preserve initial answers and export anonymous item records',async()=>{
+ const {DIAGNOSTIC_BANK,DIAGNOSTIC_VERSION,DIMENSIONS}=await import('../bridge-diagnostic-data.js');
+ const {gradeDiagnostic,sanitizeDiagnostic,diagnosticCsv,diagnosticKey}=await import('../bridge-diagnostic.js');
+ assert.equal(Object.keys(DIAGNOSTIC_BANK).length,8);assert.equal(DIMENSIONS.length,3);
+ assert.notEqual(diagnosticKey('alice'),diagnosticKey('bob'));
+ for(const [id,pairs] of Object.entries(DIAGNOSTIC_BANK)){
+  assert.equal(pairs.length,3);
+  for(const pair of pairs){assert.equal(pair.length,2);assert.notEqual(pair[0].prompt,pair[1].prompt);for(const q of pair){assert.ok(q.options[q.answer]);assert.ok(q.why.length>30);assert.ok(q.step>=0&&q.step<=3);}}
+  for(const phase of ['baseline','followup']){
+   const i=phase==='baseline'?0:1,answers=pairs.map(p=>p[i].answer);
+   assert.ok(gradeDiagnostic(id,phase,answers).every(g=>g.correct));
+   assert.equal(gradeDiagnostic(id,phase,[null,1,0]),null);
+   assert.equal(gradeDiagnostic(id,phase,answers.map((a,k)=>(a+1)%pairs[k][i].options.length)).filter(g=>g.correct).length,0);
+  }
+ }
+ const started='2026-11-12T10:00:00Z',ended='2026-11-12T10:01:00Z';
+ const a={started,ended,answers:DIAGNOSTIC_BANK.bond.map(p=>p[0].answer)};
+ const b={started:ended,ended:'2026-11-12T10:02:00Z',answers:DIAGNOSTIC_BANK.bond.map(p=>p[1].answer)};
+ const raw={version:DIAGNOSTIC_VERSION,participant:'CB-12345678',topics:{bond:{baseline:a,followups:[b]},unknown:{baseline:a,followups:[]}}};
+ const cleaned=sanitizeDiagnostic(raw);
+ assert.deepEqual(cleaned.topics.bond.baseline,a);assert.deepEqual(cleaned.topics.bond.followups,[b]);assert.equal(cleaned.topics.unknown,undefined);
+ const csv=diagnosticCsv(cleaned);assert.equal(csv.split('\r\n').length,7);assert.match(csv,/participant_code/);assert.doesNotMatch(csv,/email|display_name|user_id/);
+ assert.equal(sanitizeDiagnostic({...raw,version:'old'}).topics.bond,undefined);
+ const invalid=sanitizeDiagnostic({...raw,topics:{bond:{baseline:{...a,answers:[99,null,0]},followups:[b]}}});
+ assert.equal(invalid.topics.bond.baseline.ended,null);assert.equal(invalid.topics.bond.followups.length,0);
+ assert.equal(gradeDiagnostic('unknown','baseline',[0,0,0]),null);
+ assert.equal(gradeDiagnostic('bond','invalid',[0,0,0]),null);
+ assert.equal(gradeDiagnostic('bond','baseline',new Array(3)),null);
+});

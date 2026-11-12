@@ -1,3 +1,5 @@
+import {DIAGNOSTIC_BANK} from '../bridge-diagnostic-data.js';
+import {diagnosticKey} from '../bridge-diagnostic.js';
 import {TEXTBOOK_COMPARISONS} from '../bridge-evidence.js';
 
 import test from 'node:test';
@@ -120,5 +122,72 @@ test('continuity practice: 32 interactive tasks, evidence, conclusions, retry, p
  await page.goto(base+'/himya-platforma/sabaktastyk-kopiri');await page.waitForLoadState('networkidle');
  assert.equal(await page.locator('[data-cp-form]').count(),0,'bridge retains existing sign-in requirement');
  await guest.close();
+ }finally{await browser.close();await new Promise(r=>server.close(r));}
+});
+
+
+test('personal diagnostics: baseline stays fixed, alternate questions, targeted reading, CSV, account isolation and unavailable storage',async()=>{
+ const server=http.createServer((req,res)=>{
+  const p=new URL(req.url,'http://localhost').pathname.replace(/^\/himya-platforma(?=\/|$)/,'')||'/';
+  res.setHeader('Cache-Control','no-store');
+  if(p==='/config.js'){res.setHeader('Content-Type','text/javascript');return res.end('window.__CHEM_CONFIG__={};');}
+  if(p.startsWith('/api/')){
+   const actor=req.headers.cookie?.match(/actor=(\w+)/)?.[1];
+   res.setHeader('Content-Type','application/json');
+   return res.end(JSON.stringify(p==='/api/session'?{user:actor?{id:actor,role:'student',display_name:'QA'}:null}:p==='/api/content'?DEFAULT_CONTENT:p==='/api/settings'?{}:[]));
+  }
+  const asset=p.split('/').pop(),name=/\.(js|css)$/.test(asset)?asset:'index.html';
+  if(!/^[a-zA-Z0-9_.-]+$/.test(name)){res.writeHead(404);return res.end();}
+  try{res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript':name.endsWith('.css')?'text/css':'text/html; charset=utf-8');res.end(readFileSync(new URL(name,root)));}catch{res.writeHead(404);res.end();}
+ });
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch();
+ try{for(const width of [1440,320]){
+  const context=await browser.newContext({viewport:{width,height:1000},acceptDownloads:true}),page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await context.addCookies([{name:'actor',value:'learner',url:base}]);
+  await page.goto(base+'/himya-platforma/sabaktastyk-kopiri');await page.locator('.bd-panel').waitFor();
+  for(const [topic,pairs] of Object.entries(DIAGNOSTIC_BANK)){
+   await page.locator('[data-cb-topic="'+topic+'"]').click();
+   await page.locator('[data-bd-start="baseline"]').click();
+   await page.locator('[data-bd-form] button[type=submit]').click();
+   assert.match(await page.locator('[data-bd-error]').textContent(),/Үш сұрақ/);
+   for(let i=0;i<3;i++)await page.locator('[data-bd-form] input[name="bd-'+i+'"][value="'+((pairs[i][0].answer+1)%3)+'"]').check();
+   if(topic==='bond'){await page.reload();await page.locator('[data-bd-form]').waitFor();assert.equal(await page.locator('[data-bd-form] input:checked').count(),3,'partial responses restored');}
+   await page.locator('[data-bd-form] button[type=submit]').click();
+   assert.equal(await page.locator('.bd-baseline .bd-wrong').count(),3);
+   const initial=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)).topics,diagnosticKey('learner'));
+   const link=page.locator('.bd-baseline a').first();await link.click();
+   assert.equal(await page.locator('#cb-reading-'+topic+'-'+pairs[0][0].step+' .cb-micro-reading').evaluate(e=>e.open),true);
+   await page.locator('[data-bd-start="followup"]').click();
+   assert.ok((await page.locator('[data-bd-form]').textContent()).includes(pairs[0][1].prompt));
+   for(let i=0;i<3;i++)await page.locator('[data-bd-form] input[name="bd-'+i+'"][value="'+pairs[i][1].answer+'"]').check();
+   await page.locator('[data-bd-form] button[type=submit]').click();
+   assert.equal(await page.locator('.bd-latest .bd-correct').count(),3);
+   const after=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)).topics,diagnosticKey('learner'));
+   assert.deepEqual(after[topic].baseline,initial[topic].baseline,'later attempt must not rewrite initial evidence');
+   await page.locator('.bd-map > summary').click();assert.equal(await page.locator('.bd-map-grid article').count(),8);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'diagnostic width '+width+' '+topic);
+   await page.locator('.bd-map > summary').click();
+  }
+  const downloadPromise=page.waitForEvent('download');await page.locator('[data-bd-export]').click();const download=await downloadPromise;
+  const csv=readFileSync(await download.path(),'utf8');assert.equal(csv.split('\r\n').length,49);assert.doesNotMatch(csv,/learner|QA|@/);
+  await context.addCookies([{name:'actor',value:'other',url:base}]);await page.reload();await page.locator('.bd-panel').waitFor();
+  assert.equal(await page.locator('[data-bd-start="baseline"]').count(),1);
+  await context.addCookies([{name:'actor',value:'learner',url:base}]);await page.reload();await page.locator('[data-bd-result]').waitFor();
+  assert.equal(await page.locator('.bd-latest .bd-correct').count(),3);
+  await page.locator('[data-bd-start="followup"]').click();
+  for(let i=0;i<3;i++)await page.locator('[data-bd-form] input[name="bd-'+i+'"][value="'+((DIAGNOSTIC_BANK.bond[i][1].answer+1)%3)+'"]').check();
+  await page.locator('[data-bd-form] button[type=submit]').click();
+  assert.match(await page.locator('.bd-panel').textContent(),/Алғашқы кейінгі тексеру: 3\/3; соңғысы: 0\/3/);
+  assert.equal(await page.locator('.bd-latest .bd-wrong a').count(),3);
+  if(width===1440){
+   await page.evaluate(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k.startsWith('chembridge.diagnostic.'))throw Error('quota');return set.call(this,k,v);};});
+   await page.locator('[data-bd-start="followup"]').click();
+   assert.match(await page.locator('[data-bd-status]').textContent(),/Сақталмады/);
+   assert.equal(await page.locator('[data-bd-form]').count(),1);
+  }
+  assert.deepEqual(errors,[]);await context.close();
+ }
  }finally{await browser.close();await new Promise(r=>server.close(r));}
 });
