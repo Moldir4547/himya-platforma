@@ -55,7 +55,6 @@ function modelPicture(topic,scenario,task){
 const memory=new Map();
 export function createContinuityPractice({section,state,ladders,store}){
  let current='bond',notice='',scenario=0;const owner=state.user?.id||null,identity=()=>state.user?.id||null;
- const prefix=location.pathname==='/himya-platforma'||location.pathname.startsWith('/himya-platforma/')?'/himya-platforma':'';
  const runs=new Map();
  function read(id){
   if(runs.has(id))return runs.get(id);
@@ -65,7 +64,6 @@ export function createContinuityPractice({section,state,ladders,store}){
   const run=sanitizeRun(id,v||{});runs.set(id,run);return run;
  }
  function save(){if(!owner)return;const value=read(current),key=practiceKey(owner,current);memory.set(key,value);try{localStorage.setItem(key,JSON.stringify(value));notice='Әрекет осы браузерде аккаунтыңыз үшін сақталды.';}catch{notice='Әрекет браузерге сақталмады. Нәтиже бетте тұр; жаңартқанда жоғалуы мүмкін.';}}
- function links(){if(prefix)section.querySelectorAll('a[href^="/"]').forEach(a=>{const h=a.getAttribute('href');if(!h.startsWith(prefix+'/'))a.setAttribute('href',prefix+h);});}
  function theory(t,i){return '#'+readingId(t.id,i);}
  function overview(){return '<details class="cp-overview"><summary>Осы әрекеттердегі тақырып нәтижелері</summary><ul>'+ladders.map(t=>{const r=practiceResult(t.id,read(t.id));return '<li><span>'+esc(t.title)+'</span><b>'+(r.finished?r.score+'/4 · аяқталды':r.answered+'/4 жауап')+'</b></li>';}).join('')+'</ul></details>';}
  function render(){
@@ -90,7 +88,7 @@ export function createContinuityPractice({section,state,ladders,store}){
    body='<form data-cp-form novalidate><span class="tj-eyebrow">ИНТЕРАКТИВТІ БАСПАЛДАҚ · '+(i+1)+'/4</span><h4 tabindex="-1">'+LEVELS[i]+'</h4><p class="cp-prompt">'+esc(task.prompt)+'</p>'+input+'<p data-cp-error role="alert"></p>'+(answered?'<div class="cp-feedback '+(correct?'cp-correct':'cp-wrong')+'" role="status"><b>'+(correct?'✓ Дұрыс жауап':'Қате жауап · түсіндірмені қараңыз')+'</b><p>'+esc(task.why)+'</p><a href="'+theory(t,i)+'">Осы қадамның теориясына оралу →</a></div><button type="button" data-cp-next>'+(i===3?'Қорытындыны көру':'Келесі қадам')+' →</button>':'<button type="submit">Жауапты тексеру</button>')+'</form>';
   }
   const host=section.querySelector('[data-cb-practice]');
-  host.innerHTML='<section class="cp-practice" aria-label="Сабақтастық тапсырмалары"><div class="cp-progress-head"><h4>Білімді қадаммен бекітіңіз</h4><span>'+r.answered+'/4 қадам</span></div><progress max="4" value="'+r.answered+'" aria-label="Орындалған тапсырмалар"></progress><p class="cp-storage-note">Бұл төрт тапсырма тірек білімді бекітеді. Терең түсіндіруге арналған авторлық тапсырма жоғарыдағы «Осы айырманы түсіндіріп көріңіз» бөлімінде берілген.</p><p class="cp-storage-note">'+(owner?'Нәтиже осы браузерде, осы аккаунт үшін сақталады. Құрылғылар арасында синхрондалмайды және ресми тест ұпайына қосылмайды.':'Қонақ ретінде орындауға болады. Жауаптар бұл беттен шыққан соң сақталмайды.')+'</p>'+body+'<p data-cp-save-status role="status">'+esc(notice)+'</p>'+overview()+'</section>';links();
+  host.innerHTML='<section class="cp-practice" aria-label="Сабақтастық тапсырмалары"><div class="cp-progress-head"><h4>Білімді қадаммен бекітіңіз</h4><span>'+r.answered+'/4 қадам</span></div><progress max="4" value="'+r.answered+'" aria-label="Орындалған тапсырмалар"></progress><p class="cp-storage-note">Бұл төрт тапсырма тірек білімді бекітеді. Терең түсіндіруге арналған авторлық тапсырма жоғарыдағы «Осы айырманы түсіндіріп көріңіз» бөлімінде берілген.</p><p class="cp-storage-note">'+(owner?'Нәтиже осы браузерде, осы аккаунт үшін сақталады. Құрылғылар арасында синхрондалмайды және ресми тест ұпайына қосылмайды.':'Қонақ ретінде орындауға болады. Жауаптар бұл беттен шыққан соң сақталмайды.')+'</p>'+body+'<p data-cp-save-status role="status">'+esc(notice)+'</p>'+overview()+'</section>';
  }
  function show(id){if(!PRACTICE_TASKS[id]||identity()!==owner)return;current=id;scenario=0;notice='';render();}
  section.addEventListener('submit',event=>{
