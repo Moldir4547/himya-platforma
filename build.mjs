@@ -36,6 +36,7 @@ const files = [
   "bond-lab.js",
   "equivalent-path.js",
   "school.js",
+  "school-equation-practice.js",
   "school-visuals.js",
   "school-materials.js",
   "teacher-materials.js",
@@ -67,6 +68,14 @@ const files = [
   "platform.css",
   "experience.css",
 ];
+// Fail deployment before publishing a broken module graph.
+for (const file of files.filter(name => name.endsWith(".js"))) {
+  const source = await readFile(file, "utf8");
+  for (const match of source.matchAll(/(?:from\s*|import\s*\(\s*|import\s*)(["'])(\.\/[a-zA-Z0-9_.-]+\.js)\1/g)) {
+    if (!files.includes(match[2].slice(2)))
+      throw new Error(file + " imports unpublished asset " + match[2]);
+  }
+}
 await mkdir("dist", { recursive: true });
 const revision = process.env.GITHUB_SHA || "preview";
 for (const file of files) {
