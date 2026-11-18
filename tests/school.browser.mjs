@@ -60,7 +60,9 @@ assert.equal(await page.locator('#school-panel form,#school-panel svg,#school-pa
 assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
 await page.evaluate(()=>window.openUnit('oxides'));
 await page.locator('[data-school-tab="worksheet"]').first().click();
-assert.equal(await page.locator('#school-panel .school-file-empty').count(),1);
+assert.equal(await page.locator('#school-panel .cq-paper .cq-grid section').count(),4);
+assert.equal(await page.locator('#school-panel [data-cq-send] [data-camera]').count(),1);
+assert.equal(await page.locator('#school-panel [data-cq-send] [data-gallery]').count(),1);
 assert.equal(await page.locator('#school-panel .resource-card,#school-panel form,#school-panel svg').count(),0);
 
 
