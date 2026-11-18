@@ -84,3 +84,11 @@
 .school-visual-note{font-size:.85rem;line-height:1.75;color:#4c687a;margin:20px 0 0}
 @media(max-width:600px){.school-visual{padding:14px 10px;border-radius:16px}.school-visual-grid{grid-template-columns:minmax(0,1fr)}.school-visual-copy{padding:16px}.school-visual-heading{padding:0 4px}.school-visual-heading h3{font-size:1.16rem!important}.school-visual-stage svg{max-width:300px}}
 @media print{.school-visual{background:white;padding:10px;border:0}.school-visual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.school-visual-card{break-inside:avoid;box-shadow:none}.school-visual-copy p{font-size:10pt}}
+
+.school-path .school-opening {border-inline-start: .36rem solid var(--hook-accent); padding: clamp(1rem,3vw,1.6rem); overflow-wrap:anywhere;}
+.school-opening.hook-r {--hook-accent:#9256b3}
+.school-opening.hook-p {--hook-accent:#398bc1}
+.school-opening.hook-m {--hook-accent:#2c9766}
+.school-hook-label {display:inline-flex; align-items:center; gap:.45em;}
+.school-hook-label span {display:inline-grid; place-items:center; width:1.6em; height:1.6em; border:2px solid var(--hook-accent); border-radius:50%;}
+.school-opening summary {cursor:pointer; padding-block:.55em;}
