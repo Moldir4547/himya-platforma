@@ -1,4 +1,4 @@
-import {html} from './worksheet-quests.js';
+import {html,handIn} from './worksheet-quests.js';
 const uuid=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
 const unavailable='Жұмысты қабылдау қызметі қосылмаған. Парақты сақтап қойып, мұғалімге хабарласыңыз.';
 const failure=e=>/ws_|schema cache|does not exist/i.test(e.message)||e.status===404?unavailable:e.message==='invalid_pair'?'Код табылмады. Мұғалім берген кодты тексер.':e.message==='recipient_changed'?'Алушы өзгерді. Бетті жаңартып, мұғалімнің атын тексер.':'Байланыс орнамады. Интернетті тексеріп, қайта көріңіз.';
@@ -16,6 +16,7 @@ export async function photo(file){
 }
 export function bindDelivery(root,{store,state,units}){
  root.querySelector('[data-cq-print]')?.addEventListener('click',()=>window.print());
+ const gradePanel=root.querySelector('[data-cq-grade-upload]');if(gradePanel){const pick=gradePanel.querySelector('[data-cq-pick]'),slot=gradePanel.querySelector('[data-cq-slot]');pick.onchange=()=>{const u=units.find(v=>v.slug===pick.value);slot.innerHTML=u?handIn(u,state.user):'';if(u)bindDelivery(slot,{store,state,units});};}
  const sendBox=root.querySelector('[data-cq-send]'),inbox=root.querySelector('[data-cq-inbox]');
  if(!sendBox&&!inbox)return;
  const user=state.user,owner=user?.id,box=sendBox||inbox,$=s=>box.querySelector(s);
