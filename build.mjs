@@ -32,6 +32,7 @@ const files = [
   "registration.js",
   "bond-practice.js",
   "bridge-path.js",
+  "bridge-exit.js",
   "bond-models.js",
   "bond-lab.js",
   "equivalent-path.js",
