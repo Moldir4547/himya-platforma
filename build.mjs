@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile, copyFile } from "node:fs/promises";
 const files = [
   "index.html",
+  "chembridge-home-720.jpg",
+  "chembridge-home-1440.jpg",
   "appearance.js",
   "appearance.css",
   "virtual-lab.html",
@@ -83,6 +85,10 @@ for (const file of files.filter(name => name.endsWith(".js"))) {
 await mkdir("dist", { recursive: true });
 const revision = process.env.GITHUB_SHA || "preview";
 for (const file of files) {
+  if (file.endsWith(".jpg")) {
+    await copyFile(file, `dist/${file}`);
+    continue;
+  }
   let text = await readFile(file, "utf8");
   if (file.endsWith(".js"))
     text = text.replace(
