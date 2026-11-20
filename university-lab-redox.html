@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>№11 зертханалық жұмыс — виртуалды нұсқа</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f8fa;--card:#fff;--text:#13293d;--muted:#5c7080;--primary:#0b3d5c;--accent:#d9611f;--border:#e3e9ed;--ok:#22c55e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}}
+:root[data-theme="dark"]{--bg:#0b1620;--card:#132433;--text:#e9f2f7;--muted:#93acbb;--primary:#5aa8d6;--accent:#ff9a5c;--border:#24394a}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:22px 14px 60px}
+h1{font-size:1.3rem;margin:0 0 8px}
+.box,.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:12px;font-size:.86rem;line-height:1.5;transition:box-shadow .3s,border-color .3s}
+.box b{color:var(--primary)}.mut{color:var(--muted);font-size:.78rem}
+.card.flash{box-shadow:0 0 0 4px rgba(34,197,94,.7),0 0 24px 6px rgba(34,197,94,.45);border-color:var(--ok)}
+.shelf{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.shelf div{display:flex;flex-direction:column;align-items:center;width:70px;font-size:.66rem;text-align:center;color:var(--muted);line-height:1.2}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:99px;padding:3px 10px;font-size:.76rem}
+.chk{margin-top:6px;font-size:.82rem}.chk .g{font-weight:700;margin-top:9px;color:var(--primary)}
+.i{display:flex;gap:9px;align-items:center;padding:3px 6px;border-radius:6px;color:var(--muted)}
+.dot{width:16px;height:16px;border-radius:50%;background:#b8c4cc;flex:none;transition:.3s;font-size:11px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1}
+.i.cur{background:rgba(74,154,216,.12);color:var(--text)}.i.cur .dot{background:#f5a524;box-shadow:0 0 0 3px rgba(245,165,36,.3)}
+.i.done{color:var(--text);background:rgba(34,197,94,.1)}.i.done .dot{background:var(--ok);box-shadow:0 0 12px 4px rgba(34,197,94,.8)}
+.lamps{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.lamp{width:22px;height:22px;border-radius:50%;background:#b8c4cc;border:2px solid rgba(0,0,0,.12);transition:background .4s,box-shadow .4s;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700}
+.lamp.cur{background:#f5a524;animation:pl 1.2s ease-in-out infinite}
+.lamp.done{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.3),0 0 14px 4px rgba(34,197,94,.9)}
+.lamp.pop{animation:pop .9s ease-out 2}
+@keyframes pl{50%{box-shadow:0 0 10px 3px rgba(245,165,36,.75)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.8)}100%{transform:scale(1)}}
+#scard{position:relative}
+#ok{position:absolute;left:50%;top:14px;transform:translateX(-50%) scale(.8);display:flex;align-items:center;gap:10px;background:rgba(14,90,45,.95);color:#fff;font-weight:700;padding:10px 18px;border-radius:99px;box-shadow:0 0 0 3px #22c55e,0 0 26px 8px rgba(34,197,94,.75);opacity:0;pointer-events:none;transition:opacity .35s,transform .35s;z-index:3;font-size:.95rem;white-space:nowrap}
+#ok.on{opacity:1;transform:translateX(-50%) scale(1)}
+#ok i{width:20px;height:20px;border-radius:50%;background:#4ade80;box-shadow:0 0 12px 4px #4ade80;display:inline-block}
+#scene{width:100%;height:auto;max-height:54vh;display:block;border-radius:8px}
+.bar{margin-top:8px;font-size:.85rem;min-height:3.6em}
+.strip{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:6px;font-size:.78rem}
+.sw2{width:22px;height:22px;border-radius:50%;background:var(--c);border:2px solid rgba(255,255,255,.85);box-shadow:0 0 10px var(--c);animation:pop .8s ease-out}
+.st{font-weight:700;color:var(--primary);margin-bottom:4px}.card p{margin:2px 0 8px;color:var(--muted)}
+button{background:var(--primary);color:#fff;border:none;padding:9px 14px;border-radius:8px;font-size:.86rem;cursor:pointer;margin:3px 6px 3px 0}
+button:disabled{opacity:.45;cursor:default}button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+table{border-collapse:collapse;font-size:.8rem;width:100%;margin:6px 0}th,td{border:1px solid var(--border);padding:4px 6px;text-align:center}th{background:var(--bg)}
+.center{text-align:center;margin-top:12px}
+.bz{animation:bz var(--d,1s) ease-in infinite;opacity:0}@keyframes bz{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-26px);opacity:0}}
+.dash{animation:dash .35s linear infinite}@keyframes dash{to{stroke-dashoffset:-22}}
+#rv h3{margin:10px 0 3px;font-size:.92rem;color:var(--primary)}#rv p{margin:3px 0;color:var(--text)}
+.rb{height:14px;border-radius:99px;background-size:200% 100%;animation:rbm 5s linear infinite;margin:8px 0 14px}
+@keyframes rbm{to{background-position:200% 0}}
+.gal{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.gl{width:96px;text-align:center;font-size:.7rem;line-height:1.25;opacity:0;animation:glin .9s ease-out forwards;animation-delay:calc(var(--i)*.4s)}
+@keyframes glin{0%{opacity:0;transform:translateY(24px) scale(.5)}70%{transform:translateY(-5px) scale(1.1)}100%{opacity:1;transform:none}}
+.tb2{width:36px;height:84px;margin:0 auto 6px;border:3px solid rgba(120,140,160,.75);border-top:none;border-radius:0 0 18px 18px;position:relative;overflow:hidden;animation:pg 1.8s ease-in-out infinite alternate;background:rgba(200,225,240,.15)}
+.tb2::before{content:"";position:absolute;left:0;right:0;bottom:0;top:22px;background:var(--c);animation:wv 2.2s ease-in-out infinite alternate}
+.tb2::after{content:"";position:absolute;left:5px;top:24px;width:5px;height:42px;background:rgba(255,255,255,.55);border-radius:3px}
+@keyframes wv{to{top:16px}}@keyframes pg{from{box-shadow:0 0 6px var(--c)}to{box-shadow:0 0 22px 4px var(--c)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>№11 зертханалық жұмыс · виртуалды нұсқа</h1>
+<div class="box"><b>Тотығу-тотықсыздану реакциялары</b><br>
+<b>Жұмыстың мақсаты:</b> тотығу-тотықсыздану реакцияларын жүргізу; элементтердің тотығу дәрежесін анықтап, реакцияны электрондық немесе иондық-электрондық әдіспен теңестіру; реакцияның жүруі оны өткізу жағдайына тәуелді екенін зерттеу.</div>
+<div class="box"><b>Қажет аспаптар мен реактивтер</b><div class="shelf" id="shelf"></div><div class="shelf" id="chips"></div></div>
+<div class="box"><b>Орындалу реті</b> <span class="mut">— орындалған қадам жасыл түспен жанады</span><div class="chk" id="chk"></div></div>
+
+<div class="card" id="scard"><div id="ok"></div><svg id="scene" viewBox="0 0 400 250"></svg><div class="bar" id="say"></div>
+<div class="strip" id="strip"><span class="mut">Бақыланған түстер:</span></div></div>
+<div class="card"><div class="lamps" id="lamps"></div><div class="st" id="stT"></div><p id="stD"></p><div id="acts"></div></div>
+<div class="card" id="rv" style="display:none"></div>
+<div class="card" id="gcard" style="display:none"><b>🌈 Түстер галереясы</b> <span class="mut">— зертханада шыққан барлық түстер</span><div class="rb" id="rb"></div><div class="gal" id="gal"></div><div class="center"><button class="secondary" onclick="gallery()">▶ Түстерді қайта көрсету</button></div></div>
+<div class="center"><button class="secondary" onclick="location.reload()">↺ Қайта бастау</button></div>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id);
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),rg=c=>'rgb('+c.map(Math.round).join()+')';
+const mix=(a,va,b,vb)=>a.map((x,i)=>(x*va+b[i]*vb)/((va+vb)||1));
+const wait=(ms,f)=>setTimeout(f,ms),say=s=>$('say').innerHTML=s;
+function tween(ms,fn,done){const t0=performance.now();(function f(now){const p=Math.min(1,(now-t0)/ms),e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;fn(e,p);p<1?requestAnimationFrame(f):done&&done()})(t0)}
+function seq(fns,done){let i=0;(function n(){i<fns.length?fns[i++](n):done&&done()})()}
+const par=(arr,f,cb)=>seq(arr.map(i=>c=>f(i,c)),cb);
+const CLEAR='#d3eaf5',PUR='#7b1e8c',FES='#cfe8c8',CUS='#3f9bd8',WATER='#e8eef0';
+const COL=[];
+function rec(n,h){if(COL.find(c=>c.n===n))return;COL.push({n,h});const s=document.createElement('span');s.className='sw2';s.style.setProperty('--c',h);s.title=n;$('strip').appendChild(s)}
+
+/* ---------- apparatus ---------- */
+let vid=0,SC={};const sc=$('scene');
+function base(){sc.innerHTML='<rect width="400" height="250" fill="#eef4f7"/><rect y="218" width="400" height="32" fill="#cdbb9e"/><rect y="218" width="400" height="3" fill="#b3a083"/>';SC={}}
+function lab(x,y,s,z){const t=el('text',{x,y,'text-anchor':'middle','font-size':z||9,fill:'#13293d'},sc);t.textContent=s;return t}
+function rack(x1,x2,y){el('rect',{x:x1,y,width:x2-x1,height:9,rx:3,fill:'#b08a5b'},sc);[x1+10,x2-18].forEach(x=>el('rect',{x,y:y+9,width:8,height:196-y,fill:'#9c7848'},sc))}
+function tubeSpec(w,h){const p=`M0,0V${h-w/2}a${w/2},${w/2} 0 0 0 ${w},0V0`;return{cl:p+'Z',od:p+`M-3,0H${w+3}`,pts:[[0,h],[1,h-14],[20,12]],hw:w/2,mx:w/2}}
+function ves(x,y,o){const id='v'+(vid++),v={x,y,mx:o.mx,hw:o.hw,pv:[o.mx,0],vol:0,rgb:hx(CLEAR),dx:0,dy:0,tilt:0,lbVol:0};
+ v.g=el('g',{},sc);el('path',{d:o.cl},el('clipPath',{id},v.g));
+ v.lg=el('g',{},el('g',{'clip-path':`url(#${id})`},v.g));
+ v.liq=el('rect',{x:-300,y:600,width:800,height:600,opacity:.85},v.lg);v.liq.style.fill=rg(v.rgb);
+ v.tb=el('rect',{x:-300,y:600,width:800,height:600,fill:'#fff',opacity:0},v.lg);
+ v.lb=el('rect',{x:-300,y:600,width:800,height:600,fill:'#7a1fa2',opacity:0},v.lg);
+ el('path',{d:o.od,fill:'rgba(200,225,240,.14)',stroke:'#5c7080','stroke-width':2,'stroke-linejoin':'round','stroke-linecap':'round'},v.g);
+ v.ys=q=>{const p=o.pts;let i=0;while(i<p.length-2&&p[i+1][0]<q)i++;return p[i][1]+(q-p[i][0])/(p[i+1][0]-p[i][0])*(p[i+1][1]-p[i][1])};
+ v.upd=()=>{const s=v.vol<=0?600:v.ys(v.vol);v.liq.setAttribute('y',s);v.tb.setAttribute('y',s);v.lb.setAttribute('y',v.lbVol>0&&v.vol>0?v.ys(Math.min(v.lbVol,v.vol)):600);
+  v.g.setAttribute('transform',`translate(${v.x+v.dx},${v.y+v.dy}) rotate(${v.tilt},${v.pv[0]},${v.pv[1]})`);v.lg.setAttribute('transform',`rotate(${-v.tilt},${v.pv[0]},${s})`)};
+ v.upd();return v}
+const col=(v,hex,ms)=>{v.liq.style.transition='fill '+(ms||1600)+'ms';v.rgb=hx(hex);v.liq.style.fill=rg(v.rgb)};
+function ppt(v,hex,op,ms,cb){v.tb.setAttribute('fill',hex);tween(ms||1800,e=>v.tb.setAttribute('opacity',op*e),cb)}
+function layer(v,mL,hex,ms,cb){v.lb.setAttribute('fill',hex);tween(ms||2000,e=>{v.lbVol=mL*e;v.lb.setAttribute('opacity',.95*e);v.upd()},cb)}
+function rock(v,cb){v.pv=[v.mx,60];tween(1500,(e,p)=>{v.tilt=18*Math.sin(p*Math.PI*5);v.upd()},()=>{v.tilt=0;v.pv=[v.mx,0];v.upd();cb&&cb()})}
+function pourer(){const p=el('g',{id:'pr',style:'display:none'},sc);el('path',{id:'prS',d:'','stroke-width':2.6,fill:'none','stroke-linecap':'round'},p);el('g',{id:'prC'},p);
+ el('text',{id:'prT',x:14,y:-46,'font-size':9,'font-weight':700,fill:'#13293d',style:'paint-order:stroke;stroke:#eef4f7;stroke-width:3px'},p)}
+function look(mode,hex){const gl='rgba(200,225,240,.4)',s='stroke="#5c7080"';
+ $('prC').innerHTML=mode=='pour'?`<rect x="-7" y="0" width="14" height="48" rx="2" fill="${gl}" ${s} stroke-width="1.6"/><rect id="prL" x="-6" y="1" width="12" height="40" fill="${hex}" opacity=".9"/>`+[10,20,30,40].map(y=>`<line x1="-7" y1="${y}" x2="-2" y2="${y}" ${s} stroke-width=".8"/>`).join('')
+ :mode=='drops'?`<path d="M-2.5,0V30h5V0" fill="${gl}" ${s} stroke-width="1.4"/><path d="M-8,30c0,-9 16,-9 16,0v14c0,6 -16,6 -16,0z" fill="#5a4a42"/><rect x="-1.5" y="1" width="3" height="10" fill="${hex}"/>`
+ :`<rect x="-2.5" y="2" width="5" height="36" rx="2" fill="#9aa6ad"/><ellipse cx="0" cy="3" rx="7" ry="4.5" fill="#9aa6ad"/><circle cx="-2" cy="2" r="1.8" fill="${hex}"/><circle cx="2" cy="4" r="1.6" fill="${hex}"/>`}
+function addTo(v,mL,hex,o,cb){o=o||{};const mode=o.mode||'pour',lx=v.x+v.mx,ly=v.y-(mode=='drops'?14:10);
+ look(mode,o.sc||hex);const P=$('pr'),S=$('prS');P.style.display='';P.setAttribute('transform',`translate(${lx},${ly})`);
+ $('prC').setAttribute('transform',mode=='drops'?'rotate(180)':'rotate(-135)');$('prT').textContent=o.lab||'';
+ S.setAttribute('stroke',o.sc||(mode=='crystals'?'#fff':hex));S.style.filter=mode=='crystals'?'drop-shadow(0 0 1px #5c7080)':'';
+ S.setAttribute('stroke-dasharray',mode=='pour'?'none':mode=='drops'?'2 9':'3 8');S.setAttribute('class',mode=='pour'?'':'dash');
+ const v0=v.vol,c0=v.rgb,c1=hx(hex),cm=o.keep?c0:mix(c0,v0,c1,mL);v.liq.style.transition='none';
+ tween(o.ms||1000,e=>{v.vol=v0+mL*e;v.upd();v.liq.style.fill=rg(c0.map((x,i)=>x+(cm[i]-x)*e));
+  S.setAttribute('d','M0,0V'+Math.max(4,v.y+(v.vol<=0?v.ys(0):v.ys(v.vol))-ly));const L=$('prL');L&&L.setAttribute('height',40*(1-e*.8))},()=>{v.rgb=cm;P.style.display='none';cb&&cb()})}
+function mkBub(cx,y,N,d,w){w=w||6;const g=el('g',{},sc);for(let k=0;k<N;k++)el('circle',{cx:cx-w+k*(2*w/Math.max(N-1,1)),cy:y,r:1.9,fill:'#fff',stroke:'#8fb5cb','stroke-width':.5,class:'bz',style:`--d:${d}s;animation-delay:${(k*d/N).toFixed(2)}s`},g);return g}
+function sceneTubes(labs,subs,x0,dx){base();const n=labs.length;x0=x0||400/(n+1);dx=dx||400/(n+1);rack(x0-60,x0+dx*(n-1)+60,142);SC.tb=[];
+ labs.forEach((l,k)=>{const c=x0+dx*k;SC.tb.push(ves(c-14,84,tubeSpec(28,120)));lab(c,236,l,8.5);subs&&subs[k]&&lab(c,246,subs[k],7)});pourer()}
+const T=()=>SC.tb,mv=(g,x,y)=>g.setAttribute('transform',`translate(${x},${y})`);
+function splinter(t,cb){const cx=t.x+t.mx,g=el('g',{},sc);
+ el('line',{x1:0,y1:-70,x2:0,y2:0,stroke:'#b08a5b','stroke-width':3,'stroke-linecap':'round'},g);const em=el('circle',{cx:0,cy:0,r:3.2,fill:'#ff6a2a'},g);
+ mv(g,cx,20);const ty=t.y+52;tween(1000,e=>mv(g,cx,20+(ty-20)*e),()=>{
+  const f=el('g',{},sc),gl=el('circle',{cx:0,cy:-14,r:22,fill:'#ffb347',opacity:.5},f);
+  el('path',{d:'M0,0C-10,-8 -8,-26 0,-44C8,-26 10,-8 0,0Z',fill:'#ffb21f'},f);el('path',{d:'M0,0C-5,-6 -4,-18 0,-30C4,-18 5,-6 0,0Z',fill:'#fff3b0'},f);
+  em.setAttribute('fill','#ffe27a');tween(700,e=>f.setAttribute('transform',`translate(${cx},${ty}) scale(${.2+1.4*e})`),()=>wait(1800,()=>{f.remove();em.setAttribute('fill','#ff6a2a');tween(800,e=>mv(g,cx,ty-(ty-20)*e),()=>{g.remove();cb()})}))})}
+function nail(t,cb){const cx=t.x+t.mx,g=el('g',{},sc);
+ el('rect',{x:-1.6,y:0,width:3.2,height:40,fill:'#8c949a',stroke:'#5f666b','stroke-width':.6},g);el('rect',{x:-5,y:-3,width:10,height:3.5,rx:1,fill:'#8c949a',stroke:'#5f666b','stroke-width':.6},g);
+ el('path',{d:'M-1.6,40L0,47L1.6,40Z',fill:'#8c949a'},g);const cu=el('rect',{x:-2.4,y:30,width:4.8,height:17,rx:1.5,fill:'#b8582c',opacity:0},g);
+ const fy=t.y+t.h-10-47;mv(g,cx,-30);tween(900,e=>mv(g,cx,-30+(fy+30)*e),()=>cb(cu))}
+
+/* ---------- steps ---------- */
+const mk=(g,t,d,acts)=>({g,t,d,acts});
+const A=(l,run,o)=>Object.assign({l,run},o);
+const steps=[
+mk(0,'1. KMnO₄-тің тотықтырғыштық қасиеті','1 мл KMnO₄ ерітіндісіне 5–6 тамшы H₂SO₄ тамызып, FeSO₄ кристалдарын саламыз; ерітінді түссізденген соң KSCN тамызамыз.',[
+ A('KMnO₄ құйып, H₂SO₄ тамызу',cb=>addTo(T()[0],1,PUR,{lab:'KMnO₄ · 1 мл'},()=>addTo(T()[0],.4,CLEAR,{mode:'drops',keep:1,lab:'H₂SO₄ · 5–6 тамшы',ms:1200},()=>{rec('MnO₄⁻ — күлгін','#7b1e8c');say('Қышқыл ортадағы KMnO₄ ерітіндісі — <b>күлгін</b> (MnO₄⁻).');cb()})),{pre:()=>sceneTubes(['KMnO₄ + H₂SO₄'],['+ FeSO₄, + KSCN'])}),
+ A('FeSO₄ кристалдарын салу',cb=>addTo(T()[0],.05,'#9fc79a',{mode:'crystals',sc:'#9fc79a',keep:1,lab:'FeSO₄ кристалдары',ms:1200},()=>{col(T()[0],'#b0602c',1500);wait(1600,()=>{col(T()[0],'#f6efc8',2400);wait(2500,()=>{rec('Mn²⁺ және Fe³⁺ — ақшыл сары (түссіз)','#f3e8a6');say('Ерітінді <b>түссізденді</b>: MnO₄⁻ → Mn²⁺ (түссіз), Fe²⁺ → Fe³⁺. MnO₄⁻ + 5Fe²⁺ + 8H⁺ = Mn²⁺ + 5Fe³⁺ + 4H₂O.');cb()})})}),{needs:[0]}),
+ A('KSCN тамызу',cb=>addTo(T()[0],.3,CLEAR,{mode:'drops',keep:1,lab:'KSCN · бірнеше тамшы',ms:1400},()=>{col(T()[0],'#b3121b',2000);wait(2100,()=>{rec('Fe(SCN)₃ — қан қызыл','#b3121b');say('<b>Қан қызыл түс</b>: Fe³⁺ + 3SCN⁻ = Fe(SCN)₃ — Fe²⁺-нің Fe³⁺-ке тотыққанын дәлелдейді.');cb()})}),{needs:[1]})]),
+mk(1,'2. H₂O₂-нің тотықтырғыштық қасиеті','1 мл KI ерітіндісіне 1–2 тамшы H₂SO₄ қосып, 1–2 тамшы 3 % H₂O₂ тамызамыз; иодты хлороформпен анықтаймыз.',[
+ A('KI және H₂SO₄',cb=>addTo(T()[0],1,CLEAR,{lab:'KI · 1 мл'},()=>addTo(T()[0],.15,CLEAR,{mode:'drops',keep:1,lab:'H₂SO₄ · 1–2 тамшы',ms:1000},()=>{say('Ерітінді түссіз.');cb()})),{pre:()=>sceneTubes(['KI + H₂SO₄'],['+ H₂O₂, + CHCl₃'])}),
+ A('H₂O₂ тамызу',cb=>addTo(T()[0],.15,WATER,{mode:'drops',keep:1,lab:'3 % H₂O₂ · 1–2 тамшы',ms:1200},()=>{col(T()[0],'#a8641a',2200);wait(2300,()=>{rec('I₂ ерітіндісі — сары-қоңыр','#b8731c');say('Ерітінді <b>сары-қоңыр</b> түске боялды (I₂): 2KI + H₂O₂ + H₂SO₄ = I₂ + K₂SO₄ + 2H₂O.');cb()})}),{needs:[0]}),
+ A('Хлороформ қосу (I₂ анықтау)',cb=>addTo(T()[0],1,WATER,{keep:1,lab:'CHCl₃ · бірнеше тамшы',ms:1000},()=>rock(T()[0],()=>{col(T()[0],'#f0e3a0',2200);layer(T()[0],1,'#7a1fa2',2200,()=>{rec('I₂ хлороформда — күлгін','#7a1fa2');say('Төменгі хлороформ қабаты <b>күлгін</b> түске боялды — ерітіндіде бос иод бар. Электрон-баланс: 2I⁻ − 2e = I₂ | H₂O₂ + 2H⁺ + 2e = 2H₂O. Тотықтырғыш — H₂O₂, тотықсыздандырғыш — KI.');cb()})})),{needs:[1]})]),
+mk(2,'3. H₂O₂-нің тотықсыздандырғыштық қасиеті','2 тамшы KMnO₄ ерітіндісіне 2 тамшы 2 н H₂SO₄ қосып, түссізденгенше H₂O₂ тамшылатамыз. Сынауыққа шала жанған шырпы ұстаймыз.',[
+ A('KMnO₄ және H₂SO₄',cb=>addTo(T()[0],.6,PUR,{lab:'KMnO₄ · 2 тамшы',ms:900},()=>addTo(T()[0],.2,CLEAR,{mode:'drops',keep:1,lab:'2 н H₂SO₄ · 2 тамшы',ms:1000},()=>{say('Күлгін ерітінді (MnO₄⁻).');cb()})),{pre:()=>sceneTubes(['KMnO₄ + H₂SO₄'],['+ H₂O₂ (тамшылап)'])}),
+ A('H₂O₂ тамшылату (түссізденгенше)',cb=>addTo(T()[0],.6,WATER,{mode:'drops',keep:1,lab:'H₂O₂ (тамшылап)',ms:3000},()=>{const t=T()[0],g=mkBub(t.x+14,t.y+t.h-12,7,.5,8);col(t,'#f6f2f8',2200);wait(2400,()=>{rec('Mn²⁺ — түссіз (әлсіз қызғылт)','#f3d9e6');say('Ерітінді <b>түссізденді</b>, газ көпіршіктері бөлінуде.');wait(1200,()=>{g.remove();cb()})})}),{needs:[0]}),
+ A('Шала жанған шырпы ұстау',cb=>splinter(T()[0],()=>{rec('Жалын — ашық сары (O₂ барын көрсетеді)','#ffb21f');say('Шала жанған шырпы <b>лезде жарқырап жанды</b> — бөлінген газ оттегі (O₂). 2KMnO₄ + 5H₂O₂ + 3H₂SO₄ = 2MnSO₄ + 5O₂↑ + K₂SO₄ + 8H₂O. Тотықтырғыш — KMnO₄ (Mn⁺⁷ → Mn⁺²), тотықсыздандырғыш — H₂O₂ (O⁻¹ → O₂⁰).');cb()}),{needs:[1]})]),
+mk(3,'4. Жай заттар қатысатын реакция (Fe + CuSO₄)','Сынауыққа 2–3 мл CuSO₄ құйып, кішкене темір шеге саламыз.',[
+ A('CuSO₄ құйып, шеге салу',cb=>addTo(T()[0],3,CUS,{lab:'CuSO₄ · 3 мл'},()=>{rec('Cu²⁺ — көк','#3f9bd8');nail(T()[0],cu=>{const t=T()[0];tween(4500,e=>{cu.setAttribute('opacity',.95*e)});ppt(t,'#b8582c',.35,4500);col(t,'#b9dcb4',4500);
+  say('Шегенің бетін <b>қызыл-қоңыр мыс</b> жапты, ерітіндінің көк түсі <b>ақшыл жасылға</b> (Fe²⁺) ауысуда…');wait(4700,()=>{rec('Cu — қызыл-қоңыр','#b8582c');rec('Fe²⁺ — ақшыл жасыл','#b9dcb4');say('CuSO₄ + Fe = FeSO₄ + Cu↓. Cu²⁺ + 2e = Cu⁰ (тотықтырғыш — CuSO₄), Fe⁰ − 2e = Fe²⁺ (тотықсыздандырғыш — Fe).');cb()})})}),{pre:()=>sceneTubes(['CuSO₄ + Fe шеге'],['Fe + CuSO₄ = FeSO₄ + Cu'])})]),
+mk(4,'5 (а). Орта әсері: KMnO₄ + FeSO₄','Үш сынауыққа KMnO₄ құйып, біріншісіне H₂SO₄, екіншісіне H₂O, үшіншісіне KOH қосамыз; содан соң үшеуіне де FeSO₄ қосамыз.',[
+ A('KMnO₄ құю',cb=>par([0,1,2],(i,c)=>addTo(T()[i],2.5,PUR,{lab:'KMnO₄ · 2,5 мл',ms:800},c),cb),{pre:()=>sceneTubes(['H₂SO₄ (қышқыл)','H₂O (бейтарап)','KOH (сілтілік)'],['+ FeSO₄','+ FeSO₄','+ FeSO₄'])}),
+ A('Орталарды қосу',cb=>par([0,1,2],(i,c)=>addTo(T()[i],.8,CLEAR,{keep:1,lab:['H₂SO₄','H₂O','KOH'][i]+' · 0,8 мл',ms:800},c),()=>{say('Бастапқыда үш сынауықта да ерітінді <b>күлгін</b>.');cb()}),{needs:[0]}),
+ A('FeSO₄ қосу',cb=>par([0,1,2],(i,c)=>addTo(T()[i],.8,FES,{keep:1,lab:'FeSO₄ · 0,8 мл',ms:800},c),()=>{
+  col(T()[0],'#f6efc8',2400);col(T()[1],'#6b4423',2400);ppt(T()[1],'#4a2c14',.8,2400);col(T()[2],'#1f8a3a',2400);ppt(T()[2],'#8a3b14',.4,2400);
+  wait(2600,()=>{rec('Mn²⁺ және Fe³⁺ — ақшыл сары','#f3e8a6');rec('MnO₂ — қоңыр тұнба','#4a2c14');rec('MnO₄²⁻ — жасыл','#1f8a3a');rec('Fe(OH)₃ — қызыл-қоңыр','#8a3b14');
+   say('<b>Қышқыл ортада</b> ерітінді түссізденді (Mn²⁺), <b>бейтарапта</b> қоңыр тұнба (MnO₂), <b>сілтілікте</b> <b>жасыл</b> ерітінді (MnO₄²⁻) және қоңыр Fe(OH)₃ түсті.');cb()})}),{needs:[1]})]),
+mk(4,'5 (б). Орта әсері: KMnO₄ + Na₂SO₃','Дәл осындай тәжірибені FeSO₄-тің орнына Na₂SO₃ алып қайталаймыз.',[
+ A('KMnO₄ құйып, орталарды қосу',cb=>par([0,1,2],(i,c)=>addTo(T()[i],2.5,PUR,{lab:'KMnO₄ · 2,5 мл',ms:700},c),()=>par([0,1,2],(i,c)=>addTo(T()[i],.8,CLEAR,{keep:1,lab:['H₂SO₄','H₂O','KOH'][i]+' · 0,8 мл',ms:700},c),cb)),{pre:()=>sceneTubes(['H₂SO₄ (қышқыл)','H₂O (бейтарап)','KOH (сілтілік)'],['+ Na₂SO₃','+ Na₂SO₃','+ Na₂SO₃'])}),
+ A('Na₂SO₃ қосу',cb=>par([0,1,2],(i,c)=>addTo(T()[i],.8,CLEAR,{keep:1,lab:'Na₂SO₃ · 0,8 мл',ms:800},c),()=>{
+  col(T()[0],'#f3e3ec',2400);col(T()[1],'#d8c3a8',2400);ppt(T()[1],'#4a2c14',.85,2400);col(T()[2],'#1f8a3a',2400);
+  wait(2600,()=>{rec('Mn²⁺ — түссіз (әлсіз қызғылт)','#f3d9e6');say('<b>Қышқыл ортада</b> ерітінді түссізденді (Mn²⁺), <b>бейтарапта</b> қоңыр MnO₂ тұнбасы, <b>сілтілікте</b> таза <b>жасыл</b> ерітінді (K₂MnO₄).');cb()})}),{needs:[0]})]),
+mk(4,'Құбылыс және қорытынды','Теңдеулерді, эквиваленттерді және зертханада шыққан барлық түстерді көреміз.',[A('Қорытындыны ашу',cb=>{reveal();gallery();cb()})])
+];
+function reveal(){const rv=$('rv');rv.style.display='';rv.innerHTML=`<b style="font-size:1rem">Құбылыс және қорытынды</b>
+<h3>1. KMnO₄ + FeSO₄ (қышқыл орта)</h3><p>2KMnO₄ + 10FeSO₄ + 8H₂SO₄ = 2MnSO₄ + 5Fe₂(SO₄)₃ + K₂SO₄ + 8H₂O<br>Электрондық баланс: Mn⁺⁷ + 5e → Mn⁺² (×2); 2Fe⁺² − 2e → 2Fe⁺³ (×5).<br>Иондық-электрондық: MnO₄⁻ + 8H⁺ + 5e = Mn²⁺ + 4H₂O | Fe²⁺ − e = Fe³⁺ (×5); MnO₄⁻ + 5Fe²⁺ + 8H⁺ = Mn²⁺ + 5Fe³⁺ + 4H₂O. Fe³⁺ + 3SCN⁻ = Fe(SCN)₃.</p>
+<h3>2. KI + H₂O₂</h3><p>2KI + H₂O₂ + H₂SO₄ = I₂ + K₂SO₄ + 2H₂O; 2I⁻ − 2e = I₂ | H₂O₂ + 2H⁺ + 2e = 2H₂O. Тотықтырғыш — H₂O₂, тотықсыздандырғыш — KI. I₂ хлороформда күлгін.</p>
+<h3>3. KMnO₄ + H₂O₂</h3><p>2KMnO₄ + 5H₂O₂ + 3H₂SO₄ = 2MnSO₄ + 5O₂↑ + K₂SO₄ + 8H₂O; MnO₄⁻ + 8H⁺ + 5e = Mn²⁺ + 4H₂O (×2) | H₂O₂ − 2e = O₂ + 2H⁺ (×5). Тотықтырғыш — KMnO₄, тотықсыздандырғыш — H₂O₂; O₂ шала жанған шырпыны жандырады.</p>
+<h3>4. Fe + CuSO₄</h3><p>CuSO₄ + Fe = FeSO₄ + Cu↓; Cu²⁺ + 2e = Cu⁰ (тотықтырғыш) | Fe⁰ − 2e = Fe²⁺ (тотықсыздандырғыш).</p>
+<h3>5. Ортаға тәуелділік (KMnO₄)</h3><p><b>FeSO₄-пен:</b><br>қышқыл: 2KMnO₄ + 10FeSO₄ + 8H₂SO₄ = 2MnSO₄ + 5Fe₂(SO₄)₃ + K₂SO₄ + 8H₂O<br>бейтарап: KMnO₄ + 3FeSO₄ + 7H₂O = MnO₂↓ + 3Fe(OH)₃↓ + KHSO₄ + 2H₂SO₄<br>сілтілік: KMnO₄ + FeSO₄ + 3KOH = K₂MnO₄ + Fe(OH)₃↓ + K₂SO₄</p>
+<p><b>Na₂SO₃-пен:</b><br>қышқыл: 2KMnO₄ + 5Na₂SO₃ + 3H₂SO₄ = 2MnSO₄ + 5Na₂SO₄ + K₂SO₄ + 3H₂O<br>бейтарап: 2KMnO₄ + 3Na₂SO₃ + H₂O = 2MnO₂↓ + 3Na₂SO₄ + 2KOH<br>сілтілік: 2KMnO₄ + Na₂SO₃ + 2KOH = 2K₂MnO₄ + Na₂SO₄ + H₂O</p>
+<p>Жарты реакциялар: қышқыл: MnO₄⁻ + 8H⁺ + 5e = Mn²⁺ + 4H₂O (Mn⁺⁷ → Mn⁺²); бейтарап: MnO₄⁻ + 2H₂O + 3e = MnO₂ + 4OH⁻ (Mn⁺⁷ → Mn⁺⁴); сілтілік: MnO₄⁻ + e = MnO₄²⁻ (Mn⁺⁷ → Mn⁺⁶). Тотықсыздандырғыштар: Fe²⁺ − e = Fe³⁺; SO₃²⁻ + H₂O − 2e = SO₄²⁻ + 2H⁺ (қышқыл), SO₃²⁻ + 2OH⁻ − 2e = SO₄²⁻ + H₂O (бейтарап, сілтілік).</p>
+<table><tr><th>Зат</th><th>Рөлі</th><th>Э, г/моль-экв</th></tr>
+<tr><td>KMnO₄ (қышқыл)</td><td>тотықтырғыш, 5e</td><td>158,0/5 = 31,6</td></tr>
+<tr><td>KMnO₄ (бейтарап)</td><td>тотықтырғыш, 3e</td><td>158,0/3 = 52,7</td></tr>
+<tr><td>KMnO₄ (сілтілік)</td><td>тотықтырғыш, 1e</td><td>158,0/1 = 158,0</td></tr>
+<tr><td>FeSO₄</td><td>тотықсыздандырғыш, 1e</td><td>151,9/1 = 151,9</td></tr>
+<tr><td>Na₂SO₃</td><td>тотықсыздандырғыш, 2e</td><td>126,0/2 = 63,0</td></tr>
+<tr><td>H₂O₂</td><td>тотықтырғыш/тотықсыздандырғыш, 2e</td><td>34,0/2 = 17,0</td></tr>
+<tr><td>KI</td><td>тотықсыздандырғыш, 1e</td><td>166,0/1 = 166,0</td></tr>
+<tr><td>CuSO₄ / Fe</td><td>тотықтырғыш / тотықсыздандырғыш, 2e</td><td>79,8 / 27,9</td></tr></table>
+<p class="mut">Ескерту: түстер модельденген; төмендегі галерея — осы зертханада шыққан барлық түстердің жиынтығы.</p>`}
+function gallery(){$('gcard').style.display='';const cs=COL.map(c=>c.h);
+ $('rb').style.backgroundImage='linear-gradient(90deg,'+cs.concat(cs[0]).join(',')+')';
+ $('gal').innerHTML=COL.map((c,i)=>'<div class="gl" style="--i:'+i+';--c:'+c.h+'"><div class="tb2"></div>'+c.n+'</div>').join('');
+ if(!gallery.once){gallery.once=1;wait(600,()=>$('gcard').scrollIntoView({behavior:'smooth'}))}}
+
+/* ---------- engine ---------- */
+let cur=0,busy=false;
+const G=['1. KMnO₄-тің тотықтырғыштық қасиеті','2. H₂O₂-нің тотықтырғыштық қасиеті','3. H₂O₂-нің тотықсыздандырғыштық қасиеті','4. Жай заттар қатысатын реакциялар','5. Реакция өнімдерінің ортаға тәуелділігі'];
+function refresh(){const s=steps[cur];s.acts.forEach((x,i)=>{$('ac'+i).disabled=!!x.done||busy||(x.needs||[]).some(j=>!s.acts[j].done)})}
+function show(){const s=steps[cur];$('li'+cur).classList.add('cur');$('lp'+cur).classList.add('cur');$('stT').textContent=(cur+1)+'/'+steps.length+' · '+s.t;$('stD').textContent=s.d;
+ $('acts').innerHTML='';s.acts.forEach((x,i)=>{const b=document.createElement('button');b.id='ac'+i;b.textContent=x.l;b.onclick=()=>act(i);$('acts').appendChild(b)});refresh()}
+function act(i){const s=steps[cur],x=s.acts[i];if(x.pre&&!x.pd){x.pd=1;x.pre()}busy=true;refresh();
+ x.run(()=>{x.done=1;busy=false;if(s.acts.every(a=>a.done))complete();else refresh()})}
+function complete(){const li=$('li'+cur);li.classList.remove('cur');li.classList.add('done');const lp=$('lp'+cur);lp.classList.remove('cur');lp.classList.add('done','pop');li.querySelector('.dot').textContent='✓';
+ const ok=$('ok');ok.innerHTML='<i></i>✓ '+(cur+1)+'-қадам орындалды';ok.classList.add('on');wait(2200,()=>ok.classList.remove('on'));
+ $('scard').classList.add('flash');wait(1000,()=>$('scard').classList.remove('flash'));cur++;
+ if(cur<steps.length)show();else{$('stT').textContent='✓ Барлық қадам орындалды';$('stD').textContent='Төменде қорытынды және түстер галереясы көрсетілген.';$('acts').innerHTML=''}}
+(function init(){
+ const bottle=(c,solid)=>`<svg viewBox="0 0 24 34" width="24" height="33"><rect x="9" y="1" width="6" height="6" fill="#8a97a1"/><path d="M8,7h8l3,6v18a2,2 0 0 1-2,2H7a2,2 0 0 1-2-2V13z" fill="rgba(200,225,240,.35)" stroke="#5c7080" stroke-width="1.5"/><rect x="6" y="${solid?22:18}" width="12" height="${solid?9:13}" fill="${c}"/></svg>`;
+ const rs=[['KI',CLEAR],['Na₂SO₃',CLEAR],['NaOH',CLEAR],['KOH',CLEAR],['FeSO₄',FES],['H₂SO₄',CLEAR],['KMnO₄',PUR],['H₂O₂ 3 %',WATER],['CuSO₄',CUS],['темір шеге','#8c949a',1],['KSCN',CLEAR],['CHCl₃ / бензол',WATER]];
+ $('shelf').innerHTML=rs.map(r=>'<div>'+bottle(r[1],r[2])+r[0]+'</div>').join('');
+ $('chips').innerHTML=['сынауықтар','штатив','шырпы'].map(x=>'<span class="chip">'+x+'</span>').join('');
+ let h='';steps.forEach((s,i)=>{if(i==0||steps[i-1].g!=s.g)h+='<div class="g">'+G[s.g]+'</div>';h+='<div class="i" id="li'+i+'"><span class="dot"></span>'+(i+1)+'. '+s.t+'</div>'});$('chk').innerHTML=h;
+ $('lamps').innerHTML=steps.map((s,i)=>'<span class="lamp" id="lp'+i+'" title="'+(i+1)+'. '+s.t+'">'+(i+1)+'</span>').join('');
+ sceneTubes(['KMnO₄ + H₂SO₄'],['+ FeSO₄, + KSCN']);steps[0].acts[0].pd=1;show()})();
+</script>
+</body>
+</html>

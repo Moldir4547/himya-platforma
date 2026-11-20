@@ -24,6 +24,9 @@ assert.equal(labForPath(base+'/zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-su
 assert.equal(labForPath(base+'/teacher-created-hydrolysis','№9 Тұздардың гидролизі').file,'university-lab-hydrolysis.html');
 assert.equal(labForPath('/universitet/darister/hydrolysis','Тұздардың гидролизі'),undefined);
 assert.equal(labForPath(base+'/number-9','№9 Басқа зертхана'),undefined);
+assert.equal(labForPath(base+'/zerthanalyq-sabaq-15-totygu-totyqsyzdanu-reakciyalary').file,'university-lab-redox.html');
+assert.equal(labForPath(base+'/teacher-created-redox','Тотығу-тотықсыздану реакциялары').file,'university-lab-redox.html');
+assert.equal(labForPath('/mektep/redox','Тотығу-тотықсыздану реакциялары'),undefined);
 for(const lab of UNIVERSITY_LABS)assert.match(readFileSync(new URL('../'+lab.file,import.meta.url),'utf8'),/<html lang="kk">/);
 });
 test('teacher simulations run in responsive isolated embeds',async()=>{
@@ -32,7 +35,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','university-lab-redox.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -44,7 +47,7 @@ const context=await browser.newContext({viewport:{width,height:900}}),page=await
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://127.0.0.1:'+server.address().port+'/');
 await page.locator('.university-html-lab').last().waitFor();
-assert.equal(await page.locator('.university-html-lab').count(),6);
+assert.equal(await page.locator('.university-html-lab').count(),UNIVERSITY_LABS.length);
 assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
@@ -79,6 +82,11 @@ const expected={Mg:12.1525,Zn:32.69,Fe:27.9225}[metal];
 assert.ok(Math.abs(value-expected)/expected<0.12,'equivalent mass is consistent with selected metal');
 assert.match(await frame.locator('#res').textContent(),{Mg:/Магнийдің/,Zn:/Мырыштың/,Fe:/Темірдің/}[metal]);
 assert.equal(await frame.locator('#metal').isDisabled(),true);
+}else if(lab.file.includes('redox')){
+assert.match(await frame.locator('h1').textContent(),/№11 зертханалық жұмыс/);
+await frame.locator('#li0.cur').waitFor();
+assert.ok(await frame.locator('#acts button:enabled').count());
+assert.equal(await frame.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
 }else if(lab.file.includes('hydrolysis')){
 await frame.getByRole('button',{name:'Оқытушыдан ерітінді алу',exact:true}).click();
 await frame.getByRole('button',{name:'Индикатор қағазын батыру',exact:true}).click();
