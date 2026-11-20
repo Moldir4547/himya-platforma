@@ -29,6 +29,7 @@ const files = [
   "university-lab-classes.html",
   "university-lab-kinetics.html",
   "university-lab-solutions.html",
+  "university-lab-solutions-full.html",
   "university-lab-hydrolysis.html",
   "university-lab-redox.html",
   "university-lab-complexes.html",

@@ -19,6 +19,7 @@ assert.equal(labForPath(base+'/number-5','№5 CO₂ молярлық масса
 assert.equal(labForPath(base+'/rate-only','Реакция жылдамдығы'),undefined);
 assert.equal(labForPath(base+'/teacher-created-topic','№7 Әртүрлі концентрациялы ерітінділер дайындау').file,'university-lab-solutions.html');
 assert.equal(labForPath('/mektep/topic','Ерітінділер дайындау'),undefined);
+assert.equal(labForPath(base+'/teacher-preparation','Концентрациясы әртүрлі ерітінділер даярлау').fullFile,'university-lab-solutions-full.html');
 assert.equal(labForPath(base+'/properties','Ерітінділердің қасиеттері'),undefined);
 assert.equal(labForPath(base+'/zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-sutegindik-korsetkish-tuzdar-gidrolizi').file,'university-lab-hydrolysis.html');
 assert.equal(labForPath(base+'/teacher-created-hydrolysis','№9 Тұздардың гидролизі').file,'university-lab-hydrolysis.html');
@@ -38,7 +39,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','university-lab-redox.html','university-lab-complexes.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','university-lab-redox.html','university-lab-complexes.html','university-lab-solutions-full.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -55,7 +56,7 @@ assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
 assert.equal(await section.locator('iframe').getAttribute('sandbox'),'allow-scripts');
-assert.equal(await section.locator('a').getAttribute('rel'),'noopener noreferrer');
+assert.equal(await section.locator('a').first().getAttribute('rel'),'noopener noreferrer');
 await section.locator('summary').click();
 const frame=section.frameLocator('iframe');
 if(lab.file.includes('co2')){

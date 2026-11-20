@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8"><title>№6 виртуалды зертхана: Ерітінділер дайындау</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mu:#5b6676;--bd:#d9dee6;--ac:#0f766e;--ok:#15803d;--wa:#b45309;--er:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1b2129;--tx:#e8ecf2;--mu:#9aa5b5;--bd:#2d3540;--ac:#2dd4bf;--ok:#4ade80;--wa:#fbbf24;--er:#f87171;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:1050px;margin:0 auto;padding:14px}h1{font-size:19px;margin:0 0 4px}.mu{color:var(--mu);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:5px 11px;cursor:pointer;font-size:13px}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.chip.done::after{content:" ✓"}
+.g{display:grid;grid-template-columns:230px 1fr;gap:12px}@media(max-width:760px){.g{grid-template-columns:1fr}}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px}
+.it{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:7px 4px;cursor:pointer;font-size:13px;text-align:center}.it:hover{border-color:var(--ac)}.it.rg{border-style:dashed}
+.st{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}.st:last-child{border:0}
+.n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--bd);display:grid;place-items:center;font-size:12px}
+.st.cur .n{background:var(--ac);color:#fff}.st.ok .n{background:var(--ok);color:#fff}.st.cur>div>span:first-child{font-weight:600}
+.tm{margin-left:auto;font-size:12px;color:var(--mu);white-space:nowrap;text-align:right}
+.big{font:600 26px ui-monospace,monospace}.bar{height:6px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac);width:0}
+#msg{min-height:22px;font-size:14px}.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+button.r,button.go{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 12px;border-radius:8px;cursor:pointer}button.go{background:var(--ac);color:#fff;border-color:var(--ac)}
+input{width:110px;padding:5px 7px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+.f{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:5px 0;font-size:13px}.rd{font:600 14px ui-monospace,monospace;background:var(--bg);padding:3px 8px;border-radius:6px;border-left:3px solid var(--ac)}
+svg{width:150px;height:250px;flex:none}.lq{transition:y .6s,height .6s}table{border-collapse:collapse;font-size:12px;margin:4px 8px 4px 0;display:inline-table}td,th{border:1px solid var(--bd);padding:2px 6px}
+</style></head><body><div class="w">
+<h1>№6 зертханалық жұмыс — виртуалды нұсқа</h1>
+<div class="mu">Құрғақ тұздан және тығыздығы белгілі қышқылдан әртүрлі концентрациялы ерітінділер дайындау.</div>
+<div class="card"><b>Мақсаты:</b> массалық үлесі, молярлы және нормаль концентрациялы ерітінділерді дайындап, ареометрмен тығыздығын өлшеп, концентрациясын кесте бойынша тексеру.
+<div class="mu" style="margin-top:4px">Жалпы жоспарлы уақыт: <b id="tot"></b> · Орындалған: <b id="dn">0/5</b></div>
+<details><summary class="mu">Симуляциядағы тығыздық пен концентрация кестелері (20 °C)</summary><p class="mu">Оқу моделіне арналған мәндер. Аралық мәндер сызықтық интерполяциямен есептеледі.</p><div id="tbl"></div></details></div>
+<div class="card"><div class="chips" id="ch"></div></div>
+<div class="g">
+<div class="card" style="margin-top:12px"><b>Құралдар мен реактивтер</b><div class="mu" style="margin-bottom:6px">Қадам бойынша қажеттісін басыңыз</div><div class="shelf" id="sh"></div></div>
+<div>
+<div class="card"><div class="row">
+<svg viewBox="0 0 150 250"><defs><clipPath id="cp"><rect x="45" y="30" width="60" height="200" rx="4"/></clipPath></defs>
+<g clip-path="url(#cp)"><rect class="lq" id="lq" x="45" y="230" width="60" height="0" fill="#7dd3fc" opacity=".75"/></g>
+<g id="hy" style="display:none"><rect id="hs" x="73" y="20" width="4" height="60" fill="var(--tx)"/><rect id="hb" x="67" y="80" width="16" height="22" rx="8" fill="var(--wa)"/></g>
+<rect x="45" y="30" width="60" height="200" rx="4" fill="none" stroke="var(--mu)" stroke-width="3"/></svg>
+<div style="flex:1;min-width:200px"><div class="mu">Секундомер</div><div class="big" id="clk">00:00</div>
+<div class="mu">Жоспарлы: <span id="pl">—</span></div><div class="bar"><i id="pb"></i></div>
+<div style="margin-top:8px"><button class="r" id="rs">↺ Қайта бастау</button></div></div></div>
+<div id="msg" class="mu" style="margin-top:8px">Тапсырманы таңдаңыз.</div></div>
+<div class="card"><b id="tt">Қадамдар</b><div id="sl"></div></div>
+</div></div></div>
+<script>
+var Mr={Na:105.99,H:98.08,NaOH:40,Ba:208.23,BaH:244.26,NaH:286.14};
+var TB={H:[[0,0.9982],[1,1.005],[2,1.012],[5,1.032],[10,1.066],[20,1.139],[30,1.219],[40,1.303],[50,1.395],[60,1.498],[70,1.611],[80,1.727],[90,1.814],[96,1.835],[98,1.836]],
+NaOH:[[0,0.9982],[1,1.010],[2,1.021],[4,1.043],[6,1.065],[8,1.087],[10,1.109],[12,1.131],[16,1.175],[20,1.219],[30,1.328],[40,1.430],[50,1.525]],
+Na:[[0,0.9982],[1,1.009],[2,1.019],[4,1.039],[5,1.052],[6,1.061],[8,1.082],[10,1.103],[12,1.124]],
+Ba:[[0,0.9982],[2,1.016],[4,1.034],[6,1.052],[8,1.071],[10,1.090],[12,1.110]]};
+var NM={H:'H₂SO₄',NaOH:'NaOH',Na:'Na₂CO₃',Ba:'BaCl₂'};
+function f(t,x,a,b){for(var k=0;k<t.length-1;k++){var p=t[k],q=t[k+1];if(x>=p[a]&&x<=q[a])return p[b]+(x-p[a])*(q[b]-p[b])/(q[a]-p[a])}return t[x<t[0][a]?0:t.length-1][b]}
+function dens(k,w){return f(TB[k],w,0,1)}function conc(k,d){return f(TB[k],d,1,0)}
+var $=function(i){return document.getElementById(i)};
+$('tbl').innerHTML=Object.keys(TB).map(function(k){return '<table><tr><th>'+NM[k]+' ω,%</th><th>ρ, г/мл</th></tr>'+TB[k].map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1].toFixed(3)+'</td></tr>'}).join('')+'</table>'}).join('');
+var R={bal:'Химиялық таразы',abal:'Аналитикалық таразы',cyl:'Өлшеуіш цилиндр',beak:'Химиялық стақан',rod:'Шыны таяқша',tall:'Биік цилиндр',areo:'Ареометр',flask:'Өлшеуіш колба',fun:'Воронка',lamp:'Спирт шамы',water:'Дистилденген су',salt:'Na₂CO₃·10H₂O',ba:'BaCl₂·2H₂O',acid:'Лаб. H₂SO₄ ерітіндісі',alk:'Лаб. NaOH ерітіндісі'};
+$('sh').innerHTML=Object.keys(R).map(function(k){var q=['salt','ba','acid','alk','water'].indexOf(k)>-1;return '<button class="it'+(q?' rg':'')+'" onclick="use(\''+k+'\')">'+(q?'🧪 ':'🧰 ')+R[k]+'</button>'}).join('');
+var rd=null;
+function S(t,x,s,i,o,lv,d,h){return{t:t,x:x,s:s,i:i||[],o:o||'',lv:lv,d:d,h:h}}
+function M3(k,r,m){return 10*conc(k,r)*r/m}
+function mk(){var o=[];
+// 1а
+var mh=10*Mr.NaH/Mr.Na,mw=200-mh,d1=dens('Na',5);
+o.push({n:'1а',h:'5 % Na₂CO₃ ерітіндісі (200 г) — кристаллогидраттан және судан',s:[
+S(null,'Есептеу: Na₂CO₃·10H₂O массасы және су көлемі (Мәтіндегі 200 г шамасы дайын ерітіндінің массасы деп алынды, ω = 5 %)',150,[['Кристаллогидрат, г',mh,.02],['Су, мл',mw,.02]],'Есеп симуляцияда тексерілді ✓'),
+S('salt','Na₂CO₃·10H₂O реактивін алыңыз',10),
+S('bal','Химиялық таразыда тұзды өлшеңіз',60,[['Таразы, г',mh,.02]]),
+S('cyl','Цилиндрмен судың көлемін өлшеңіз',45,[['Су, мл',mw,.02]]),
+S('beak','Суды стақанға құйып, тұзды салыңыз',30,[],'',.5),
+S('rod','Шыны таяқшамен тұз түгел ерігенше араластырыңыз',60,[],'Ерітінді мөлдір.',.55),
+S('tall','Ерітіндіні құрғақ биік цилиндрге құйыңыз',30,[],'',.8),
+S('areo','Ареометрді салып тығыздықты өлшеңіз (қабырғаға тимесін!)',40,[['ω, % (7-кесте, интерполяция)',function(){return conc('Na',rd)},.04]],'',.8,d1,1),
+S(null,'Молярлы және нормаль концентрацияны есептеңіз',90,[['См, моль/л',function(){return M3('Na',rd,Mr.Na)},.04],['Сн, моль-экв/л',function(){return 2*M3('Na',rd,Mr.Na)},.04]],'Табылған ω-ны берілген 5 % -мен салыстырыңыз.')]});
+// 1ә-1
+var w0=conc('H',1.835),ma=25/(w0/100),va=ma/1.835,vw=250-ma,d2=dens('H',10);
+o.push({n:'1ә-1',h:'250 г 10 % қышқыл ерітіндісі — концентрліден және судан',s:[
+S('acid','Лабораториядағы H₂SO₄ ерітіндісін алыңыз',10),
+S('tall','Оны құрғақ биік цилиндрге құйыңыз',25,[],'',.8),
+S('areo','Ареометрмен қышқыл тығыздығын өлшеңіз',40,[['ω қышқыл, % (6-кесте)',w0,.03]],'',.8,1.835,1),
+S(null,'Есептеу: қышқыл ерітіндісінің массасы, көлемі және судың көлемі',150,[['m қышқыл, г',ma,.02],['V қышқыл, мл',va,.02],['V су, мл',vw,.02]],'Есеп симуляцияда тексерілді ✓'),
+S('cyl','Цилиндрмен судың көлемін өлшеп, стақанға құйыңыз',45,[['Су, мл',vw,.02]],'',.6),
+S('cyl','Басқа цилиндрмен қышқылдың көлемін өлшеңіз',45,[['Қышқыл, мл',va,.02]]),
+S('acid','Қышқылды суға құйыңыз (қышқыл → суға!)',20,[],'',.7),
+S('rod','Шыны таяқшамен әбден араластырыңыз',40,[],'Ерітінді қызады.',.7),
+S('tall','Салқындатып (20 °C), биік цилиндрге құйыңыз',90,[],'',.8),
+S('areo','Ареометрмен тығыздығын өлшеңіз',40,[['ω, % (6-кесте)',function(){return conc('H',rd)},.05]],'',.8,d2,1),
+S(null,'Молярлы және нормаль концентрацияны есептеңіз',90,[['См, моль/л',function(){return M3('H',rd,Mr.H)},.04],['Сн, моль-экв/л',function(){return 2*M3('H',rd,Mr.H)},.04]])]});
+// 1ә-2
+var wt=conc('NaOH',1.05),wb=conc('NaOH',1.430),mS=200*1.05,mN=mS*wt/100,mc=mN/(wb/100),vc=mc/1.430,vwn=mS-mc;
+o.push({n:'1ә-2',h:'200 мл NaOH ерітіндісі (ρ=1,05 г/мл) — концентрліден және судан',s:[
+S('alk','Лабораториядағы NaOH ерітіндісін алыңыз',10),
+S('tall','Оны құрғақ биік цилиндрге құйыңыз',25,[],'',.8),
+S('areo','Ареометрмен концентрлі ерітіндінің тығыздығын өлшеңіз',40,[['ω бастапқы, % (6-кесте)',wb,.03]],'',.8,1.430,1),
+S(null,'Дайындалатын ерітіндінің ω-сын кестеден (ρ=1,05) интерполяциямен табыңыз',60,[['ω, %',wt,.04]]),
+S(null,'Есептеу: m ерітінді, m NaOH, V концентрлі, V су',180,[['m ерітінді, г',mS,.01],['m NaOH, г',mN,.04],['V конц., мл',vc,.04],['V су, мл',vwn,.03]],'Есеп симуляцияда тексерілді ✓'),
+S('cyl','Цилиндрмен су көлемін өлшеп, стақанға құйыңыз',45,[['Су, мл',vwn,.03]],'',.6),
+S('cyl','Цилиндрмен концентрлі сілтінің көлемін өлшеңіз',45,[['Сілті, мл',vc,.04]]),
+S('alk','Сілтіні суға қосып, араластырыңыз',30,[],'',.7),
+S('rod','Араластырып, салқындатыңыз',90,[],'',.7),
+S('tall','Биік цилиндрге құйыңыз',20,[],'',.8),
+S('areo','Дайын ерітіндінің тығыздығын өлшеңіз',40,[['ρ табылған; ω, % (6-кесте)',function(){return conc('NaOH',rd)},.05]],'Табылған ω мен есептелген ω айырмасын бағалаңыз.',.8,1.05,1),
+S(null,'Молярлы және эквивалентті концентрацияны есептеңіз',90,[['См = Сн, моль/л',function(){return M3('NaOH',rd,Mr.NaOH)},.04]])]});
+// 2а
+var mB=0.5*0.25*Mr.BaH/2,rB=1.03;for(var q=0;q<20;q++)rB=dens('Ba',0.25*Mr.Ba/(10*rB));
+o.push({n:'2а',h:'250 мл 0,5 н BaCl₂ — құрғақ заттан және судан',s:[
+S(null,'Есептеу: BaCl₂·2H₂O массасы (Мэ = М/2)',100,[['m, г',mB,.02]],'Есеп симуляцияда тексерілді ✓'),
+S('ba','BaCl₂·2H₂O реактивін алыңыз',10),
+S('bal','Таразыда 0,01 г дәлдікпен өлшеңіз',60,[['Таразы, г',mB,.01]]),
+S('fun','Воронка арқылы тұзды өлшеуіш колбаға салыңыз',30),
+S('water','Воронканы сумен шайып, колбаны жартысына дейін толтырыңыз',30,[],'',.5),
+S('flask','Колбаны шайқап, тұзды толық ерітіңіз',45,[],'',.5),
+S('water','Суды белгіге дейін жеткізіңіз',40,[],'',.8),
+S('flask','Аузын бармақпен жауып, төңкеріп араластырыңыз',30,[],'Ерітінді біртекті.',.8),
+S('tall','Құрғақ биік цилиндрге құйыңыз',25,[],'',.8),
+S('areo','Ареометрмен тығыздығын өлшеңіз',40,[['ω, % (кесте бойынша)',function(){return conc('Ba',rd)},.05]],'Берілген 0,5 н-ге сәйкес ω-мен салыстырыңыз.',.8,rB,1)]});
+// 2ә
+var mAc=0.1*0.25*Mr.H,mAs=mAc/(w0/100),vAs=mAs/1.835,rA=1.005;for(var q2=0;q2<20;q2++)rA=dens('H',0.1*Mr.H/(10*rA));
+o.push({n:'2ә',h:'250 мл 0,1 М H₂SO₄ — концентрлі ерітіндіден',s:[
+S('acid','Лабораториядағы H₂SO₄ ерітіндісін алыңыз',10),
+S('tall','Биік цилиндрге құйыңыз',25,[],'',.8),
+S('areo','Ареометрмен тығыздығын өлшеңіз',40,[['ω, % (6-кесте)',w0,.03]],'',.8,1.835,1),
+S(null,'Есептеу: қышқыл ерітіндісінің массасы және көлемі',120,[['m ерітінді, г',mAs,.03],['V, мл',vAs,.03]],'Есеп симуляцияда тексерілді ✓'),
+S('cyl','Өлшеуіш цилиндрмен қышқыл көлемін өлшеңіз',45,[['V, мл',vAs,.04]]),
+S('flask','Өлшеуіш колбаны жартысына дейін сумен толтырыңыз',30,[],'',.5),
+S('fun','Қышқылды воронкамен колбаға құйыңыз (қышқыл → суға!)',30,[],'',.55),
+S('water','Воронканы шайып, белгіге дейін су қосып араластырыңыз',60,[],'',.8),
+S('tall','Биік цилиндрге құйыңыз',25,[],'',.8),
+S('areo','Ареометрмен тығыздығын өлшеңіз',40,[['См, моль/л (берілген 0,1-мен салыстырыңыз)',function(){return M3('H',rd,Mr.H)},.15]],'Дәлдікті бағалаңыз.',.8,rA,1)]});
+return o}
+var E=mk(),cur=-1,si=0,td=0,t0=0,iv=0,lastT=0,rec=[],done={},wr=0;
+function fm(s){s=Math.round(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function plan(e){return e.s.reduce(function(a,x){return a+x.s},0)}
+var all=E.reduce(function(a,e){return a+plan(e)},0);$('tot').textContent=fm(all)+' (≈'+Math.round(all/60)+' мин)';
+$('ch').innerHTML=E.map(function(e,i){return '<button class="chip" id="c'+i+'" onclick="pick('+i+')">'+e.n+'</button>'}).join('');
+function tick(){if(t0){$('clk').textContent=fm((Date.now()-t0)/1000);$('pb').style.width=Math.min(100,(Date.now()-t0)/10/plan(E[cur]))+'%'}}
+function lvl(v){var h=Math.round(190*v);$('lq').setAttribute('height',h);$('lq').setAttribute('y',230-h)}
+function draw(){var e=E[cur];$('sl').innerHTML=e.s.map(function(s,i){var c=i<si?'ok':i==si?'cur':'';
+var inp='';if(i==si&&s.i.length&&td){inp='<div>'+(rd&&s.h?'<div class="rd">Ареометр: ρ = '+rd.toFixed(3)+' г/мл</div>':'')+s.i.map(function(a,j){return '<div class="f">'+a[0]+': <input id="in'+j+'" type="number" step="any"></div>'}).join('')+'<button class="go" onclick="chk()">Тексеру</button></div>'}
+var a=rec[i]!=null?'<br>іс жүзінде '+fm(rec[i]):'';
+return '<div class="st '+c+'"><span class="n">'+(i<si?'✓':i+1)+'</span><div><span>'+s.x+'</span>'+(i<si&&s.o?'<div class="mu">'+s.o+'</div>':'')+inp+'</div><span class="tm">норма '+fm(s.s)+a+'</span></div>'}).join('')}
+function reset(){clearInterval(iv);t0=0;si=0;rec=[];lastT=0;td=0;rd=null;wr=0;$('clk').textContent='00:00';$('pb').style.width='0';lvl(0);$('hy').style.display='none'}
+function pick(i){cur=i;reset();[].forEach.call(document.querySelectorAll('.chip'),function(c,j){c.classList.toggle('on',j==i)});
+$('tt').textContent='Тәжірибе '+E[i].n+' — '+E[i].h;$('pl').textContent=fm(plan(E[i]));$('msg').style.color='';$('msg').textContent='Бірінші қадамды орындаңыз.';td=E[i].s[0].t===null?1:0;draw()}
+$('rs').onclick=function(){if(cur>-1)pick(cur)};
+function start(){if(!t0){t0=Date.now();iv=setInterval(tick,500)}}
+function use(k){if(cur<0){$('msg').textContent='Алдымен тапсырманы таңдаңыз.';return}
+var e=E[cur];if(si>=e.s.length){$('msg').textContent='Тапсырма аяқталды.';return}
+var s=e.s[si];if(s.t===null){$('msg').style.color='var(--er)';$('msg').textContent='Бұл қадам есептеу — нәтижені енгізіңіз.';return}
+if(td){$('msg').textContent='Нәтижені енгізіп «Тексеру» басыңыз.';return}
+if(k!==s.t){$('msg').style.color='var(--er)';$('msg').textContent='✗ '+R[k]+' қазір қажет емес. Қадам тізімін қараңыз.';return}
+$('msg').style.color='';start();td=1;
+if(s.lv!==undefined)lvl(s.lv);
+if(s.d){rd=Math.round((s.d+(s.h&&s.d!==1.835&&s.d!==1.430?(Math.random()-.5)*.0016:0))*1000)/1000;var y=30+(1.9-rd)*60;$('hy').style.display='';$('hs').setAttribute('y',y-10);$('hb').setAttribute('y',y+50)}
+else if(s.t==='tall'||s.t==='areo'){$('hy').style.display='none'}
+$('msg').textContent='✓ '+R[k]+(rd&&s.h?' — көрсеткіш: ρ = '+rd.toFixed(3)+' г/мл':'');
+if(!s.i.length)adv();else draw()}
+function adv(){var e=E[cur],s=e.s[si],now=(Date.now()-t0)/1000;rec[si]=now-lastT;lastT=now;si++;td=0;
+if(si>=e.s.length){clearInterval(iv);t0=0;done[cur]=1;$('c'+cur).classList.add('done');$('dn').textContent=Object.keys(done).length+'/5';$('clk').textContent=fm(lastT);$('pb').style.width='100%';
+var pl=plan(e);$('msg').innerHTML='✅ Аяқталды. Уақыт: <b>'+fm(lastT)+'</b> (норма '+fm(pl)+') — '+(lastT<=pl*1.5?'<span style="color:var(--ok)">жақсы</span>':'<span style="color:var(--wa)">баяу, қайталап көріңіз</span>')}
+else{td=e.s[si].t===null?1:0}
+draw()}
+function chk(){var s=E[cur].s[si],ok=1,bad='';s.i.forEach(function(a,j){var v=parseFloat(document.getElementById('in'+j).value),t=typeof a[1]==='function'?a[1]():a[1];if(isNaN(v)||Math.abs(v-t)>a[2]*Math.abs(t)+.005){ok=0;bad=bad||a[0];if(wr>=2)bad+=' (дұрысы ≈ '+(Math.round(t*1000)/1000)+')'}});
+if(ok){$('msg').style.color='var(--ok)';$('msg').textContent='✓ Дұрыс. '+(s.o||'');wr=0;adv()}else{wr++;$('msg').style.color='var(--er)';$('msg').textContent='✗ Қате: '+bad+'. Қайта есептеңіз.'}}
+</script></body></html>
