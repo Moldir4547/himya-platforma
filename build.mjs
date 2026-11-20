@@ -36,6 +36,8 @@ const files = [
   "bond-lab.js",
   "equivalent-path.js",
   "school.js",
+  "worksheet-quests.js",
+  "worksheet-delivery.js",
   "school-explanations.js",
   "school-equation-practice.js",
   "school-visuals.js",
