@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8"><title>№10 виртуалды зертхана: Комплексті қосылыстар</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mu:#5b6676;--bd:#d9dee6;--ac:#0f766e;--ok:#15803d;--wa:#b45309;--er:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1b2129;--tx:#e8ecf2;--mu:#9aa5b5;--bd:#2d3540;--ac:#2dd4bf;--ok:#4ade80;--wa:#fbbf24;--er:#f87171;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:1050px;margin:0 auto;padding:14px}h1{font-size:19px;margin:0 0 4px}.mu{color:var(--mu);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:5px 11px;cursor:pointer;font-size:13px}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.chip.done::after{content:" ✓"}
+.g{display:grid;grid-template-columns:230px 1fr;gap:12px}@media(max-width:760px){.g{grid-template-columns:1fr}}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:6px}
+.it{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:7px 4px;cursor:pointer;font-size:13px;text-align:center}.it:hover{border-color:var(--ac)}.it.eq{border-style:dashed}
+.st{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}.st:last-child{border:0}
+.n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--bd);display:grid;place-items:center;font-size:12px}
+.st.cur .n{background:var(--ac);color:#fff}.st.ok .n{background:var(--ok);color:#fff}.st.cur{font-weight:600}
+.tm{margin-left:auto;font-size:12px;color:var(--mu);white-space:nowrap;text-align:right}
+.big{font:600 26px ui-monospace,monospace}.bar{height:6px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+#msg{min-height:22px;font-size:14px}.eqn{font-family:ui-monospace,monospace;font-size:13px;background:var(--bg);border-left:3px solid var(--ac);padding:6px 8px;margin:5px 0;border-radius:4px}
+.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}button.r{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 12px;border-radius:8px;cursor:pointer}
+svg{width:170px;height:240px;flex:none}.liq,.pp{transition:fill .8s,height .6s,y .6s,opacity .6s}
+</style></head><body><div class="w">
+<h1>№10 зертханалық жұмыс — виртуалды нұсқа</h1>
+<div class="mu">Комплексті қосылыстар: алу, қасиеттері, тұрақтылығы. Қос тұздар мен комплекс тұздарды ажырату.</div>
+<div class="card"><b>Мақсаты:</b> комплекс қосылыстардың қасиеттерін, алу әдістерін және тұрақтылығын анықтау; қос тұздарды комплекс тұздардан айыра білу.
+<div class="mu" style="margin-top:4px">Жалпы жоспарлы уақыт: <b id="tot"></b> · Орындалған тәжірибе: <b id="dn">0</b></div></div>
+<div class="card"><div class="mu" style="margin-bottom:6px">Тәжірибені таңдаңыз:</div><div class="chips" id="ch"></div></div>
+<div class="g">
+<div class="card" style="margin-top:12px"><b>Құралдар мен реактивтер</b><div class="mu" style="margin-bottom:6px">Қадам бойынша қажеттісін басыңыз</div><div class="shelf" id="sh"></div></div>
+<div>
+<div class="card"><div class="row">
+<svg viewBox="0 0 170 240"><defs><clipPath id="cp"><path d="M55 20h60v170a30 30 0 0 1-60 0z"/></clipPath></defs>
+<g id="fl" style="display:none"><ellipse cx="85" cy="232" rx="14" ry="7" fill="#f59e0b"/><ellipse cx="85" cy="228" rx="7" ry="4" fill="#fde68a"/></g>
+<g clip-path="url(#cp)"><rect class="liq" id="lq" x="50" y="220" width="70" height="0" fill="transparent"/>
+<rect class="pp" id="pp" x="50" y="220" width="70" height="0" fill="transparent"/></g>
+<rect id="zn" x="76" y="150" width="8" height="46" fill="#9ca3af" style="display:none" rx="2"/>
+<rect id="lt" x="100" y="6" width="9" height="40" fill="#e11d48" style="display:none"/>
+<path d="M55 20v170a30 30 0 0 0 60 0V20" fill="none" stroke="var(--mu)" stroke-width="3"/><path d="M50 20h70" stroke="var(--mu)" stroke-width="3"/></svg>
+<div style="flex:1;min-width:200px"><div class="mu">Тәжірибе секундомері</div><div class="big" id="clk">00:00</div>
+<div class="mu">Жоспарлы: <span id="pl">—</span></div><div class="bar"><i id="pb"></i></div>
+<div style="margin-top:8px"><button class="r" id="rs">↺ Қайта бастау</button></div></div></div>
+<div id="msg" class="mu" style="margin-top:8px">Тәжірибені таңдаңыз.</div></div>
+<div class="card"><b id="tt">Қадамдар</b><div id="sl"></div></div>
+<div class="card"><b>Бақылау және теңдеулер</b><div id="lg" class="mu">Әзірше бос.</div></div>
+</div></div></div>
+<script>
+var R={tube:'Сынауық (штативте)',lamp:'Спирт шамы',zn:'Мырыш түйірі',lit:'Дымқыл лакмус',AgNO3:'AgNO₃',NaCl:'NaCl',NH3:'NH₃·H₂O (2н)',CuCl2:'CuCl₂',HgNO:'Hg(NO₃)₂',KI:'KI',BiNO:'Bi(NO₃)₃',FeCl3:'FeCl₃',KSCN:'KSCN',K3:'K₃[Fe(CN)₆]',FeSO4:'FeSO₄',NaOH:'NaOH (2н)',AgC:'[Ag(NH₃)₂]Cl',Na2S:'Na₂S₂O₃ (1н)',HNO3:'HNO₃ (сұйылт.)',NH4S:'(NH₄)₂S',CuC:'[Cu(NH₃)₄]Cl₂',Mohr:'Мор тұзы',BaCl:'BaCl₂'};
+var T='tube';
+function S(t,x,s,l,p,o,e){return{t:t,x:x,s:s,l:l,p:p,o:o,e:e||''}}
+var tb=S(T,'Штативке таза сынауық орнатыңыз',10,'transparent','','Сынауық дайын.');
+var E=[
+{n:'1а',h:'Комплексті катион: [Ag(NH₃)₂]⁺',s:[tb,
+S('AgNO3','1–2 мл AgNO₃ ерітіндісін құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('NaCl','Шамалы NaCl ерітіндісін қосыңыз',20,null,'#f5f5f5','Ақ ірімшік тәрізді тұнба — AgCl.','AgNO₃ + NaCl → AgCl↓ + NaNO₃'),
+S('NH3','Тұнба ерігенше NH₃ ерітіндісін қосыңыз',40,'#dbe7f3cc','','Тұнба еріді. Түссіз [Ag(NH₃)₂]Cl түзілді (к.с. = 2).','AgCl + 2NH₃ → [Ag(NH₃)₂]Cl\nДиссоц.: [Ag(NH₃)₂]Cl → [Ag(NH₃)₂]⁺ + Cl⁻; [Ag(NH₃)₂]⁺ ⇄ Ag⁺ + 2NH₃\nАты: диамминкүміс(I) хлориді')]},
+{n:'1ә',h:'Комплексті катион: [Cu(NH₃)₄]²⁺',s:[tb,
+S('CuCl2','1–2 мл CuCl₂ ерітіндісін құйыңыз',15,'#7fd3e8cc','','Ашық көгілдір ерітінді (Cu²⁺).'),
+S('NH3','NH₃ ерітіндісін тамшылатып қосыңыз',20,'#8ec5ee99','#5b9bd5','Алдымен көк Cu(OH)₂ тұнбасы түседі.','CuCl₂ + 2NH₃ + 2H₂O → Cu(OH)₂↓ + 2NH₄Cl'),
+S('NH3','Тұнба ерігенше NH₃ қосыңыз',40,'#1d2fb8','','Тұнба ерді, қою көк ерітінді — [Cu(NH₃)₄]²⁺ (к.с. = 4).','Cu(OH)₂ + 4NH₃ → [Cu(NH₃)₄](OH)₂\nФормуласы: [Cu(NH₃)₄](OH)₂ — тетраамминмыс(II) гидроксиді\nДиссоц.: [Cu(NH₃)₄](OH)₂ → [Cu(NH₃)₄]²⁺ + 2OH⁻')]},
+{n:'2а',h:'Комплексті анион: [HgI₄]²⁻',s:[tb,
+S('HgNO','1–2 мл Hg(NO₃)₂ құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('KI','KI қанық ерітіндісін тамшылатып қосыңыз',20,null,'#e03a24','Қызыл HgI₂ тұнбасы түседі.','Hg(NO₃)₂ + 2KI → HgI₂↓ + 2KNO₃'),
+S('KI','Тұнба ерігенше KI қосыңыз',35,'#dbe7f3cc','','Тұнба еріді, түссіз ерітінді (к.с. = 4).','HgI₂ + 2KI → K₂[HgI₄]\nДиссоц.: K₂[HgI₄] → 2K⁺ + [HgI₄]²⁻')]},
+{n:'2ә',h:'Комплексті анион: [BiI₄]⁻',s:[tb,
+S('BiNO','1–2 мл Bi(NO₃)₃ құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('KI','KI ерітіндісін тамшылатып қосыңыз',20,null,'#2b1d16','Қара-қоңыр BiI₃ тұнбасы.','Bi(NO₃)₃ + 3KI → BiI₃↓ + 3KNO₃'),
+S('KI','Тұнба ерігенше KI қосыңыз',35,'#f59e0bdd','','Тұнба еріді, ерітінді сарғыш-қызғылт сары түс алды.','BiI₃ + KI → K[BiI₄]\nДиссоц.: K[BiI₄] → K⁺ + [BiI₄]⁻')]},
+{n:'3а',h:'Fe³⁺ ионына сапалық реакция',s:[tb,
+S('FeCl3','FeCl₃ ерітіндісінің 1–2 тамшысын құйыңыз',10,'#e9c75fcc','','Сарғыш ерітінді.'),
+S('KSCN','KSCN ерітіндісін қосыңыз',15,'#a80f1c','','Қан қызыл түс — Fe(SCN)₃.','Мол.: FeCl₃ + 3KSCN → Fe(SCN)₃ + 3KCl\nИонд.: Fe³⁺ + 3SCN⁻ → Fe(SCN)₃')]},
+{n:'3ә-1',h:'FeCl₃ + FeSO₄ (салыстыру)',s:[tb,
+S('FeCl3','1–2 мл FeCl₃ құйыңыз',15,'#e9c75fcc','','Сарғыш ерітінді.'),
+S('FeSO4','FeSO₄ қосыңыз',15,'#d6b04acc','','Көк тұнба түзілмейді (Fe³⁺ + Fe²⁺ — Турнбулл көгі емес).')]},
+{n:'3ә-2',h:'Турнбулл көгі: [Fe(CN)₆]³⁻ ионына реакция',s:[tb,
+S('K3','1–2 мл K₃[Fe(CN)₆] құйыңыз',15,'#e8b923cc','','Сарғыш-қызыл ерітінді.'),
+S('FeSO4','FeSO₄ қосыңыз',20,'#1f3a93','#14307f','Қою көк тұнба — Турнбулл көгі.','Мол.: 3FeSO₄ + 2K₃[Fe(CN)₆] → Fe₃[Fe(CN)₆]₂↓ + 3K₂SO₄\nИонд.: 3Fe²⁺ + 2[Fe(CN)₆]³⁻ → Fe₃[Fe(CN)₆]₂↓')]},
+{n:'4ә',h:'Мырыш күмісті ығыстырады',s:[tb,
+S('AgC','1–2 мл [Ag(NH₃)₂]Cl ерітіндісін құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('zn','1–2 түйір мырыш салыңыз',60,null,'#777','Мырышта сұр күміс қабаты бөлінеді.','2[Ag(NH₃)₂]Cl + Zn → [Zn(NH₃)₄]Cl₂ + 2Ag↓\nК.т.: [Zn(NH₃)₄]²⁺ тұрақтырақ (Kт аз) болғандықтан Zn күмісті ығыстырады.')]},
+{n:'4б-1',h:'Ag⁺ катионына реакция',s:[tb,
+S('AgNO3','1–2 мл AgNO₃ құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('KI','KI ерітіндісін қосыңыз',15,null,'#ecdf4a','Сары AgI тұнбасы.','AgNO₃ + KI → AgI↓ + KNO₃')]},
+{n:'4б-2',h:'[Ag(NH₃)₂]⁺ ионы және NaOH, KI',s:[tb,
+S('AgC','1–2 мл [Ag(NH₃)₂]Cl құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('NaOH','NaOH ерітіндісін қосыңыз',15,null,'','Өзгеріс жоқ — Ag⁺ концентрациясы өте аз.'),
+S('KI','KI ерітіндісін қосыңыз',20,null,'#f1e98f','AgI тұнбасы түседі.','[Ag(NH₃)₂]⁺ ⇄ Ag⁺ + 2NH₃; Kт = 6,8·10⁻⁸\nAgI-дің ЕК өте аз ⇒ Ag⁺ + I⁻ → AgI↓')]},
+{n:'4в',h:'Тиосульфатты комплекс',s:[tb,
+S('AgNO3','1–2 мл AgNO₃ құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('NaCl','NaCl қосып AgCl тұнбасын алыңыз',15,null,'#f5f5f5','Ақ AgCl тұнбасы.','AgNO₃ + NaCl → AgCl↓ + NaNO₃'),
+S('Na2S','Тұнба ерігенше Na₂S₂O₃ (1н) қосыңыз',40,'#dbe7f3cc','','Тұнба ерді — [Ag(S₂O₃)₂]³⁻.','AgCl + 2Na₂S₂O₃ → Na₃[Ag(S₂O₃)₂] + NaCl'),
+S('KI','KI ерітіндісін қосыңыз',20,null,'','Тұнба түспейді (4б-1/4б-2-мен салыстырыңыз). Тиосульфатты комплекс аммиактыдан тұрақтырақ (Kт аз).','[Ag(S₂O₃)₂]³⁻ ⇄ Ag⁺ + 2S₂O₃²⁻; Kт кестеден тексеріңіз')]},
+{n:'4г',h:'[Ag(NH₃)₂]⁺ және NH₄⁺ тұрақсыздығы',s:[tb,
+S('AgC','1–2 мл [Ag(NH₃)₂]Cl құйыңыз',15,'#dbe7f3cc','','Түссіз ерітінді.'),
+S('HNO3','AgCl тұнбасы түскенше HNO₃ қосыңыз',30,null,'#f5f5f5','Ақ AgCl тұнбасы түседі.','[Ag(NH₃)₂]Cl + 2HNO₃ → AgCl↓ + 2NH₄NO₃\nKт[Ag(NH₃)₂]⁺ = 6,87·10⁻⁸; Kт(NH₄⁺) = 6,0·10⁻¹⁰ ⇒ NH₄⁺ тұрақтырақ, NH₃ байланысады.')]},
+{n:'4д-1',h:'Cu²⁺ + NaOH',s:[tb,
+S('CuCl2','CuCl₂ ерітіндісін құйыңыз',15,'#7fd3e8cc','','Ашық көгілдір ерітінді.'),
+S('NaOH','NaOH ерітіндісін қосыңыз',15,'#bfe3f288','#4f8fd1','Көк Cu(OH)₂ тұнбасы.','CuCl₂ + 2NaOH → Cu(OH)₂↓ + 2NaCl')]},
+{n:'4д-2',h:'Cu²⁺ + (NH₄)₂S',s:[tb,
+S('CuCl2','CuCl₂ ерітіндісін құйыңыз',15,'#7fd3e8cc','','Ашық көгілдір ерітінді.'),
+S('NH4S','(NH₄)₂S ерітіндісін қосыңыз',15,'#9ca3a8aa','#111','Қара CuS тұнбасы.','CuCl₂ + (NH₄)₂S → CuS↓ + 2NH₄Cl')]},
+{n:'4д-3',h:'[Cu(NH₃)₄]²⁺ + NaOH, (NH₄)₂S',s:[tb,
+S('CuC','[Cu(NH₃)₄]Cl₂ ерітіндісін құйыңыз',15,'#1d2fb8','','Қою көк ерітінді.'),
+S('NaOH','NaOH ерітіндісін қосыңыз',15,null,'','Тұнба түспейді: Cu²⁺ аз, ЕК[Cu(OH)₂] жетпейді.'),
+S('NH4S','(NH₄)₂S ерітіндісін қосыңыз',20,'#1a1f4d','#111','Қара CuS тұнбасы (ЕК(CuS) өте аз).','[Cu(NH₃)₄]²⁺ ⇄ Cu²⁺ + 4NH₃; Cu²⁺ + S²⁻ → CuS↓')]},
+{n:'5а',h:'Мор тұзы: NH₄⁺ ионы',s:[tb,
+S('Mohr','Мор тұзы (NH₄)₂Fe(SO₄)₂ ерітіндісін құйыңыз',15,'#cfe9d4cc','','Ашық жасыл ерітінді.','(NH₄)₂Fe(SO₄)₂ → 2NH₄⁺ + Fe²⁺ + 2SO₄²⁻'),
+S('NaOH','NaOH қосыңыз',15,null,'#7a9a6a','Жасылдау Fe(OH)₂ тұнбасы.','Fe²⁺ + 2OH⁻ → Fe(OH)₂↓'),
+S('lamp','Қыздырыңыз (спирт шамы)',30,null,null,'Аммиактың иісі шығады.','NH₄⁺ + OH⁻ →(t) NH₃↑ + H₂O'),
+S('lit','Сынауық аузына дымқыл лакмус ұстаңыз',10,null,null,'Лакмус көгереді — NH₃ бар.','NH₄⁺ дәлелденді')]},
+{n:'5ә',h:'Мор тұзы + KSCN',s:[tb,
+S('Mohr','Мор тұзы ерітіндісін құйыңыз',15,'#cfe9d4cc','','Ашық жасыл ерітінді.'),
+S('KSCN','KSCN ерітіндісін қосыңыз',15,'#b8404e','','Нұсқаулық бойынша қан қызыл түс (Fe³⁺-ке тән).','Fe³⁺ + 3SCN⁻ → Fe(SCN)₃\nЕскерту: Мор тұзында Fe²⁺; Fe³⁺ ізі әдетте ауада тотығудан болады.')]},
+{n:'5б',h:'Мор тұзы + BaCl₂',s:[tb,
+S('Mohr','Мор тұзы ерітіндісін құйыңыз',15,'#cfe9d4cc','','Ашық жасыл ерітінді.'),
+S('BaCl','BaCl₂ ерітіндісін қосыңыз',15,null,'#f5f5f5','Ақ BaSO₄ тұнбасы — SO₄²⁻ бар.','Ba²⁺ + SO₄²⁻ → BaSO₄↓\nҚос тұз: толық диссоциацияланады (NH₄⁺, Fe²⁺, SO₄²⁻); комплексте [Fe(CN)₆]³⁻ ыдырамайды.')]}
+];
+var $=function(i){return document.getElementById(i)};
+var cur=-1,si=0,t0=0,tl=0,iv=0,done={},lastT=0,rec=[];
+function fm(s){s=Math.round(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function plan(e){return e.s.reduce(function(a,x){return a+x.s},0)}
+var all=E.reduce(function(a,e){return a+plan(e)},0);$('tot').textContent=fm(all)+' (≈'+Math.round(all/60)+' мин)';
+$('ch').innerHTML=E.map(function(e,i){return '<button class="chip" id="c'+i+'" onclick="pick('+i+')">'+e.n+'</button>'}).join('');
+$('sh').innerHTML=Object.keys(R).map(function(k){var q=['tube','lamp','zn','lit'].indexOf(k)>-1;return '<button class="it'+(q?' eq':'')+'" onclick="use(\''+k+'\')">'+(q?'🧰 ':'🧪 ')+R[k]+'</button>'}).join('');
+function tick(){if(t0){$('clk').textContent=fm((Date.now()-t0)/1000);var p=plan(E[cur]);$('pb').style.width=Math.min(100,(Date.now()-t0)/10/p)+'%'}}
+function draw(){var e=E[cur];$('sl').innerHTML=e.s.map(function(s,i){var c=i<si?'ok':i==si?'cur':'';var a=rec[i]!=null?'<br>іс жүзінде '+fm(rec[i]):'';return '<div class="st '+c+'"><span class="n">'+(i<si?'✓':i+1)+'</span><span>'+s.x+'</span><span class="tm">норма '+fm(s.s)+a+'</span></div>'}).join('')}
+function reset(){clearInterval(iv);t0=0;si=0;rec=[];lastT=0;$('clk').textContent='00:00';$('pb').style.width='0';
+var l=$('lq');l.setAttribute('fill','transparent');l.setAttribute('height',0);l.setAttribute('y',220);var p=$('pp');p.setAttribute('height',0);p.setAttribute('y',220);
+$('zn').style.display=$('fl').style.display=$('lt').style.display='none';$('lg').innerHTML='Әзірше бос.'}
+function pick(i){cur=i;reset();[].forEach.call(document.querySelectorAll('.chip'),function(c,j){c.classList.toggle('on',j==i)});
+$('tt').textContent='Тәжірибе '+E[i].n+' — '+E[i].h;$('pl').textContent=fm(plan(E[i]));$('msg').textContent='Бірінші қадамды орындаңыз.';draw()}
+$('rs').onclick=function(){if(cur>-1)pick(cur)};
+function use(k){if(cur<0){$('msg').textContent='Алдымен тәжірибені таңдаңыз.';return}
+var e=E[cur];if(si>=e.s.length){$('msg').textContent='Тәжірибе аяқталды. Басқасын таңдаңыз немесе қайта бастаңыз.';return}
+var s=e.s[si];if(k!==s.t){$('msg').style.color='var(--er)';$('msg').textContent='✗ '+R[k]+' қазір қажет емес. Қадам тізімін қараңыз.';return}
+$('msg').style.color='';if(!t0){t0=Date.now();iv=setInterval(tick,500)}
+var now=(Date.now()-t0)/1000;rec[si]=now-lastT;lastT=now;
+var l=$('lq'),p=$('pp'),lv=Math.min(150,35+si*35);
+if(s.t!==T&&s.t!=='lamp'&&s.t!=='lit'&&s.t!=='zn'){l.setAttribute('height',lv);l.setAttribute('y',220-lv)}
+if(s.t===T){l.setAttribute('height',0)}
+if(s.l!==null)l.setAttribute('fill',s.l);
+if(s.p!==null&&s.p!==undefined){if(s.p===''){p.setAttribute('height',0);p.setAttribute('y',220)}else{p.setAttribute('fill',s.p);p.setAttribute('height',28);p.setAttribute('y',192)}}
+if(s.t==='zn'){$('zn').style.display='';$('zn').setAttribute('fill','#9ca3af');setTimeout(function(){$('zn').setAttribute('fill','#d1d5db')},800)}
+if(s.t==='lamp'){$('fl').style.display=''}
+if(s.t==='lit'){$('lt').style.display='';setTimeout(function(){$('lt').setAttribute('fill','#2563eb')},600)}
+if(s.t!=='lamp')$('fl').style.display='none';
+var lg=$('lg');if(lg.textContent==='Әзірше бос.')lg.innerHTML='';
+lg.innerHTML+='<div><b>'+(si+1)+'. </b>'+s.o+'</div>'+(s.e?'<div class="eqn">'+s.e.replace(/\n/g,'<br>')+'</div>':'');
+si++;draw();
+if(si>=e.s.length){clearInterval(iv);t0=0;var tot=lastT,pl=plan(e);done[cur]=1;$('c'+cur).classList.add('done');$('dn').textContent=Object.keys(done).length+'/'+E.length;
+$('clk').textContent=fm(tot);$('pb').style.width='100%';
+$('msg').innerHTML='✅ Тәжірибе аяқталды. Уақыт: <b>'+fm(tot)+'</b> (норма '+fm(pl)+') — '+(tot<=pl*1.5?'<span style="color:var(--ok)">жақсы</span>':'<span style="color:var(--wa)">баяу, қайталап көріңіз</span>')+'. Енді түсірілген теңдеулерді дәптерге жазыңыз.'}
+else $('msg').textContent='✓ '+s.o}
+</script></body></html>
