@@ -25,7 +25,7 @@ jobs:
       - run: python3 tests/guided_lab_integration.py
       - run: node build.mjs
       - run: npm install --no-save --package-lock=false playwright@1.56.1 @electric-sql/pglite@0.5.10
-      - run: node --test tests/worksheet-quests.test.mjs tests/worksheet-photos.sql.mjs
+      - run: node --test tests/bridge-exit.sql.mjs tests/worksheet-quests.test.mjs tests/worksheet-photos.sql.mjs
       - run: node tests/guided-lab.sql.mjs
       - run: node tests/guided-lab-11.sql.mjs
       - run: node tests/guided-lab-10.sql.mjs
@@ -33,7 +33,7 @@ jobs:
       - run: node tests/guided-lab-8.sql.mjs
       - run: node tests/university-control.sql.mjs
       - run: npx playwright install --with-deps chromium
-      - run: node --test tests/appearance.browser.mjs
+      - run: node --test tests/bridge-exit.browser.mjs tests/appearance.browser.mjs
       - run: node --test tests/continuity-assessment.browser.mjs
       - run: node --test tests/teacher-journey.browser.mjs
       - run: node --test tests/registration.browser.mjs
