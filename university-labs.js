@@ -7,6 +7,7 @@ export const UNIVERSITY_LABS = [
  ,{slug:'solution-preparation',file:'university-lab-solutions.html',title:'Әртүрлі концентрациялы ерітінділер дайындау',description:'Концентрлі ерітіндіден сұйылту, құрғақ тұздан ерітінді дайындау, масса мен көлемді есептеу және ареометрмен тығыздықты өлшеу.',note:'Жүктелген авторлық HTML нұсқа · №6.',matchTopic:'solutions'}
  ,{slug:'zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-sutegindik-korsetkish-tuzdar-gidrolizi',file:'university-lab-hydrolysis.html',title:'Тұздардың гидролизі',description:'Индикатор арқылы pH анықтаңыз, тұз ерітінділерінің ортасын салыстырыңыз және температура, сұйылту мен қышқыл қосудың гидролизге әсерін бақылаңыз.',note:'Авторлық HTML файлда №9 деп белгіленген. Платформада осы тақырып №13 зертханалық сабаққа сәйкес келеді.',matchTopic:'hydrolysis'}
  ,{slug:'zerthanalyq-sabaq-15-totygu-totyqsyzdanu-reakciyalary',file:'university-lab-redox.html',title:'Тотығу-тотықсыздану реакциялары',description:'Виртуалды тәжірибелерде түс өзгерісін бақылап, реакцияларды электрондық баланс арқылы түсіндіріңіз.',note:'Авторлық файлда №11, ал платформадағы тізімде бұл тақырып №15 болып берілген.',matchTopic:'redox'}
+ ,{slug:'zerthanalyq-sabaq-14-kompleksti-qosylystar',file:'university-lab-complexes.html',title:'Комплексті қосылыстар',description:'Комплекс иондарының түзілуін виртуалды тәжірибеде бақылап, ерітінділердің түсін салыстырыңыз.',note:'Авторлық файлда №10, ал платформадағы тізімде бұл тақырып №14 болып берілген.',matchTopic:'complexes'}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
 export function labForPath(path,title=''){
@@ -18,6 +19,7 @@ export function labForPath(path,title=''){
  if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='kinetics');
  if(clean.startsWith(course+'/')&&/ерітінді/iu.test(title)&&/дайында/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='solutions');
  if(clean.startsWith(course+'/')&&/гидролиз/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='hydrolysis');
+ if(clean.startsWith(course+'/')&&/комплекс(?:ті|тік)\s+қосылыстар/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='complexes');
  if(clean.startsWith(course+'/')&&/тотығу[\s–—-]+тотықсыздану/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='redox');
 }
 export function bindUniversityLabs(root,pathname=location.pathname){
