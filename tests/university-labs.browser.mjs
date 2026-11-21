@@ -62,13 +62,13 @@ assert.equal(await section.locator('a').first().getAttribute('rel'),'noopener no
 await section.locator('summary').first().click();
 const frame=section.frameLocator('iframe').first();
 if(lab.companion){
- await frame.locator('#c0').click();
- assert.equal(await frame.locator('#c0.on').count(),1);
- await section.locator('summary').nth(1).click();
+ await frame.locator('#c0').press('Enter');
+ await frame.locator('#c0.on').waitFor();
+ await section.locator('summary').nth(1).press('Enter');
  const companion=section.frameLocator('iframe').nth(1);
- await companion.locator('#c0').click();
+ await companion.locator('#c0').press('Enter');
  assert.match(await companion.locator('h1').textContent(),/№8/);
- assert.equal(await companion.locator('#c0.on').count(),1);
+ await companion.locator('#c0.on').waitFor();
  continue;
 }
 if(lab.file.includes('co2')){
@@ -100,7 +100,7 @@ assert.match(await frame.locator('#res').textContent(),{Mg:/Магнийдің/,
 assert.equal(await frame.locator('#metal').isDisabled(),true);
 }else if(lab.file.includes('complexes')){
 assert.match(await frame.locator('h1').textContent(),/№10 зертханалық жұмыс/);
-await frame.locator('#c0').click();
+await frame.locator('#c0').press('Enter');
 assert.equal(await frame.locator('#c0.on').count(),1);
 assert.equal(await frame.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
 }else if(lab.file.includes('redox')){

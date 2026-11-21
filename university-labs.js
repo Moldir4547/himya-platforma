@@ -41,7 +41,7 @@ export function bindUniversityLabs(root,pathname=location.pathname){
   const details=document.createElement('details'),summary=document.createElement('summary');
   summary.textContent=label;details.append(summary);
   const frame=document.createElement('iframe');
-  frame.title=sim.title;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('loading','lazy');
+  frame.title=sim.title;frame.setAttribute('sandbox','allow-scripts');
   const url=new URL(sim.file,document.baseURI).href;
   details.addEventListener('toggle',()=>{if(details.open&&!frame.hasAttribute('src'))frame.src=url;});
   details.append(frame);section.append(details);
