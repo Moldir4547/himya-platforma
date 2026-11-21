@@ -77,10 +77,10 @@ function render(){
  const url=new URL(location.href);url.search=new URLSearchParams({topic:topic.id,mode});history.replaceState(null,'',url);
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  const v={cross:crossView,match:matchView,code:codeView}[mode](topic);
- $('game').innerHTML='<p class="eyebrow">'+(topic.grade?topic.grade+'-сынып':'Университет')+'</p><h2 id="game-title">'+esc(topic.title)+'</h2><p><strong>'+names[mode]+'</strong></p><form id="play">'+v.markup+'<div class="actions screen"><button class="primary" type="submit">Тексеру</button><button type="button" id="reset">Қайта бастау</button></div><p id="result" role="status"></p></form>';
+ $('game').innerHTML='<p class="eyebrow">'+(topic.grade?topic.grade+'-сынып':'Университет')+'</p><h2 id="game-title">'+esc(topic.title)+'</h2><p><strong>'+names[mode]+'</strong></p><form id="play">'+v.markup+'<div class="actions screen"><button class="primary" type="submit">Тексеру</button><button type="button" id="restart-game">Қайта бастау</button></div><p id="result" role="status"></p></form>';
  const form=$('play'),check=v.bind(form);
  form.addEventListener('submit',event=>{event.preventDefault();check();});
- $('reset').onclick=()=>{form.reset();for(const el of form.querySelectorAll('[data-state]'))delete el.dataset.state;for(const el of form.querySelectorAll('.feedback'))el.textContent='';score('Жаңа ойын басталды.');form.querySelector('input,select')?.focus();};
+ $('restart-game').onclick=()=>{form.reset();for(const el of form.querySelectorAll('[data-state]'))delete el.dataset.state;for(const el of form.querySelectorAll('.feedback'))el.textContent='';score('Жаңа ойын басталды.');form.querySelector('input,select')?.focus();};
 }
 $('level').onchange=()=>catalog();$('grade').onchange=()=>catalog();$('topic').onchange=render;
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render();});
