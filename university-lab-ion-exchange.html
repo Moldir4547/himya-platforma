@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8"><title>№8 виртуалды зертхана: Ион алмасу реакциялары</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mu:#5b6676;--bd:#d9dee6;--ac:#0f766e;--ok:#15803d;--wa:#b45309;--er:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1b2129;--tx:#e8ecf2;--mu:#9aa5b5;--bd:#2d3540;--ac:#2dd4bf;--ok:#4ade80;--wa:#fbbf24;--er:#f87171;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:1050px;margin:0 auto;padding:14px}h1{font-size:19px;margin:0 0 4px}.mu{color:var(--mu);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:5px 11px;cursor:pointer;font-size:13px}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}.chip.done::after{content:" ✓"}
+.g{display:grid;grid-template-columns:240px 1fr;gap:12px}@media(max-width:760px){.g{grid-template-columns:1fr}}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
+.it{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:8px;padding:7px 4px;cursor:pointer;font-size:13px;text-align:center}.it:hover{border-color:var(--ac)}.it.rg{border-style:dashed}
+.st{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}.st:last-child{border:0}
+.n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--bd);display:grid;place-items:center;font-size:12px}
+.st.cur .n{background:var(--ac);color:#fff}.st.ok .n{background:var(--ok);color:#fff}.st.cur>div>span:first-child{font-weight:600}
+.tm{margin-left:auto;font-size:12px;color:var(--mu);white-space:nowrap;text-align:right}
+.big{font:600 26px ui-monospace,monospace}.bar{height:6px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .4s}
+#msg{min-height:22px;font-size:14px}.row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+button.r{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:6px 12px;border-radius:8px;cursor:pointer}
+.eqn{font-family:ui-monospace,monospace;font-size:13px;background:var(--bg);border-left:3px solid var(--ac);padding:6px 8px;margin:5px 0;border-radius:4px}
+svg{width:170px;height:270px;flex:none}.lq,.pp{transition:fill .8s,y .6s,height .6s}.lt{transition:fill .6s}
+.bb circle{fill:#fff;opacity:0;animation:rise var(--d,1s) infinite}.bb.f{--d:.7s}.bb.s{--d:3s}.bb.f circle,.bb.s circle{opacity:.85}
+@keyframes rise{from{transform:translateY(0)}to{transform:translateY(-130px)}}
+.fla{animation:fk .25s infinite alternate}@keyframes fk{from{transform:scaleY(.85)}to{transform:scaleY(1.1)}}.fla{transform-box:fill-box;transform-origin:bottom}
+</style></head><body><div class="w">
+<h1>№8 зертханалық жұмыс — виртуалды нұсқа</h1>
+<div class="mu">Электролит ерітінділеріндегі реакциялар: бейтараптау, амфотерлік, ерімейтін тұздар, тұнбаның еруі, ұшқыш қосылыстар.</div>
+<div class="card"><b>Мақсаты:</b> ерітіндідегі ион алмасу реакцияларының бағытын ерігіштік көбейтіндісі мен диссоциациялану дәрежесі бойынша түсіндіру, иондық теңдеулерді жазу.
+<div class="mu" style="margin-top:4px">Жалпы жоспарлы уақыт: <b id="tot"></b> · Орындалған: <b id="dn"></b></div></div>
+<div class="card"><div class="chips" id="ch"></div></div>
+<div class="g">
+<div class="card" style="margin-top:12px"><b>Құралдар мен реактивтер</b><div class="mu" style="margin-bottom:6px">Қадамға сай қажеттісін басыңыз</div><div class="shelf" id="sh"></div></div>
+<div>
+<div class="card"><div class="row">
+<svg viewBox="0 -45 170 315"><defs><clipPath id="cp"><path d="M50 30h60v170a30 30 0 0 1-60 0z"/></clipPath></defs>
+<g id="fl" style="display:none"><path class="fla" d="M80 262c-16-12-12-28 0-40 12 12 16 28 0 40z" fill="#f59e0b"/><path class="fla" d="M80 262c-7-6-5-14 0-20 5 6 7 14 0 20z" fill="#fde68a"/></g>
+<g clip-path="url(#cp)"><rect class="lq" id="lq" x="45" y="230" width="70" height="0" fill="transparent"/><rect class="pp" id="pp" x="45" y="230" width="70" height="0" fill="transparent"/>
+<rect id="zn" x="72" y="212" width="16" height="9" rx="2" fill="#9ca3af" style="display:none"/>
+<g class="bb" id="bb"><circle cx="62" cy="215" r="3"/><circle cx="78" cy="225" r="2.5" style="animation-delay:.3s"/><circle cx="94" cy="218" r="3" style="animation-delay:.5s"/><circle cx="70" cy="210" r="2" style="animation-delay:.2s"/><circle cx="88" cy="222" r="3" style="animation-delay:.6s"/></g></g>
+<g id="pa" style="display:none"><rect x="96" y="-38" width="7" height="60" fill="#e5e7eb" stroke="var(--mu)" stroke-width=".5"/><rect class="lt" id="lt" x="96" y="-38" width="7" height="24" fill="#e53935"/></g>
+<path d="M50 30v170a30 30 0 0 0 60 0V30" fill="none" stroke="var(--mu)" stroke-width="3"/><path d="M45 30h70" stroke="var(--mu)" stroke-width="3"/></svg>
+<div style="flex:1;min-width:200px"><div class="mu">Секундомер</div><div class="big" id="clk">00:00</div>
+<div class="mu">Жоспарлы: <span id="pl">—</span></div><div class="bar"><i id="pb"></i></div>
+<div style="margin-top:8px"><button class="r" id="rs">↺ Қайта бастау</button></div></div></div>
+<div id="msg" class="mu" style="margin-top:8px">Тәжірибені таңдаңыз.</div></div>
+<div class="card"><b id="tt">Қадамдар</b><div id="sl"></div></div>
+<div class="card"><b>Бақылаулар мен теңдеулер</b><div id="lg" class="mu">Әзірше бос.</div></div>
+</div></div></div>
+<script>
+var R={dish:'Фарфор табақша',tube:'Сынауық (штатив)',lamp:'Спирт шамы',spat:'Шпатель',rod:'Шыны таяқша',zn:'Мырыш түйірі',lit:'Лакмус қағазы',cyl:'Өлшеуіш цилиндр 20 мл',therm:'Термометр',
+HCl:'HCl 2н',H2SO4:'H₂SO₄ 2н',HNO3:'HNO₃',AcOH:'CH₃COOH 2н',NaOH:'NaOH 2н',KOH:'KOH 2н',AcONa:'CH₃COONa',NH4Cl:'NH₄Cl',KCl:'KCl',KClO3:'KClO₃',NaClO3:'NaClO₃',Na2SO4:'Na₂SO₄',Na2S:'Na₂S 1н',BaCl2:'BaCl₂',BaNO:'Ba(NO₃)₂',SrCl2:'SrCl₂',SrSO4:'SrSO₄ (қан.)',CaCl2:'CaCl₂',CaSO4:'CaSO₄ (қан.)',CuCl2:'CuCl₂',ZnSO4:'ZnSO₄',FeSO4:'FeSO₄',CaOH:'Ca(OH)₂ (қатты)',CaOx:'CaC₂O₄ (қатты)',php:'Фенолфталейн',water:'Дистилденген су'};
+var EQP=['dish','tube','lamp','spat','rod','zn','lit','cyl','therm'];
+var $=function(i){return document.getElementById(i)};
+$('sh').innerHTML=Object.keys(R).map(function(k){var q=EQP.indexOf(k)>-1;return '<button class="it'+(q?'':' rg')+'" onclick="use(\''+k+'\')">'+(q?'🧰 ':'🧪 ')+R[k]+'</button>'}).join('');
+function P(t,x,s,o,ex){var r={t:t,x:x,s:s,o:o||'',e:''};for(var k in ex||{})r[k]=ex[k];return r}
+var CL='#dbe7f3cc',RS={lv:0,p:'',b:'',fl:0,l:'transparent',zn:0,pa:0};
+var TU=P('tube','Штативке таза сынауық орнатыңыз',10,'',RS),DI=P('dish','Фарфор табақшаны алыңыз',10,'',RS);
+var E=[
+{n:'1а',h:'Күшті қышқыл + күшті сілті (бейтараптау)',s:[DI,
+P('HCl','5 мл 2н HCl құйыңыз',15,'Қышқыл ерітіндісі.',{l:CL,lv:.4}),
+P('lit','Көк лакмус қағазын батырыңыз',10,'Көк лакмус қызарды — орта қышқылдық.',{pa:1,lt:'#e53935'}),
+P('NaOH','2н NaOH-ты тамшылатып қосыңыз',25,'Лакмус түсі өзгеріп барады.',{lv:.5}),
+P('lit','Лакмусты тексеріңіз',10,'Лакмус күлгін, көк пен қызыл қағаз түсі өзгермейді — орта бейтарап (pH ≈ 7).',{lt:'#7e57c2',e:'HCl + NaOH → NaCl + H₂O\nH⁺ + Cl⁻ + Na⁺ + OH⁻ → Na⁺ + Cl⁻ + H₂O\nH⁺ + OH⁻ → H₂O'}),
+P('lamp','Спирт шамымен қыздырып, құрғатыңыз',90,'Су буланып, ақ кристалл қалды — NaCl.',{fl:1,pa:0,l:'transparent',lv:0,p:'#f5f5f5'})]},
+{n:'1ә',h:'Әлсіз қышқыл + күшті сілті',s:[TU,
+P('NaOH','2 мл 2н NaOH құйыңыз',10,'',{l:CL,lv:.3}),
+P('php','1 тамшы фенолфталейн қосыңыз',10,'Таңқурай түс — сілтілік орта.',{l:'#d81b60cc'}),
+P('AcOH','2н CH₃COOH тамшылатып, түссізденгенше қосыңыз',30,'Ерітінді түссізденді — NaOH бейтараптанды.',{l:CL,lv:.45,e:'CH₃COOH + NaOH → CH₃COONa + H₂O\nCH₃COOH + Na⁺ + OH⁻ → CH₃COO⁻ + Na⁺ + H₂O\nCH₃COOH + OH⁻ → CH₃COO⁻ + H₂O'})]},
+{n:'2',h:'Амфотерлік: Zn(OH)₂',s:[TU,P('ZnSO4','ZnSO₄ ерітіндісін құйыңыз',10,'',{l:CL,lv:.35}),
+P('NaOH','Шамалы NaOH қосыңыз',15,'Ақ Zn(OH)₂ тұнбасы.',{p:'#f2f2f2',e:'ZnSO₄ + 2NaOH → Zn(OH)₂↓ + Na₂SO₄\nZn²⁺ + 2OH⁻ → Zn(OH)₂↓'}),
+P('HCl','Бірінші сынауыққа HCl қосыңыз',20,'Тұнба ериді (негіздік қасиет).',{p:'',e:'Zn(OH)₂ + 2HCl → ZnCl₂ + 2H₂O\nZn(OH)₂ + 2H⁺ → Zn²⁺ + 2H₂O'}),
+TU,P('ZnSO4','Екінші сынауыққа ZnSO₄ құйыңыз',10,'',{l:CL,lv:.35}),P('NaOH','Шамалы NaOH қосыңыз',15,'Ақ тұнба.',{p:'#f2f2f2'}),
+P('NaOH','Артық NaOH қосыңыз',20,'Тұнба ериді (қышқылдық қасиет) — цинкат түзілді.',{p:'',e:'Zn(OH)₂ + 2NaOH → Na₂[Zn(OH)₄]\nZn(OH)₂ + 2OH⁻ → [Zn(OH)₄]²⁻'})]},
+{n:'3',h:'Күшті қышқыл + әлсіз қышқыл тұзы',s:[TU,P('HCl','5 мл 2н қышқыл құйыңыз',10,'',{l:CL,lv:.4}),P('zn','Бір түйір мырыш салыңыз',20,'Сутегі қарқынды бөлінеді.',{zn:1,b:'f',e:'Zn + 2HCl → ZnCl₂ + H₂↑'}),
+P('AcONa','5 мл CH₃COONa қосыңыз',30,'Газ бөлінуі баяулады: H⁺ әлсіз CH₃COOH түзіп байланысты.',{lv:.6,b:'s',e:'HCl + CH₃COONa → CH₃COOH + NaCl\nH⁺ + CH₃COO⁻ → CH₃COOH'}),
+TU,P('HCl','Екінші сынауыққа 5 мл қышқыл құйыңыз',10,'',{l:CL,lv:.4}),P('zn','Мырыш салыңыз',20,'Сутегі бөлінеді.',{zn:1,b:'f'}),
+P('water','5 мл су қосыңыз',25,'Тек сұйылтқанда реакция аздап баяулайды, бірақ тоқтамайды — айырмашылық ацетаттың әсерінен.',{lv:.6,b:'f'})]},
+{n:'4',h:'Ерімейтін сульфаттардың түзілуі',s:[TU,P('BaCl2','2–3 тамшы BaCl₂ құйыңыз',10,'',{l:CL,lv:.2}),P('Na2SO4','Na₂SO₄ ерітіндісін қосыңыз',15,'Дереу ақ BaSO₄ тұнбасы (ЕК = 1,1·10⁻¹⁰).',{p:'#f5f5f5',e:'BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl\nBa²⁺ + SO₄²⁻ → BaSO₄↓'}),
+TU,P('SrCl2','2–3 тамшы SrCl₂ құйыңыз',10,'',{l:CL,lv:.2}),P('CaSO4','CaSO₄ қанық ерітіндісін қосыңыз',30,'Баяу ақ лайлану — SrSO₄ (ЕК = 3,2·10⁻⁷): [Sr²⁺][SO₄²⁻] > ЕК.',{p:'#ededed',e:'SrCl₂ + CaSO₄ → SrSO₄↓ + CaCl₂\nSr²⁺ + SO₄²⁻ → SrSO₄↓'}),
+TU,P('CaCl2','2–3 тамшы CaCl₂ құйыңыз',10,'',{l:CL,lv:.2}),P('SrSO4','SrSO₄ қанық ерітіндісін қосыңыз',20,'Тұнба түспейді: CaSO₄-тың ЕК-і (2,5·10⁻⁵) үлкен, [Ca²⁺][SO₄²⁻] < ЕК.',{p:''})]},
+{n:'5а',h:'Ca(OH)₂ тұнбасының еруі',s:[TU,P('CaOH','Шпательмен Ca(OH)₂ салыңыз',10,'',{p:'#f2f2f2'}),P('water','Су құйыңыз',10,'',{l:CL,lv:.4}),P('rod','Шыны таяқшамен араластырыңыз',20,'Тұнбасы бар қанық ерітінді (ЕК = 5,5·10⁻⁶).',{l:'#e8eef5cc'}),
+P('HCl','HCl қосыңыз',20,'Тұнба ериді: OH⁻ иондары H⁺-пен суға байланысып, [Ca²⁺][OH⁻]² < ЕК.',{p:'',l:CL,e:'Ca(OH)₂ + 2HCl → CaCl₂ + 2H₂O\nCa(OH)₂ + 2H⁺ → Ca²⁺ + 2H₂O\nЕК = [Ca²⁺][OH⁻]²'})]},
+{n:'5ә',h:'CaC₂O₄: HCl және CH₃COOH',s:[TU,P('CaOx','Шпательмен CaC₂O₄ салыңыз',10,'',{p:'#f5f5f5'}),P('HCl','HCl қосыңыз',25,'Тұнба ериді: қымыздық қышқылы (K₁ = 5,9·10⁻²) әлсіз, HCl күшті.',{p:'',l:CL,lv:.4,e:'CaC₂O₄ + 2HCl → CaCl₂ + H₂C₂O₄\nCaC₂O₄ + 2H⁺ → Ca²⁺ + H₂C₂O₄'}),
+TU,P('CaOx','Екінші сынауыққа CaC₂O₄ салыңыз',10,'',{p:'#f5f5f5'}),P('AcOH','CH₃COOH қосыңыз',25,'Тұнба ермейді: CH₃COOH өте әлсіз (α ≈ 0,013), C₂O₄²⁻-ті байланыстыра алмайды.',{l:CL,lv:.4})]},
+{n:'6',h:'Нашар еритін сульфидтер',s:[TU,P('FeSO4','FeSO₄ (жаңа дайындалған) құйыңыз',10,'',{l:'#cfe9d4cc',lv:.3}),P('Na2S','Na₂S қосыңыз',15,'Қара FeS тұнбасы.',{p:'#1a1a1a',e:'FeSO₄ + Na₂S → FeS↓ + Na₂SO₄'}),
+P('HCl','2н HCl қосыңыз',25,'FeS ериді, H₂S иісі шығады (ЕК(FeS) ≈ 5·10⁻¹⁸ — салыстырмалы түрде үлкен).',{p:'',b:'s',e:'FeS + 2HCl → FeCl₂ + H₂S↑\nFeS + 2H⁺ → Fe²⁺ + H₂S↑'}),
+TU,P('CuCl2','CuCl₂ құйыңыз',10,'',{l:'#4fa3e0cc',lv:.3}),P('Na2S','Na₂S қосыңыз',15,'Қара CuS тұнбасы.',{p:'#111',e:'CuCl₂ + Na₂S → CuS↓ + 2NaCl'}),
+P('HCl','2н HCl қосыңыз',25,'CuS ермейді: ЕК(CuS) ≈ 6·10⁻³⁶ өте аз, H₂S түзуге жетпейді. (Нұсқаулықтағы «мыс(I)» орнына мыс(II) сульфиді алынды.)',{})]},
+{n:'7',h:'Ұшқыш қосылыс — NH₃ түзілуі',s:[TU,P('NH4Cl','Аммоний тұзы (NH₄Cl) ерітіндісін құйыңыз',10,'',{l:CL,lv:.35}),P('NaOH','1–2 тамшы NaOH қосыңыз',10,'',{lv:.4}),
+P('lamp','Қайнағанша қыздырыңыз',40,'Газ бөлінеді, өткір иіс.',{fl:1,b:'f'}),
+P('lit','Аузына дымқыл қызыл лакмус ұстаңыз',15,'Қызыл лакмус көгерді — NH₃ бөлінді.',{pa:1,lt:'#2f4fd6',e:'NH₄Cl + NaOH → NH₃↑ + NaCl + H₂O\nNH₄⁺ + OH⁻ → NH₃↑ + H₂O'})]}
+];
+var cur=-1,si=0,t0=0,iv=0,lastT=0,rec=[],done={};
+function fm(s){s=Math.round(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function plan(e){return e.s.reduce(function(a,x){return a+x.s},0)}
+var all=E.reduce(function(a,e){return a+plan(e)},0);$('tot').textContent=fm(all)+' (≈'+Math.round(all/60)+' мин)';$('dn').textContent='0/'+E.length;
+$('ch').innerHTML=E.map(function(e,i){return '<button class="chip" id="c'+i+'" onclick="pick('+i+')">'+e.n+'</button>'}).join('');
+function tick(){if(t0){$('clk').textContent=fm((Date.now()-t0)/1000);$('pb').style.width=Math.min(100,(Date.now()-t0)/10/plan(E[cur]))+'%'}}
+function lvl(v){var h=Math.round(170*v);$('lq').setAttribute('height',h);$('lq').setAttribute('y',230-h)}
+function draw(){var e=E[cur];$('sl').innerHTML=e.s.map(function(s,i){var c=i<si?'ok':i==si?'cur':'';var a=rec[i]!=null?'<br>іс жүзінде '+fm(rec[i]):'';
+return '<div class="st '+c+'"><span class="n">'+(i<si?'✓':i+1)+'</span><div><span>'+s.x+'</span></div><span class="tm">норма '+fm(s.s)+a+'</span></div>'}).join('')}
+function vis(){lvl(0);$('lq').setAttribute('fill','transparent');$('pp').setAttribute('height',0);$('pp').setAttribute('y',230);$('bb').setAttribute('class','bb');$('fl').style.display='none';$('zn').style.display='none';$('pa').style.display='none'}
+function reset(){clearInterval(iv);t0=0;si=0;rec=[];lastT=0;$('clk').textContent='00:00';$('pb').style.width='0';vis();$('lg').textContent='Әзірше бос.'}
+function pick(i){cur=i;reset();[].forEach.call(document.querySelectorAll('.chip'),function(c,j){c.classList.toggle('on',j==i)});
+$('tt').textContent='Тәжірибе '+E[i].n+' — '+E[i].h;$('pl').textContent=fm(plan(E[i]));$('msg').style.color='';$('msg').textContent='Бірінші қадамды орындаңыз.';draw()}
+$('rs').onclick=function(){if(cur>-1)pick(cur)};
+function use(k){if(cur<0){$('msg').textContent='Алдымен тәжірибені таңдаңыз.';return}
+var e=E[cur];if(si>=e.s.length){$('msg').textContent='Тәжірибе аяқталды.';return}
+var s=e.s[si];if(k!==s.t){$('msg').style.color='var(--er)';$('msg').textContent='✗ '+R[k]+' қазір қажет емес. Қадам тізімін қараңыз.';return}
+$('msg').style.color='';if(!t0){t0=Date.now();iv=setInterval(tick,500)}
+$('fl').style.display=s.fl?'':'none';
+if(s.t==='tube'||s.t==='dish')vis();
+if(s.zn!==undefined)$('zn').style.display=s.zn?'':'none';
+if(s.l!==undefined)$('lq').setAttribute('fill',s.l);
+if(s.lv!==undefined)lvl(s.lv);
+if(s.p!==undefined){if(s.p===''){$('pp').setAttribute('height',0);$('pp').setAttribute('y',230)}else{$('pp').setAttribute('fill',s.p);$('pp').setAttribute('height',s.lv===0?14:26);$('pp').setAttribute('y',s.lv===0?216:204)}}
+if(s.b!==undefined)$('bb').setAttribute('class','bb '+s.b);
+if(s.pa!==undefined)$('pa').style.display=s.pa?'':'none';
+if(s.lt)$('lt').setAttribute('fill',s.lt);
+var now=(Date.now()-t0)/1000;rec[si]=now-lastT;lastT=now;
+var lg=$('lg');if(lg.textContent==='Әзірше бос.')lg.innerHTML='';
+if(s.o||s.e)lg.innerHTML+='<div><b>'+(si+1)+'. </b>'+s.o+'</div>'+(s.e?'<div class="eqn">'+s.e.replace(/\n/g,'<br>')+'</div>':'');
+$('msg').textContent='✓ '+(s.o||R[k]);si++;draw();
+if(si>=e.s.length){clearInterval(iv);t0=0;done[cur]=1;$('c'+cur).classList.add('done');$('dn').textContent=Object.keys(done).length+'/'+E.length;$('clk').textContent=fm(lastT);$('pb').style.width='100%';var pl=plan(e);
+$('msg').innerHTML='✅ Аяқталды. Уақыт: <b>'+fm(lastT)+'</b> (норма '+fm(pl)+') — '+(lastT<=pl*1.5?'<span style="color:var(--ok)">жақсы</span>':'<span style="color:var(--wa)">баяу, қайталап көріңіз</span>')+'. Теңдеулерді дәптерге жазыңыз.'}}
+</script></body></html>

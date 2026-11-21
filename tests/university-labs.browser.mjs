@@ -7,7 +7,7 @@ import {UNIVERSITY_LABS,labForPath} from '../university-labs.js';
 const base='/universitet/ozin-ozi-daiyndau';
 const fixture='<!doctype html><html lang="kk"><head><base href="/himya-platforma/"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="school.css"></head><body><main id="host"></main><script type="module">'+
 "import {UNIVERSITY_LABS,bindUniversityLabs} from './university-labs.js';"+
-"const host=document.querySelector('#host');window.mount=(detail=false)=>{host.innerHTML=detail?'<main class=\"lesson-main\"><div class=\"lesson-body\">Авторлық теория</div><div class=\"resource-list\">Мұғалім материалы</div><section class=\"quiz-card\">Тест</section></main>':'<div class=\"lms-unit-list\">'+UNIVERSITY_LABS.map(lab=>'<a class=\"lms-unit-card\" href=\"/himya-platforma/universitet/ozin-ozi-daiyndau/'+(lab.matchTopic?'author-'+lab.slug:lab.slug)+'\">'+lab.title+'</a>').join('')+'</div>';const path='/universitet/ozin-ozi-daiyndau'+(detail?'/'+UNIVERSITY_LABS[1].slug:'');bindUniversityLabs(host,path);bindUniversityLabs(host,path);};mount();"+
+"const host=document.querySelector('#host');window.mount=(detail=false)=>{host.innerHTML=detail?'<main class=\"lesson-main\"><div class=\"lesson-body\">Авторлық теория</div><div class=\"resource-list\">Мұғалім материалы</div><section class=\"quiz-card\">Тест</section></main>':'<div class=\"lms-unit-list\">'+UNIVERSITY_LABS.map(lab=>'<a class=\"lms-unit-card\" href=\"/himya-platforma/universitet/ozin-ozi-daiyndau/'+(lab.matchTopic&&!lab.companion?'author-'+lab.slug:lab.slug)+'\">'+lab.title+'</a>').join('')+'</div>';const path='/universitet/ozin-ozi-daiyndau'+(detail?'/'+UNIVERSITY_LABS[1].slug:'');bindUniversityLabs(host,path);bindUniversityLabs(host,path);};mount();"+
 '</script></body></html>';
 test('topic mapping keeps CO2 separate from magnesium',()=>{
 assert.equal(labForPath(base+'/zerthanalyq-sabaq-4-metall-ekvialentin-sudy-ygystyru-adisimen-anyqtau-magniidin-ekvivalenttik-massasyn-anyqtau').file,'university-lab-metal.html');
@@ -31,6 +31,8 @@ assert.equal(labForPath('/mektep/redox','Тотығу-тотықсыздану �
 assert.equal(labForPath(base+'/zerthanalyq-sabaq-14-kompleksti-qosylystar').file,'university-lab-complexes.html');
 assert.equal(labForPath(base+'/custom','Комплексті қосылыстар').file,'university-lab-complexes.html');
 assert.equal(labForPath('/mektep/topic','Комплексті қосылыстар'),undefined);
+assert.equal(labForPath(base+'/zerthanalyq-sabaq-12-elektrolittik-dissociaciya-elektrolit-eritindilerdegi-reakciyalar-erigishtik-kobeitindisi').companion.file,'university-lab-ion-exchange.html');
+assert.equal(labForPath(base+'/custom','Электролиттік диссоциация').file,'university-lab-electrolytes.html');
 for(const lab of UNIVERSITY_LABS)assert.match(readFileSync(new URL('../'+lab.file,import.meta.url),'utf8'),/<html lang="kk">/);
 });
 test('teacher simulations run in responsive isolated embeds',async()=>{
@@ -39,7 +41,7 @@ try{
 const path=new URL(req.url,'http://localhost').pathname;
 if(path==='/'){res.setHeader('Content-Type','text/html; charset=utf-8');return res.end(fixture);}
 const file=path.replace(/^\/himya-platforma\//,'');
-if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','university-lab-redox.html','university-lab-complexes.html','university-lab-solutions-full.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
+if(!['university-labs.js','university-lab-co2.html','university-lab-classes.html','university-lab-metal.html','university-lab-kinetics.html','university-lab-solutions.html','university-lab-hydrolysis.html','university-lab-redox.html','university-lab-complexes.html','university-lab-solutions-full.html','university-lab-electrolytes.html','university-lab-ion-exchange.html','school.css'].includes(file)){res.writeHead(404);return res.end();}
 res.setHeader('Content-Type',file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8');
 res.end(readFileSync(new URL('../'+file,import.meta.url)));
 }catch(e){res.writeHead(500);res.end(String(e));}
@@ -55,10 +57,20 @@ assert.equal(await page.locator('.university-html-lab').count(),UNIVERSITY_LABS.
 assert.equal(await page.locator('iframe[src]').count(),0);
 for(const lab of UNIVERSITY_LABS){
 const section=page.locator('[data-university-lab="'+lab.slug+'"]');
-assert.equal(await section.locator('iframe').getAttribute('sandbox'),'allow-scripts');
+assert.equal(await section.locator('iframe').first().getAttribute('sandbox'),'allow-scripts');
 assert.equal(await section.locator('a').first().getAttribute('rel'),'noopener noreferrer');
-await section.locator('summary').click();
-const frame=section.frameLocator('iframe');
+await section.locator('summary').first().click();
+const frame=section.frameLocator('iframe').first();
+if(lab.companion){
+ await frame.locator('#c0').click();
+ assert.equal(await frame.locator('#c0.on').count(),1);
+ await section.locator('summary').nth(1).click();
+ const companion=section.frameLocator('iframe').nth(1);
+ await companion.locator('#c0').click();
+ assert.match(await companion.locator('h1').textContent(),/№8/);
+ assert.equal(await companion.locator('#c0.on').count(),1);
+ continue;
+}
 if(lab.file.includes('co2')){
 await frame.getByRole('button',{name:'Өлшеу',exact:true}).click();
 await frame.getByRole('button',{name:'Таразыда өлшеу',exact:true}).click();

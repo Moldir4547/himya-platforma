@@ -8,6 +8,7 @@ export const UNIVERSITY_LABS = [
  ,{slug:'zerthanalyq-sabaq-13-sudyn-iondyq-kobeitindisi-sutegindik-korsetkish-tuzdar-gidrolizi',file:'university-lab-hydrolysis.html',title:'Тұздардың гидролизі',description:'Индикатор арқылы pH анықтаңыз, тұз ерітінділерінің ортасын салыстырыңыз және температура, сұйылту мен қышқыл қосудың гидролизге әсерін бақылаңыз.',note:'Авторлық HTML файлда №9 деп белгіленген. Платформада осы тақырып №13 зертханалық сабаққа сәйкес келеді.',matchTopic:'hydrolysis'}
  ,{slug:'zerthanalyq-sabaq-15-totygu-totyqsyzdanu-reakciyalary',file:'university-lab-redox.html',title:'Тотығу-тотықсыздану реакциялары',description:'Виртуалды тәжірибелерде түс өзгерісін бақылап, реакцияларды электрондық баланс арқылы түсіндіріңіз.',note:'Авторлық файлда №11, ал платформадағы тізімде бұл тақырып №15 болып берілген.',matchTopic:'redox'}
  ,{slug:'zerthanalyq-sabaq-14-kompleksti-qosylystar',file:'university-lab-complexes.html',title:'Комплексті қосылыстар',description:'Комплекс иондарының түзілуін виртуалды тәжірибеде бақылап, ерітінділердің түсін салыстырыңыз.',note:'Авторлық файлда №10, ал платформадағы тізімде бұл тақырып №14 болып берілген.',matchTopic:'complexes'}
+ ,{slug:'zerthanalyq-sabaq-12-elektrolittik-dissociaciya-elektrolit-eritindilerdegi-reakciyalar-erigishtik-kobeitindisi',file:'university-lab-electrolytes.html',title:'Электролиттер',description:'Электролиттер мен ион алмасу реакцияларына арналған екі виртуалды тәжірибе жинағы.',matchTopic:'electrolytes',companion:{file:'university-lab-ion-exchange.html',title:'Ион алмасу реакциялары'}}
 ];
 const course='/universitet/ozin-ozi-daiyndau';
 export function labForPath(path,title=''){
@@ -18,6 +19,7 @@ export function labForPath(path,title=''){
  // never the printed laboratory number, and only inside this lab course.
  if(clean.startsWith(course+'/')&&/жылдам/iu.test(title)&&/тепе[\s–—-]*тең/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='kinetics');
  if(clean.startsWith(course+'/')&&/ерітінді/iu.test(title)&&/(?:дайында|даярла)/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='solutions');
+ if(clean.startsWith(course+'/')&&/электролиттік\s+диссоциация/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='electrolytes');
  if(clean.startsWith(course+'/')&&/гидролиз/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='hydrolysis');
  if(clean.startsWith(course+'/')&&/комплекс(?:ті|тік)\s+қосылыстар/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='complexes');
  if(clean.startsWith(course+'/')&&/тотығу[\s–—-]+тотықсыздану/iu.test(title))return UNIVERSITY_LABS.find(lab=>lab.matchTopic==='redox');
@@ -35,16 +37,20 @@ export function bindUniversityLabs(root,pathname=location.pathname){
   const copy=document.createElement('p');copy.textContent=lab.description;
   section.append(heading,copy);
   if(lab.note){const note=document.createElement('p');note.className='university-lab-note';note.textContent=lab.note;section.append(note);}
+  function addSimulation(sim,label,linkLabel){
   const details=document.createElement('details'),summary=document.createElement('summary');
-  summary.textContent='Виртуалды нұсқаны ашу';details.append(summary);
+  summary.textContent=label;details.append(summary);
   const frame=document.createElement('iframe');
-  frame.title=lab.title;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('loading','lazy');
-  const url=new URL(lab.file,document.baseURI).href;
+  frame.title=sim.title;frame.setAttribute('sandbox','allow-scripts');frame.setAttribute('loading','lazy');
+  const url=new URL(sim.file,document.baseURI).href;
   details.addEventListener('toggle',()=>{if(details.open&&!frame.hasAttribute('src'))frame.src=url;});
   details.append(frame);section.append(details);
   const link=document.createElement('a');
-  link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Жеке бетте ашу ↗';
+  link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=linkLabel;
   section.append(link);
+  }
+  addSimulation(lab,lab.companion?'№7 · Электролиттерді ашу':'Виртуалды нұсқаны ашу',lab.companion?'№7 · Жеке бетте ашу ↗':'Жеке бетте ашу ↗');
+  if(lab.companion)addSimulation(lab.companion,'№8 · Ион алмасу реакцияларын ашу','№8 · Жеке бетте ашу ↗');
   if(lab.fullFile){
    const full=document.createElement('a');full.href=new URL(lab.fullFile,document.baseURI).href;
    full.target='_blank';full.rel='noopener noreferrer';full.textContent='№6 толық нұсқаны ашу · 5 тәжірибе ↗';
