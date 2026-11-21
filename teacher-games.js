@@ -9,6 +9,11 @@ const initial=TOPICS.find(t=>t.id===params.get('topic'));
 $('level').value=initial?.level||(params.get('level')==='university'?'university':'school');
 $('grade').innerHTML=opts([7,8,9,10,11].map(n=>[n,n+'-сынып']),initial?.grade||7);
 let mode=Object.hasOwn(names,params.get('mode'))?params.get('mode'):'cross';
+const timeOptions=[0,60,120,180,300];
+$('difficulty').value=params.get('difficulty')==='hard'?'hard':'practice';
+$('seconds').value=params.has('seconds')&&timeOptions.includes(Number(params.get('seconds')))?String(Number(params.get('seconds'))):$('difficulty').value==='hard'?'120':'0';
+const isHard=()=>$('difficulty').value==='hard';
+let cleanup=()=>{};
 const score=msg=>{$('result').textContent=msg;};
 const shuffled=items=>{const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 function catalog(selected){
@@ -33,7 +38,7 @@ function crossView(topic){
   const k=i%width+','+Math.floor(i/width),c=cells.get(k);
   return c?'<div class="cell"><b aria-hidden="true">'+c.starts.join('/')+'</b><input type="text" id="p'+i+'" maxlength="1" autocomplete="off" spellcheck="false" aria-label="'+c.positions.join(', ')+'"></div>':'<div class="cell" aria-hidden="true"></div>';
  }).join('');
- return {markup:'<p>Әр торға бір әріп жазыңыз. Бос орын мен дефис торға жазылмайды; бағыттау пернелерімен жылжуға болады.</p><div class="grid-row"><div class="board-scroll"><div class="board" style="grid-template-columns:repeat('+width+',auto)">'+rows+'</div></div><ol class="clues">'+words.map(w=>'<li><strong>'+(w.horizontal?'Көлденең':'Тігінен')+' · '+w.word.length+' әріп:</strong> '+esc(w.clue)+'</li>').join('')+'</ol></div>',
+ return {markup:'<p>Әр торға бір әріп жазыңыз. Бос орын мен дефис торға жазылмайды; бағыттау пернелерімен жылжуға болады.</p><div class="grid-row"><div class="board-scroll"><div class="board" style="grid-template-columns:repeat('+width+',auto)">'+rows+'</div></div><ol class="clues">'+words.map(w=>'<li><strong>'+(w.horizontal?'Көлденең':'Тігінен')+(isHard()?':</strong> ':' · '+w.word.length+' әріп:</strong> ')+esc(w.clue)+'</li>').join('')+'</ol></div>',
  bind(form){
   const boxes=[...form.querySelectorAll('.cell input')];
   form.addEventListener('keydown',event=>{
@@ -47,13 +52,28 @@ function crossView(topic){
   return ()=>{
    let correct=0;
    for(const input of boxes){const n=Number(input.id.slice(1)),value=letters(input.value),ok=value===cells.get(n%width+','+Math.floor(n/width)).letter;correct+=Number(ok);input.dataset.state=value?(ok?'ok':'bad'):'';}
+   if(isHard()){
+    const solved=words.filter(w=>Array.from(w.word,(l,i)=>letters($('p'+((w.y+(w.horizontal?0:i))*width+w.x+(w.horizontal?i:0))).value)===l).every(Boolean)).length;
+    score(solved===words.length?'Кроссворд толық шешілді!':'Толық табылған сөз: '+solved+' / '+words.length+'.');
+    return;
+   }
    score(correct===cells.size?'Кроссворд толық шешілді!':correct+' / '+cells.size+' әріп дұрыс. Белгіленген және бос торларды қайта қараңыз.');
   };
  }};
 }
 function matchView(topic){
- const choices=shuffled(topic.terms.map(([name],i)=>[i,name]));
- return {markup:'<p>Әр анықтамаға сәйкес бір термин таңдаңыз.</p>'+shuffled(topic.terms.map(([name,clue],i)=>[i,clue])).map(([i,clue])=>'<div class="task"><label>'+esc(clue)+'<select class="response" data-pair="'+i+'"><option value="">Термин таңдаңыз</option>'+opts(choices)+'</select></label><p class="feedback"></p></div>').join(''),
+ const choices=topic.terms.map(([name],i)=>[i,name]);
+ if(isHard()){
+  const seen=new Set(choices.map(([,term])=>letters(term)));
+  const related=TOPICS.filter(t=>t.id!==topic.id&&t.level===topic.level&&t.grade===topic.grade).flatMap(t=>t.terms);
+  for(const [name] of shuffled(related)){
+   const key=letters(name);
+   if(!seen.has(key)){seen.add(key);choices.push(['extra'+choices.length,name]);}
+   if(choices.length>=7)break;
+  }
+ }
+ const bank=shuffled(choices);
+ return {markup:'<p>Әр анықтамаға сәйкес бір термин таңдаңыз.</p>'+shuffled(topic.terms.map(([name,clue],i)=>[i,clue])).map(([i,clue])=>'<div class="task"><label>'+esc(clue)+'<select class="response" data-pair="'+i+'"><option value="">Термин таңдаңыз</option>' +opts(bank)+'</select></label><p class="feedback"></p></div>').join(''),
  bind(form){return ()=>{let correct=0;
   for(const select of form.querySelectorAll('[data-pair]')){
    const ok=select.value!==''&&select.value===select.dataset.pair;correct+=Number(ok);select.dataset.state=ok?'ok':'bad';
@@ -64,25 +84,72 @@ function matchView(topic){
 }
 function codeView(topic){
  const tasks=topic.tasks.filter(t=>Number.isFinite(t[1])).slice(0,2);
- return {markup:'<p>Есепті шығарып, жауапты санмен жазыңыз. Ондық бөлшекке үтір немесе нүкте қолдануға болады.</p>'+tasks.map(([q,n,unit],i)=>'<div class="task"><label>'+esc(q)+(unit&&unit!=='—'?' <small>('+esc(unit)+')</small>':'')+'<input class="response" type="text" inputmode="'+(n<0?'text':'decimal')+'" autocomplete="off" data-code="'+i+'" placeholder="Сандық жауап"></label><p class="feedback"></p></div>').join(''),
+ const reasoning=(answer,i)=>{
+  if(!isHard())return '';
+  const pool=TOPICS.filter(t=>t.id!==topic.id&&t.level===topic.level&&t.grade===topic.grade).flatMap(t=>t.tasks.map(row=>row[3])).filter(x=>typeof x==='string'&&x.trim()&&x!==answer);
+  const choices=shuffled([[0,answer],...shuffled([...new Set(pool)]).slice(0,2).map((x,j)=>[j+1,x])]);
+  return '<label>Жауапты негіздейтін түсіндірме<select class="response" data-reason="'+i+'"><option value="">Негіздемені таңдаңыз</option>'+opts(choices)+'</select></label>';
+ };
+ return {markup:'<p>Есепті шығарып, жауапты санмен жазыңыз. Ондық бөлшекке үтір немесе нүкте қолдануға болады.</p>'+tasks.map(([q,n,unit,why],i)=>'<div class="task"><label>'+esc(q)+(unit&&unit!=='—'?' <small>('+esc(unit)+')</small>':'')+'<input class="response" type="text" inputmode="'+(n<0?'text':'decimal')+'" autocomplete="off" data-code="'+i+'" placeholder="Сандық жауап"></label>'+reasoning(why,i)+'<p class="feedback"></p></div>').join(''),
  bind(form){return ()=>{let correct=0;for(const input of form.querySelectorAll('[data-code]')){
    const [,answer,,why]=tasks[Number(input.dataset.code)],value=input.value.trim().replace(',','.').replace('−','-');
    const ok=/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value)&&Number.isFinite(Number(value))&&Math.abs(Number(value)-answer)<=Math.max(0.001,Math.abs(answer)*0.005);
-   correct+=Number(ok);input.dataset.state=ok?'ok':'bad';input.closest('.task').querySelector('.feedback').textContent=value?(ok?'Дұрыс. ':'Қайта есептеңіз. ')+why:'Алдымен жауабыңызды енгізіңіз.';
+   const task=input.closest('.task'),reason=task.querySelector('[data-reason]'),validReason=!reason||reason.value==='0';
+   correct+=Number(ok&&validReason);input.dataset.state=ok?'ok':'bad';
+   if(reason)reason.dataset.state=validReason?'ok':'bad';
+   task.querySelector('.feedback').textContent=value?(ok?(validReason?'Дұрыс. ':'Сан дұрыс, негіздемені қайта қараңыз. '):'Қайта есептеңіз. ')+why:'Жауап енгізілмеді.';
   }score('Жиналған код: '+correct+' / '+tasks.length+'.');};
  }};
 }
 function render(){
  const topic=TOPICS.find(t=>t.id===$('topic').value);if(!topic)return;
- const url=new URL(location.href);url.search=new URLSearchParams({topic:topic.id,mode});history.replaceState(null,'',url);
+ cleanup();
+ const seconds=Number($('seconds').value);
+ const url=new URL(location.href);url.search=new URLSearchParams({topic:topic.id,mode,difficulty:$('difficulty').value,seconds:String(seconds)});history.replaceState(null,'',url);
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  const v={cross:crossView,match:matchView,code:codeView}[mode](topic);
- $('game').innerHTML='<p class="eyebrow">'+(topic.grade?topic.grade+'-сынып':'Университет')+'</p><h2 id="game-title">'+esc(topic.title)+'</h2><p><strong>'+names[mode]+'</strong></p><form id="play">'+v.markup+'<div class="actions screen"><button class="primary" type="submit">Тексеру</button><button type="button" id="restart-game">Қайта бастау</button></div><p id="result" role="status"></p></form>';
- const form=$('play'),check=v.bind(form);
- form.addEventListener('submit',event=>{event.preventDefault();check();});
- $('restart-game').onclick=()=>{form.reset();for(const el of form.querySelectorAll('[data-state]'))delete el.dataset.state;for(const el of form.querySelectorAll('.feedback'))el.textContent='';score('Жаңа ойын басталды.');form.querySelector('input,select')?.focus();};
+ $('game').innerHTML='<p class="eyebrow">'+(topic.grade?topic.grade+'-сынып':'Университет')+'</p><h2 id="game-title">'+esc(topic.title)+'</h2><p><strong>'+names[mode]+'</strong></p><form id="play"><fieldset id="round-fields" aria-label="Ойын тапсырмалары">'+v.markup+'</fieldset>'+'<div class="actions screen"><button class="primary" type="submit">Тексеру</button><button type="button" id="restart-game">Қайта бастау</button></div><p id="result" role="status"></p></form>';
+ const form=$('play'),check=v.bind(form),fields=$('round-fields'),submit=form.querySelector('[type=submit]');
+ const clock=$('clock'),start=$('start-round'),state=$('round-status'),meter=$('time-meter');
+ let interval,deadline,phase='ready';
+ const display=left=>{
+  clock.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+  meter.value=left;clock.dataset.urgent=String(left<=15&&phase==='running');
+ };
+ const finish=expired=>{
+  if(phase!=='running')return;
+  phase='finished';clearInterval(interval);check();fields.disabled=true;submit.disabled=true;
+  state.textContent=expired?'Уақыт бітті. Жауаптар тексерілді.':'Айналым аяқталды. Жауаптар тексерілді.';
+  $('restart-game').focus({preventScroll:true});
+ };
+ const tick=()=>{
+  const left=Math.max(0,Math.ceil((deadline-Date.now())/1000));display(left);
+  if(!left)finish(true);
+ };
+ const reset=()=>{
+  clearInterval(interval);phase='ready';form.reset();
+  for(const el of form.querySelectorAll('[data-state]'))delete el.dataset.state;
+  for(const el of form.querySelectorAll('.feedback'))el.textContent='';
+  score('');fields.disabled=submit.disabled=Boolean(seconds);
+  clock.hidden=meter.hidden=start.hidden=!seconds;
+  state.textContent=seconds?'Таймер «Бастау» батырмасын басқанда қосылады.':'Жаттығу · уақыт шектеусіз';
+  if(seconds){meter.max=seconds;display(seconds);}
+ };
+ cleanup=()=>clearInterval(interval);
+ reset();
+ start.onclick=()=>{
+  if(!seconds||phase!=='ready')return;
+  phase='running';start.hidden=true;fields.disabled=submit.disabled=false;
+  deadline=Date.now()+seconds*1000;
+  state.textContent='Уақыт жүріп жатыр.';
+  interval=setInterval(tick,250);tick();fields.querySelector('input,select')?.focus({preventScroll:true});
+ };
+ form.addEventListener('submit',event=>{event.preventDefault();if(!seconds)check();else if(phase==='running'){tick();finish(false);}});
+ $('restart-game').onclick=()=>{reset();if(seconds)start.focus();else fields.querySelector('input,select')?.focus();};
 }
 $('level').onchange=()=>catalog();$('grade').onchange=()=>catalog();$('topic').onchange=render;
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render();});
+$('difficulty').onchange=()=>{if(isHard()&&$('seconds').value==='0')$('seconds').value='120';render();};
+$('seconds').onchange=render;
 $('print').onclick=()=>window.print();
 catalog(initial?.id);
