@@ -2,10 +2,31 @@
 <html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Химиялық ойындар — ChemBridge</title><link rel="stylesheet" href="teacher-games.css"></head>
 <body><main>
-<header class="hero"><a href="./mugalim-materialdary">← Мұғалім материалдары</a><p class="eyebrow">ChemBridge · мұғалімге арналған</p>
-<h1>Химиялық ойындар</h1><p>Тақырыпты таңдаңыз. Сабақты кроссвордпен бастаңыз, ұғымдарды жұптастырыңыз немесе қысқа есеппен бекітіңіз.</p></header>
+<header class="hero"><div><a href="./mugalim-materialdary">← Мұғалім материалдары</a><p class="eyebrow">ChemBridge · мұғалімге арналған</p>
+<h1>Химиялық ойындар</h1><p>Тақырыпты таңдаңыз. Сабақты кроссвордпен бастаңыз, ұғымдарды жұптастырыңыз немесе қысқа есеппен бекітіңіз.</p></div><svg class="hero-art" viewBox="0 0 400 245" aria-hidden="true" focusable="false">
+<defs><linearGradient id="glass" x2=".7" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#e0fcff"/><stop offset=".53" stop-color="#72d5fa"/><stop offset="1" stop-color="#a981ff"/></linearGradient>
+<linearGradient id="liquid" x2=".7" y2="1"><stop stop-color="#ffec71"/><stop offset=".56" stop-color="#ffa446"/><stop offset="1" stop-color="#ed5d90"/></linearGradient>
+<radialGradient id="pink" cx=".33" cy=".26" r=".75"><stop stop-color="#ffd7f4"/><stop offset=".42" stop-color="#f28bff"/><stop offset="1" stop-color="#a14fdc"/></radialGradient>
+<radialGradient id="mint" cx=".35" cy=".24" r=".8"><stop stop-color="#dbffe8"/><stop offset=".44" stop-color="#82f3bd"/><stop offset="1" stop-color="#1aa191"/></radialGradient>
+<clipPath id="bottle"><path d="M176 55h50v52l64 91q11 21-12 26H124q-23-5-12-26l64-91z"/></clipPath>
+<filter id="blur"><feGaussianBlur stdDeviation="8"/></filter></defs>
+<ellipse cx="203" cy="221" rx="105" ry="15" fill="#152851" opacity=".7" filter="url(#blur)"/>
+<g class="orbit"><path d="M53 158c-30-58 202-132 278-89s-131 136-245 108" fill="none" stroke="#e0c8ff" stroke-width="2" stroke-dasharray="5 9" opacity=".6"/>
+<circle cx="60" cy="151" r="22" fill="url(#pink)"/><circle cx="326" cy="86" r="28" fill="url(#mint)"/><circle cx="306" cy="161" r="10" fill="url(#pink)"/><circle cx="93" cy="73" r="14" fill="url(#mint)"/>
+<path d="M287 26l5 14 14 5-14 5-5 14-5-14-14-5 14-5zM107 182l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#fff3ad"/></g>
+<path d="M176 55h50v52l64 91q11 21-12 26H124q-23-5-12-26l64-91z" fill="url(#glass)" stroke="#e8fcff" stroke-width="4"/>
+<g clip-path="url(#bottle)"><path d="M104 153q44-17 94 1t103-4v78H104z" fill="url(#liquid)"/><path d="M104 153q44-17 94 1t103-4" stroke="#fff5a4" stroke-width="5" fill="none"/>
+<circle cx="151" cy="181" r="9" fill="#fff4ac" opacity=".7"/><circle cx="253" cy="205" r="11" fill="#fff4ac" opacity=".6"/><circle cx="230" cy="166" r="5" fill="#fff4ac" opacity=".7"/></g>
+<rect x="168" y="47" width="66" height="17" rx="8" fill="#c8f1ff" stroke="#fff" stroke-width="3"/>
+<path d="M164 133l-39 64" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>
+<ellipse cx="181" cy="181" rx="7" ry="10" fill="#392650"/><ellipse cx="220" cy="181" rx="7" ry="10" fill="#392650"/>
+<circle cx="183" cy="178" r="2.5" fill="#fff"/><circle cx="222" cy="178" r="2.5" fill="#fff"/><path d="M191 194q9 12 18 0" fill="none" stroke="#392650" stroke-width="4" stroke-linecap="round"/>
+<ellipse cx="168" cy="194" rx="7" ry="4" fill="#ed6f89"/><ellipse cx="233" cy="194" rx="7" ry="4" fill="#ed6f89"/>
+<circle cx="202" cy="32" r="8" fill="url(#mint)"/><circle cx="215" cy="13" r="5" fill="url(#pink)"/>
+</svg></header>
 <div class="picker screen" aria-label="Ойын таңдау"><label>Білім деңгейі<select id="level"><option value="school">Мектеп</option><option value="university">Университет</option></select></label><label id="grade-label">Сынып<select id="grade"></select></label><label>Тақырып<select id="topic"></select></label></div>
 <nav class="choices screen" aria-label="Ойын түрлері"><button type="button" data-mode="cross">Кроссворд</button><button type="button" data-mode="match">Терминдер жұбы</button><button type="button" data-mode="code">Химиялық код</button></nav>
+<div class="challenge screen" aria-label="Айналым баптауы"><label>Қиындық<select id="difficulty"><option value="practice">Жаттығу</option><option value="hard">Күрделі</option></select></label><label>Уақыт<select id="seconds"><option value="0">Шектеусіз</option><option value="60">1 минут</option><option value="120">2 минут</option><option value="180">3 минут</option><option value="300">5 минут</option></select></label><div class="timer-box"><div class="timer-top"><span id="clock" role="timer" aria-label="Қалған уақыт" hidden></span><button class="primary" id="start-round" type="button" hidden>Бастау</button></div><progress id="time-meter" aria-label="Қалған уақыт жолағы" hidden></progress><p id="round-status" role="status"></p></div></div>
 <section id="game" aria-labelledby="game-title"></section>
 <footer class="screen"><p>Тақтада бүкіл сыныппен немесе телефонда жеке ойнауға болады. Ұпай журналға жазылмайды.</p><button id="print" type="button">Басып шығару</button></footer>
 <noscript>Ойындарды ашу үшін браузерде JavaScript қосулы болуы керек.</noscript>
