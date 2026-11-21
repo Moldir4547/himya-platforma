@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Химиялық ойындар — ChemBridge</title><link rel="stylesheet" href="teacher-games.css"></head>
+<body><main>
+<header class="hero"><a href="./mugalim-materialdary">← Мұғалім материалдары</a><p class="eyebrow">ChemBridge · мұғалімге арналған</p>
+<h1>Химиялық ойындар</h1><p>Тақырыпты таңдаңыз. Сабақты кроссвордпен бастаңыз, ұғымдарды жұптастырыңыз немесе қысқа есеппен бекітіңіз.</p></header>
+<div class="picker screen" aria-label="Ойын таңдау"><label>Білім деңгейі<select id="level"><option value="school">Мектеп</option><option value="university">Университет</option></select></label><label id="grade-label">Сынып<select id="grade"></select></label><label>Тақырып<select id="topic"></select></label></div>
+<nav class="choices screen" aria-label="Ойын түрлері"><button type="button" data-mode="cross">Кроссворд</button><button type="button" data-mode="match">Терминдер жұбы</button><button type="button" data-mode="code">Химиялық код</button></nav>
+<section id="game" aria-labelledby="game-title"></section>
+<footer class="screen"><p>Тақтада бүкіл сыныппен немесе телефонда жеке ойнауға болады. Ұпай журналға жазылмайды.</p><button id="print" type="button">Басып шығару</button></footer>
+<noscript>Ойындарды ашу үшін браузерде JavaScript қосулы болуы керек.</noscript>
+</main><script src="teacher-games.js" type="module"></script></body></html>
