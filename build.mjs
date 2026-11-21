@@ -33,6 +33,8 @@ const files = [
   "university-lab-hydrolysis.html",
   "university-lab-redox.html",
   "university-lab-complexes.html",
+  "university-lab-electrolytes.html",
+  "university-lab-ion-exchange.html",
   "university-control-data.js",
   "registration.js",
   "bond-practice.js",
