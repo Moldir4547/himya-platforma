@@ -60,7 +60,7 @@ function matchView(topic){
    select.closest('.task').querySelector('.feedback').textContent=ok?'Дұрыс.':'Анықтаманың негізгі белгісіне назар аударыңыз.';
   }
   score('Табылған жұп: '+correct+' / '+topic.terms.length+'.');
- }};
+ };}};
 }
 function codeView(topic){
  const tasks=topic.tasks.filter(t=>Number.isFinite(t[1])).slice(0,2);
