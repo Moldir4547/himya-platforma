@@ -23,6 +23,10 @@ const files = [
   "continuity-assessment.js",
   "teacher-journey.css",
   "university-control.js",
+  "university-exercises.html",
+  "university-exercises.css",
+  "university-exercises.js",
+  "university-exercises-data.js",
   "university-labs.js",
   "university-lab-co2.html",
   "university-lab-metal.html",
@@ -111,7 +115,7 @@ for (const file of files) {
       /(["'])(\.\/[a-zA-Z0-9_.-]+\.js)\1/g,
       (_, q, p) => `${q}${p}?v=${revision}${q}`,
     );
-  if (file === "index.html" || file === "teacher-games.html" || file === "chem-missions.html")
+  if (file === "index.html" || file === "teacher-games.html" || file === "chem-missions.html" || file === "university-exercises.html")
     text = text.replace(
       /((?:src|href)=["'])([a-zA-Z0-9_.-]+\.(?:js|css))(["'])/g,
       (_, a, p, q) => `${a}${p}?v=${revision}${q}`,
