@@ -1,6 +1,7 @@
 import {SupabaseStore} from './store.js';
 import {EQUATIONS,balanceRows} from './chem-equations.js';
 import {ADVENTURES} from './chem-adventures.js';
+import {UNIVERSITY_MISSIONS,UNIVERSITY_BOOK,gradeUniversity} from './chem-university-missions.js';
 const M={"7":{"name":"Заттар сұрыптаушысы","desc":"Күнделікті заттарды үш топқа орналастыр.","labels":["Жай зат","Күрделі зат","Қоспа"],"easy":[["Оттек · O₂",0,"O₂ молекуласында бір ғана элементтің атомдары бар."],["Ас тұзы · NaCl",1,"NaCl құрамында натрий мен хлор бар."],["Ауа",2,"Ауа — бірнеше газдың қоспасы."]],"hard":[["Тазартылған суда еріген ас тұзы",2,"Су мен тұз бірге біртекті қоспа түзеді."],["Таза озон · O₃",0,"Үш атом болғанымен, бәрі оттек атомдары."],["Таза көмірқышқыл газы · CO₂",1,"Көміртек пен оттек бір қосылыс түзеді."]]},"8":{"name":"Теңдеу құрастыр","desc":"Атомдар саны екі жақта тең болсын. Ең кіші бүтін коэффициенттерді енгіз.","easy":[["H₂ + O₂ → H₂O",[2,1,2]],["Na + Cl₂ → NaCl",[2,1,2]],["Mg + O₂ → MgO",[2,1,2]]],"hard":[["Fe + O₂ → Fe₂O₃",[4,3,2]],["Al + O₂ → Al₂O₃",[4,3,2]],["C₃H₈ + O₂ → CO₂ + H₂O",[1,5,3,4]]]},"9":{"name":"Ион детективі","desc":"Дерек бойынша тұнбаны немесе бақылаушы ионды тап.","easy":[["Ag⁺ пен Cl⁻ бір ерітіндіде кездескенде қандай тұнба түзіледі?",["AgCl","NaCl","KNO₃"],0,"Ag⁺ + Cl⁻ → AgCl↓."],["Ba²⁺ + SO₄²⁻ → ?",["BaCl₂","BaSO₄","Na₂SO₄"],1,"Барий сульфаты нашар ериді."],["H⁺ пен OH⁻ қосылғанда не түзіледі?",["H₂","O₂","H₂O"],2,"Бейтараптануда су түзіледі."]],"hard":[["NaCl + AgNO₃ → AgCl↓ + NaNO₃. Қысқартылған теңдеуге кірмейтін иондар?",["Ag⁺ пен Cl⁻","Na⁺ пен NO₃⁻","Na⁺ пен Cl⁻"],1,"Na⁺ және NO₃⁻ екі жақта да өзгеріссіз қалады."],["Қай жағдайдағы нәтиже ион алмасуды көрсетеді?",["Екі еритін нитратты араластырғанда өзгеріс жоқ","Екі ерітінді де бастапқыда мөлдір","Араластырудан кейін ерімейтін тұнба түзіледі"],2,"Тұнба иондардың ерітіндіден бөлініп шыққанын көрсетеді."],["Қай қысқартылған теңдеу атом саны мен зарядты сақтайды?",["CO₃²⁻ + 2H⁺ → CO₂ + H₂O","CO₃²⁻ + H⁺ → CO₂ + H₂O","CO₃²⁻ + 3H⁺ → CO₂ + H₂O"],0,"Сол жағындағы −2 және +2 зарядтары теңеседі; атом саны да сақталады."]]},"10":{"name":"Орбиталь шеберханасы","desc":"Электрондарды ұяшықтарға орналастыр. Бос торды басқанда ↑, кейін ↑↓ шығады.","easy":[["B",5,1],["C",6,2],["O",8,4]],"hard":[["N",7,3],["F",9,5],["Ne",10,6]]},"11":{"name":"Титрлеу станциясы","desc":"Стехиометриялық қатынасты қолданып, эквиваленттік көлемді есепте. Көлемді мл-мен жаз.","easy":[["20,0 мл 0,10 М HCl ерітіндісі 0,10 М NaOH-пен титрленді. NaOH көлемі?",20,"HCl мен NaOH қатынасы 1:1. Концентрациялар тең болғандықтан, көлемдері де тең."],["25,0 мл 0,20 М HCl үшін 0,10 М NaOH көлемі?",50,"c₁V₁ = c₂V₂: 25,0 × 0,20 / 0,10 = 50 мл."],["10,0 мл 0,15 М NaOH үшін 0,15 М HCl көлемі?",10,"1:1 қатынаста концентрациялар тең болса, V₁ = V₂."]],"hard":[["20,0 мл 0,10 М H₂SO₄-ті толық бейтараптандыруға қажет 0,10 М NaOH көлемі?",40,"1 моль H₂SO₄ толық бейтараптанғанда 2 моль NaOH жұмсалады."],["15,0 мл 0,20 М Ba(OH)₂ үшін қажет 0,10 М HCl көлемі?",60,"1 моль Ba(OH)₂-ге 2 моль HCl қажет. 15,0 × 0,20 × 2 / 0,10 = 60 мл."],["10,0 мл 0,15 М H₂SO₄ үшін 0,25 М NaOH көлемі?",12,"V = 2 × 10,0 × 0,15 / 0,25 = 12 мл."]]}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -45,7 +46,7 @@ function setup(){
  grade=Number($('mission-grade').value);
  level=$('mission-level').value;
  const mode=$('mission-kind').value,variant=mode==='grade'&&grade===8?'balance':mode;
- runKey=['cb-mission-run-v2',owner(),variant,mode==='grade'||mode==='balance'?grade:'all',level].join(':');
+ runKey=['cb-mission-run-v2',owner(),variant,mode==='grade'||mode==='balance'?grade:'all',UNIVERSITY_MISSIONS[mode]?'university':level].join(':');
  try{localStorage.getItem(runKey);storeOK=true;}catch{storeOK=false;}
  run=readRun()||blank();
  show();
@@ -53,13 +54,13 @@ function setup(){
 addEventListener('storage',event=>{if(event.key===runKey||event.key==='chem_supabase_session_v1')setup();});
 function show(){
  const mode=$('mission-kind').value,atomic=mode==='particles',balanced=mode==='balance'||(mode==='grade'&&grade===8),type=mode==='grade'?grade:0;
- const adventure=ADVENTURES[mode],game=adventure||(atomic?PARTICLES:balanced?{...M[8],...EQUATIONS[grade]}:M[grade]),tasks=game[level],{turn,misses,phase}=run,task=tasks[turn],panel=$('mission');
+ const uni=UNIVERSITY_MISSIONS[mode],adventure=ADVENTURES[mode],game=uni||adventure||(atomic?PARTICLES:balanced?{...M[8],...EQUATIONS[grade]}:M[grade]),tasks=uni?uni.tasks:game[level],{turn,misses,phase}=run,task=tasks[turn],panel=$('mission');
  $('motivation').textContent='';
  if(!storeOK){panel.innerHTML='<p class="mission-card">Ойын нәтижесін сақтау үшін браузерде сайт деректерін сақтауға рұқсат бер.</p>';return;}
  function route(){
-  if(!adventure)return '';
+  if(!adventure&&!uni)return '';
   const opened=turn+(phase==='correct'?1:0);
-  return '<ol class="adventure-route route-'+mode+'" aria-label="Ойын кезеңдері">'+adventure.stages.map((name,i)=>{
+  return '<ol class="adventure-route route-'+mode+'" aria-label="Ойын кезеңдері">'+(uni?tasks.map((_,i)=>'Кезең '+(i+1)):adventure.stages).map((name,i)=>{
    const isOpen=i<opened,isCurrent=i===turn&&!isOpen;
    const mark=mode==='code'?(isOpen?tasks[i][1][tasks[i][2]].slice(-1):'•'):(isOpen?'✓':isCurrent?'◆':'🔒');
    return '<li class="'+(isOpen?'unlocked':isCurrent?'active':'')+'"'+(isCurrent?' aria-current="step"':'')+'><strong>'+esc(mark)+'</strong> '+esc(name)+'</li>';
@@ -72,7 +73,7 @@ function show(){
   panel.querySelector('h3').focus();
   return;
  }
- const [prompt,a,b,why]=task;let markup='',evaluate,solution,wrongHint='Жауабыңды қайта қара.';
+ const [prompt,a,b,why]=uni?[task.prompt]:task;let markup='',evaluate,solution,source='',wrongHint='Жауабыңды қайта қара.';
  const choiceButtons=choices=>'<div class="rail">'+choices.map((label,i)=>'<button type="button" data-choice="'+i+'">'+esc(label)+'</button>').join('')+'</div>';
  if(type===7||type===9||adventure){
   const choices=type===7?game.labels:a;
@@ -123,12 +124,28 @@ function show(){
   markup=(level==='easy'?'<p>1s² және 2s² толтырылған. 2p ұяшықтарын ретте.</p>':'<p>1s, 2s және 2p ұяшықтарын түгел толтыр.</p>')+'<div class="orbitals">'+shell.map((s,i)=>'<label>'+s+'<br><button type="button" data-orbit="'+i+'" data-fill="0" aria-label="'+s+': бос">□</button></label>').join('')+'</div><button class="primary" type="submit">Тексеру</button>';
   evaluate=()=>{const v=[...panel.querySelectorAll('[data-orbit]')].map(x=>Number(x.dataset.fill)),p=v.slice(-3);return [(level==='easy'||(v[0]===2&&v[1]===2))&&p.reduce((s,n)=>s+n,0)===b&&(!p.includes(2)||!p.includes(0)),'2p-де '+b+' электрон болуы керек: алдымен бос ұяшықтарға бір-бірден, содан кейін жұппен орналастыр.'];};
  }
+ if(uni){
+  const [section,print,pdf]=task.source;
+  source='<details class="mission-source"><summary>Оқулықтағы орны: '+esc(section)+'</summary><p><cite>'+esc(UNIVERSITY_BOOK.title)+'</cite> · '+esc(UNIVERSITY_BOOK.authors)+'</p><p>Баспа: '+print+'-бет · Берілген PDF: '+pdf+'-бет</p><p>Тапсырма оқулықтағы ұғымға сүйеніп, ChemBridge үшін құрастырылды.</p></details>';
+  solution=task.fields.map(f=>f.label+': '+(f.choices?f.choices[f.value]:String(Number(f.value.toPrecision(5))).replace('.',','))).join('; ')+'. '+task.explanation;
+  markup='<div class="uni-mission-fields">'+task.fields.map((field,i)=>'<label>'+esc(field.label)+(field.choices
+   ?'<select data-uni-answer><option value="">Таңдаңыз</option>'+field.choices.map((choice,k)=>'<option value="'+k+'">'+esc(choice)+'</option>').join('')+'</select>'
+   :'<input data-uni-answer type="text" inputmode="'+(field.value<0?'text':'decimal')+'" autocomplete="off" maxlength="24" placeholder="Сан енгізіңіз">')+'<span class="uni-answer-state" aria-live="polite"></span></label>').join('')+'</div><button class="primary" type="submit">Жауаптарды тексеру</button>';
+  evaluate=()=>{
+   const controls=[...panel.querySelectorAll('[data-uni-answer]')];
+   const result=gradeUniversity(task,controls.map(el=>el.value));
+   if(!result)return [null,'Барлық ұяшықты толтыр: жауапты таңда немесе санды бірліксіз енгіз. Ондық үтір мен нүкте жарайды.'];
+   controls.forEach((el,i)=>{el.setAttribute('aria-invalid',String(!result[i]));el.nextElementSibling.textContent=result[i]?'Дұрыс':'Қайта тексер';});
+   const correct=result.filter(Boolean).length;
+   return [correct===result.length,correct+' / '+result.length+' бөлігі дұрыс. Белгіленген жауаптарды қайта тексер.'];
+  };
+ }
  if(type===11){
   solution=a+' мл. '+b;
   markup='<label>NaOH немесе HCl көлемі, мл<input type="text" class="answer" inputmode="decimal" autocomplete="off"></label><button class="primary" type="submit">Тексеру</button>';
   evaluate=()=>{const v=panel.querySelector('.answer').value.trim().replace(',','.');return [/^\d+(\.\d+)?$/.test(v)?Math.abs(Number(v)-a)<.051:null,/^\d+(\.\d+)?$/.test(v)?'Реакциядағы мольдік қатынасты және концентрацияны тексер.':'Көлемді санмен жаз.'];};
  }
- panel.innerHTML='<div class="mission-card'+(adventure?' adventure-'+mode:'')+'"><p class="eyebrow">'+(atomic?'Атом құрылысы':adventure?'Оқиғалы ойын':grade+'-сынып')+' · '+(turn+1)+' / '+tasks.length+'</p><h3>'+esc(game.name)+'</h3><p>'+esc(game.desc)+'</p><p id="mission-lives" class="mission-lives"></p>'+route()+'<p><strong>'+esc(type===10?prompt+' · Z = '+a:prompt)+'</strong></p><form id="mission-form"><fieldset id="mission-fields">'+markup+'</fieldset></form><p id="mission-explanation" aria-live="polite"></p><button id="mission-next" type="button" hidden>Келесі тапсырма</button></div>';
+ panel.innerHTML='<div class="mission-card'+(uni?' university-mission':adventure?' adventure-'+mode:'')+'"><p class="eyebrow">'+(atomic?'Атом құрылысы':uni?'Университет · күрделі':adventure?'Оқиғалы ойын':grade+'-сынып')+' · '+(turn+1)+' / '+tasks.length+'</p><h3>'+esc(game.name)+'</h3><p>'+esc(game.desc)+'</p><p id="mission-lives" class="mission-lives"></p>'+route()+(uni?'<h4>'+esc(task.title)+'</h4>':'')+'<p><strong>'+esc(type===10?prompt+' · Z = '+a:prompt)+'</strong></p><form id="mission-form"><fieldset id="mission-fields">'+markup+'</fieldset></form><p id="mission-explanation" aria-live="polite"></p>'+source+'<button id="mission-next" type="button" hidden>Келесі тапсырма</button></div>';
  function paintSolo(){
   $('mission-lives').textContent='Қалған мүмкіндік: '+(MAX_MISSES-run.misses)+' / '+MAX_MISSES+' · Ұпай: '+(run.turn+(run.phase==='correct'?1:0))*100;
   $('mission-fields').disabled=run.phase!=='playing';
@@ -168,13 +185,15 @@ function show(){
 }
 $('mission-grade').onchange=$('mission-level').onchange=setup;
 $('mission-kind').onchange=()=>{
- $('mission-grade').disabled=!['grade','balance'].includes($('mission-kind').value);
+ const kind=$('mission-kind').value;
+ $('mission-grade').disabled=!['grade','balance'].includes(kind);
+ $('mission-level').disabled=Boolean(UNIVERSITY_MISSIONS[kind]);
  setup();
 };
 const params=new URLSearchParams(location.search),requested=params.get('grade');
 if(M[requested])$('mission-grade').value=requested;
 if(params.get('difficulty')==='hard')$('mission-level').value='hard';
-if(['balance','particles',...Object.keys(ADVENTURES)].includes(params.get('mission')))$('mission-kind').value=params.get('mission');
+if(['balance','particles',...Object.keys(ADVENTURES),...Object.keys(UNIVERSITY_MISSIONS)].includes(params.get('mission')))$('mission-kind').value=params.get('mission');
 $('mission-kind').onchange();
 const cfg=window.__CHEM_CONFIG__,db=cfg?.supabaseUrl&&cfg?.supabaseAnonKey?new SupabaseStore(cfg.supabaseUrl,cfg.supabaseAnonKey):null;
 const roomStatus=msg=>{$('live-status').textContent=msg;};

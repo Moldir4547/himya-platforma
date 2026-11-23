@@ -15,3 +15,15 @@
 #mission-fields:disabled button,#mission-fields:disabled input{cursor:default}
 #mission-explanation:not(:empty){background:var(--panel);padding:.65rem;border-radius:.55rem}
 
+
+.university-mission{border-block-start:.45rem solid #9462d5}
+.uni-mission-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr));gap:.75rem;margin-block:1rem}
+.uni-mission-fields label{display:grid;align-content:start;gap:.25rem;min-width:0}
+.uni-mission-fields input,.uni-mission-fields select{width:100%;min-width:0}
+.uni-answer-state{min-block-size:1.3em;font-size:.85rem}
+.uni-mission-fields [aria-invalid=true]{border-color:var(--bad)}
+.uni-mission-fields [aria-invalid=true]+span{color:var(--bad)}
+.uni-mission-fields [aria-invalid=false]{border-color:var(--ok)}
+.uni-mission-fields [aria-invalid=false]+span{color:var(--ok)}
+.mission-source{margin:.75rem 0;padding:.5rem .75rem;border:1px solid var(--line);border-radius:.6rem;background:var(--panel)}
+.mission-source summary{cursor:pointer;font-weight:650}
