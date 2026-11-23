@@ -27,6 +27,7 @@ const files = [
   "university-exercises.css",
   "university-exercises.js",
   "university-exercises-data.js",
+  "university-exercises-sets.js",
   "university-labs.js",
   "university-lab-co2.html",
   "university-lab-metal.html",
