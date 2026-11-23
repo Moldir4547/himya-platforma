@@ -40,11 +40,11 @@ test('five grade mechanics, confetti, and a host and player connected to the sam
   assert.ok(await student.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
   const fillCounts=async values=>{for(const [i,n] of values.entries())await student.locator('#mission-fields .answer').nth(i).fill(String(n));};
   const check=()=>student.getByRole('button',{name:'Тексеру',exact:true}).click();
-  await student.goto(url+'?mission=balance&difficulty=hard');
+  await student.goto(url+'?mission=balance&grade=8&difficulty=hard');
   await fillCounts([1,1,1]);await check();assert.match(await student.locator('#mission-explanation').textContent(),/Тең емес элементтер/);
   assert.equal(await student.locator('#atom-counts tbody tr').count(),2);
-  await fillCounts([8,6,4]);await check();assert.match(await student.locator('#mission-explanation').textContent(),/ортақ бөлгішіне/);
-  await fillCounts([4,3,2]);await check();assert.match(await student.locator('#motivation').textContent(),/Жарайсың/);
+  await fillCounts([6,4,2]);await check();assert.match(await student.locator('#mission-explanation').textContent(),/ортақ бөлгішіне/);
+  await fillCounts([3,2,1]);await check();assert.match(await student.locator('#motivation').textContent(),/Жарайсың/);
   await student.locator('#mission-kind').selectOption('particles');
   await fillCounts([11,12,11]);await check();assert.match(await student.locator('#mission-explanation').textContent(),/e = Z/);
   assert.equal(await student.locator('#mission-fields .answer[aria-invalid="true"]').count(),1);
@@ -54,6 +54,38 @@ test('five grade mechanics, confetti, and a host and player connected to the sam
   await student.locator('#mission-level').selectOption('easy');
   await fillCounts([6,6,6]);await check();assert.match(await student.locator('#motivation').textContent(),/Жарайсың/);
   assert.ok(await student.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
+  await student.goto(url+'?mission=balance&grade=9&difficulty=hard');
+  await check();assert.match(await student.locator('#mission-lives').textContent(),/3 \/ 3/);
+  await fillCounts([1,1,1,1]);await check();assert.match(await student.locator('#mission-lives').textContent(),/2 \/ 3/);
+  await student.reload();
+  await fillCounts([1,3,3,2]);await check();
+  await student.locator('#mission-next').click();
+  await fillCounts([1,1,1,1]);await check();await check();
+  assert.match(await student.locator('#mission-explanation').textContent(),/Дұрыс жауап:.*Fe\(OH\)₃.*Коэффициенттер/);
+  assert.ok(await student.locator('#mission-fields button').isDisabled());
+  await student.locator('#mission-kind').selectOption('particles');
+  await student.locator('#mission-kind').selectOption('balance');
+  await student.reload();
+  assert.ok(await student.locator('#mission-fields button').isDisabled());
+  assert.equal(await student.locator('#restart-mission').count(),0);
+  assert.match(await student.locator('#mission-explanation').textContent(),/Дұрыс жауап:/);
+  await student.locator('#mission-grade').selectOption('11');
+  assert.match(await student.locator('#mission').textContent(),/KMnO₄/);
+  assert.ok(await student.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
+  await student.goto(url+'?mission=code');
+  assert.equal(await student.locator('.adventure-route .unlocked').count(),0);
+  for(const index of [2,1,2,0,3]){
+   await student.locator('[data-choice="'+index+'"]').click();
+   assert.ok(await student.locator('#mission-next').isVisible());
+   await student.locator('#mission-next').click();
+  }
+  await student.getByRole('heading',{name:/Құпия код: 87322/}).waitFor();
+  await student.goto(url+'?mission=million');
+  await student.locator('[data-choice="1"]').click();
+  assert.match(await student.locator('.adventure-route .unlocked').textContent(),/10 000/);
+  await student.goto(url+'?mission=treasure');
+  await student.locator('[data-choice="2"]').click();
+  assert.match(await student.locator('.adventure-route .unlocked').textContent(),/Жағалау/);
   await host.addInitScript(()=>localStorage.setItem('chem_supabase_session_v1',JSON.stringify({access_token:'test-token',expires_at:4102444800})));
   await host.goto(url);await host.getByRole('button',{name:'Сыныппен жарысу'}).click();await host.getByRole('button',{name:'Бөлме ашу'}).click();
   const link=await host.locator('#join-link').getAttribute('href');
@@ -64,3 +96,4 @@ test('five grade mechanics, confetti, and a host and player connected to the sam
   assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>srv.close(r));}
 });
+
