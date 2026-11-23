@@ -86,6 +86,26 @@ test('five grade mechanics, confetti, and a host and player connected to the sam
   await student.goto(url+'?mission=treasure');
   await student.locator('[data-choice="2"]').click();
   assert.match(await student.locator('.adventure-route .unlocked').textContent(),/Жағалау/);
+  await student.goto(url+'?mission=uni-orbitals');
+  await student.getByRole('heading',{name:'Орбиталь зерттеушісі'}).waitFor();
+  assert.ok(await student.locator('#mission-level').isDisabled());
+  const apply=()=>student.getByRole('button',{name:'Жауаптарды тексеру'}).click();
+  await apply();assert.match(await student.locator('#mission-lives').textContent(),/3 \/ 3/);
+  const fields=student.locator('[data-uni-answer]');
+  await fields.nth(0).fill('2,5');await fields.nth(1).fill('1');await fields.nth(2).selectOption('1');
+  await apply();await student.locator('#mission-next').click();
+  assert.match(await student.locator('#mission').textContent(),/Пероксид/);
+  await student.goto(url+'?mission=uni-redox');
+  for(let i=0;i<3;i++){
+   for(let j=0;j<3;j++)await fields.nth(j).fill('1');
+   await apply();
+  }
+  await student.reload();
+  await student.getByText(/Дұрыс жауап:.*Fe²⁺ коэффициенті: 5/).waitFor();
+  await student.locator('.mission-source summary').click();
+  assert.match(await student.locator('.mission-source').textContent(),/200-бет/);
+  assert.ok(await fields.first().isDisabled());
+  assert.ok(await student.locator('html').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
   await host.addInitScript(()=>localStorage.setItem('chem_supabase_session_v1',JSON.stringify({access_token:'test-token',expires_at:4102444800})));
   await host.goto(url);await host.getByRole('button',{name:'Сыныппен жарысу'}).click();await host.getByRole('button',{name:'Бөлме ашу'}).click();
   const link=await host.locator('#join-link').getAttribute('href');

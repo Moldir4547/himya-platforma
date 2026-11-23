@@ -61,6 +61,7 @@ const files = [
   "chem-missions.js",
   "chem-equations.js",
   "chem-adventures.js",
+  "chem-university-missions.js",
   "teacher-materials.css",
   "guided-lab.js",
   "guided-lab-data.js",
