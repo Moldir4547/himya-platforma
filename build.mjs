@@ -56,6 +56,9 @@ const files = [
   "teacher-games.html",
   "teacher-games.css",
   "teacher-games.js",
+  "chem-missions.html",
+  "chem-missions.css",
+  "chem-missions.js",
   "teacher-materials.css",
   "guided-lab.js",
   "guided-lab-data.js",
@@ -105,7 +108,7 @@ for (const file of files) {
       /(["'])(\.\/[a-zA-Z0-9_.-]+\.js)\1/g,
       (_, q, p) => `${q}${p}?v=${revision}${q}`,
     );
-  if (file === "index.html" || file === "teacher-games.html")
+  if (file === "index.html" || file === "teacher-games.html" || file === "chem-missions.html")
     text = text.replace(
       /((?:src|href)=["'])([a-zA-Z0-9_.-]+\.(?:js|css))(["'])/g,
       (_, a, p, q) => `${a}${p}?v=${revision}${q}`,
