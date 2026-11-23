@@ -1,8 +1,9 @@
+import {HOME,GUIDED} from './university-exercises-sets.js';
 import {BOOKS,AUTHORS,MODULES,checkNumber} from './university-exercises-data.js';
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const topic=$('exercise-topic'),content=$('exercise-content'),params=new URLSearchParams(location.search);
-let mode=params.get('mode')==='bozh'?'bozh':'boozh';
+let mode=params.get('mode')==='bozh'?'bozh':'boozh', selected=params.get('task')||'';
 topic.innerHTML=MODULES.map((m,i)=>'<option value="'+m.id+'">'+(i+1)+'. '+esc(m.title)+'</option>').join('');
 if(MODULES.some(m=>m.id===params.get('topic')))topic.value=params.get('topic');
 const steps=t=>'<ol>'+t.steps.map(([how,why])=>'<li><strong>'+esc(how)+'</strong><p>'+esc(why)+'</p></li>').join('')+'</ol><p class="exercise-answer"><strong>Дұрыс жауап:</strong> '+esc(t.answer)+'</p>';
@@ -12,25 +13,30 @@ function workboard(id){
 function exercise(task,name,id){
  let ref='';
  if(task.book){const b=BOOKS[task.book];ref='<p class="exercise-ref">'+esc(b.title)+' ('+b.year+'), '+task.page+'-бет (PDF: '+(task.page+b.pdfOffset)+'-бет) · '+esc(task.number)+'. Шарттың мәтіні ықшамдалды немесе тексеруге бейімделді.</p>';}
- const [, ,unit]=task.check;
- return '<section class="exercise-card" data-task="'+id+'"><h3>'+esc(name)+'</h3>'+ref+'<p>'+esc(task.prompt)+'</p>'+workboard(id)+'<form class="exercise-check"><label>Сандық жауап'+(unit?' ('+esc(unit)+')':'')+'<input type="text" inputmode="decimal" maxlength="30" autocomplete="off"></label><button class="primary" type="submit">Жауапты тексеру</button></form><p class="exercise-feedback" role="status"></p><details><summary>Алғашқы қадамға көмек</summary><p>'+esc(task.steps[0][1])+'</p></details><details data-solution><summary>Толық шешу жолы мен дұрыс жауап</summary>'+steps(task)+'</details></section>';
+ const [, ,unit]=task.check||[];
+ return '<section class="exercise-card" data-task="'+id+'"><h3>'+esc(name)+'</h3>'+ref+'<p>'+esc(task.prompt)+'</p>'+workboard(id)+(task.check?'<form class="exercise-check"><label>Сандық жауап'+(unit?' ('+esc(unit)+')':'')+'<input type="text" inputmode="decimal" maxlength="30" autocomplete="off"></label><button class="primary" type="submit">Жауапты тексеру</button></form><p class="exercise-feedback" role="status"></p>':'<p>Жауабыңызды тақтаға жазыңыз, кейін үлгі шешіммен салыстырыңыз.</p>')+'<details><summary>Алғашқы қадамға көмек</summary><p>'+esc(task.steps[0][1])+'</p></details><details data-solution><summary>Толық шешу жолы мен дұрыс жауап</summary>'+steps(task)+'</details></section>';
 }
 function render(focus=false){
  const m=MODULES.find(v=>v.id===topic.value)||MODULES[0];
  document.querySelectorAll('[data-mode]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.mode===mode)));
- const query=new URLSearchParams({mode,topic:m.id});
+ const guided=mode==='boozh', list=guided?[...(m.homework.book==='tasks'?[m.homework]:[]),...GUIDED[m.id]]:HOME[m.id];
+ const at=Number(selected),idx=selected!==''&&Number.isInteger(at)&&at>=0&&at<list.length?at:0;
+ const chosen=list[idx], query=new URLSearchParams({mode,topic:m.id,task:String(idx)});
  history.replaceState(null,'','?'+query);
- content.innerHTML='<h2 tabindex="-1">'+esc(m.title)+'</h2>'+(
-  mode==='boozh'?'<section class="exercise-card" data-task="example"><h3>БӨОЖ · оқытушымен талданатын үлгі</h3><p>'+esc(m.example.prompt)+'</p>'+steps(m.example)+workboard('example')+'</section>'
-  :exercise(m.practice,'БӨЖ · ұқсас есепті өзіңіз шығарыңыз','practice')+exercise(m.homework,'Кітаптағы үй тапсырмасына көмек','homework')
- )+'<section class="exercise-card"><h3>Оқу көздері</h3><p>'+esc(AUTHORS)+'</p><ul>'+m.pages.map(([key,r])=>'<li><cite>'+esc(BOOKS[key].title)+'</cite> ('+BOOKS[key].year+'), '+esc(r)+'-беттер.</li>').join('')+'</ul>'+[m.video,m.extraVideo].filter(Boolean).map(([id,title])=>'<p><a class="exercise-video" href="https://www.youtube.com/watch?v='+encodeURIComponent(id)+'" target="_blank" rel="noopener noreferrer">YouTube: '+esc(title)+' ↗</a></p>').join('')+'</section>';
+ const intro=guided?'БӨОЖ · Химия есептері мен жаттығулары':'БӨЖ · ПЖЭХ практикумы';
+ content.innerHTML='<h2 tabindex="-1">'+esc(m.title)+'</h2><section class="exercise-card"><h3>'+esc(intro)+'</h3><p>'+list.length+' тапсырма. Нөмірін таңдаңыз.</p><label>Тапсырма <select id="exercise-assignment">'+list.map((t,i)=>'<option value="'+i+'"'+(i===idx?' selected':'')+'>'+esc(t.number+' · '+t.page+'-бет')+'</option>').join('')+'</select></label></section>'
+ +exercise(chosen,guided?'Оқытушымен талданатын кітап тапсырмасы':'Кітаптағы үй тапсырмасы','homework')
+ +(guided?exercise(m.practice,'Әдісті бекіту · қосымша ұқсас есеп','practice'):'')
+ +'<section class="exercise-card"><h3>Оқу көздері</h3><p>'+esc(AUTHORS)+'</p><ul>'+m.pages.map(([key,r])=>'<li><cite>'+esc(BOOKS[key].title)+'</cite> ('+BOOKS[key].year+'), '+esc(r)+'-беттер.</li>').join('')+'</ul>'+[m.video,m.extraVideo].filter(Boolean).map(([id,title])=>'<p><a class="exercise-video" href="https://www.youtube.com/watch?v='+encodeURIComponent(id)+'" target="_blank" rel="noopener noreferrer">YouTube: '+esc(title)+' ↗</a></p>').join('')+'</section>';
+ $('exercise-assignment').onchange=ev=>{selected=ev.target.value;render();$('exercise-assignment')?.focus();};
  content.querySelectorAll('[data-task]').forEach(card=>{
   const key=card.dataset.task;
-  wireBoard(card,'cb-university-exercises-v1:'+m.id+':'+key);
+  const t=key==='homework'?chosen:m.practice;
+  wireBoard(card,'cb-university-exercises-v1:'+m.id+':'+(key==='homework'?[chosen.book,chosen.page,chosen.number].join(':'):key));
   const form=card.querySelector('form');if(!form)return;
   form.onsubmit=ev=>{
    ev.preventDefault();
-   const t=m[key],input=form.querySelector('input'),[n,tol]=t.check,res=checkNumber(input.value,n,tol),msg=card.querySelector('.exercise-feedback');
+   const input=form.querySelector('input'),[n,tol]=t.check,res=checkNumber(input.value,n,tol),msg=card.querySelector('.exercise-feedback');
    msg.className='exercise-feedback '+(res===true?'exercise-good':res===false?'exercise-miss':'');
    input.setAttribute('aria-invalid',String(res!==true));
    msg.textContent=res===null?'Санды өлшем бірлігінсіз енгізіңіз. Ондық үтір де, нүкте де жарайды.':res?'Сандық жауап дұрыс. Шешу жолыңызды үлгімен салыстырыңыз.':'Жауап сәйкес келмеді. Бірліктерді тексеріңіз немесе алғашқы қадамға көмекті ашыңыз.';
@@ -65,6 +71,6 @@ function wireBoard(card,key){
  notes.addEventListener('input',save);
  draw();
 }
-topic.onchange=()=>render(true);
-document.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;render(true);});
+topic.onchange=()=>{selected='';render(true);};
+document.querySelectorAll('[data-mode]').forEach(btn=>btn.onclick=()=>{mode=btn.dataset.mode;selected='';render(true);});
 render();
