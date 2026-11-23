@@ -9,47 +9,107 @@ function salute(){
  $('salute').innerHTML=Array.from({length:30},(_,i)=>{const a=i*2.39996,r=75+(i%7)*16;return '<b style="--x:'+Math.round(r*Math.cos(a))+'px;--y:'+Math.round(r*Math.sin(a))+'px;--spark:'+['#ffbf30','#2bcfad','#f56a9d','#a47aff','#4abef1'][i%5]+'"></b>';}).join('');
  animation=setTimeout(()=>{$('salute').replaceChildren();},900);
 }
+const PARTICLES={
+ name:'Атом конструкторы',desc:'Протон, нейтрон және электрон санын тап.',
+ easy:[['¹²₆C · көміртек атомы',6,12,0],['²³₁₁Na · натрий атомы',11,23,0],['³⁵₁₇Cl · хлор атомы',17,35,0],['³⁷₁₇Cl · хлор изотопы',17,37,0],['²⁷₁₃Al · алюминий атомы',13,27,0]],
+ hard:[['²³₁₁Na⁺ · натрий ионы',11,23,1],['³⁵₁₇Cl⁻ · хлорид ионы',17,35,-1],['²⁷₁₃Al³⁺ · алюминий ионы',13,27,3],['¹⁶₈O²⁻ · оксид ионы',8,16,-2],['⁵⁶₂₆Fe³⁺ · темір(III) ионы',26,56,3]]
+};
+const BALANCE={
+ ...M[8],
+ easy:[...M[8].easy,['Ca + O₂ → CaO',[2,1,2]],['H₂ + Cl₂ → HCl',[1,1,2]]],
+ hard:[...M[8].hard,['Al + HCl → AlCl₃ + H₂',[2,6,2,3]],['Na₂CO₃ + HCl → NaCl + H₂O + CO₂',[1,2,2,1,1]]]
+};
+const subs='₀₁₂₃₄₅₆₇₈₉';
+function balanceRows(equation,coeffs){
+ const parts=equation.split('→').map(side=>side.split('+').map(x=>x.trim()));
+ let i=0;
+ const sums=parts.map(side=>{
+  const counts=new Map();
+  for(const compound of side){
+   const k=coeffs[i++];
+   for(const [,element,sub] of compound.matchAll(/([A-Z][a-z]?)([₀-₉]*)/g)){
+    const n=Number([...sub].map(d=>subs.indexOf(d)).join('')||1);
+    counts.set(element,(counts.get(element)||0)+k*n);
+   }
+  }
+  return counts;
+ });
+ return [...new Set(sums.flatMap(s=>[...s.keys()]))].map(e=>[e,sums[0].get(e)||0,sums[1].get(e)||0]);
+}
+const inputRow=(label,extra='')=>'<label>'+esc(label)+'<input type="text" class="answer" inputmode="numeric" maxlength="2" autocomplete="off" '+extra+'></label>';
+const whole=el=>/^\d+$/.test(el.value.trim())?Number(el.value):NaN;
+
 let grade,level,turn=0,solved=0;
 const flags=['□','↑','↑↓'];
 function setup(){grade=Number($('mission-grade').value);level=$('mission-level').value;turn=solved=0;$('motivation').textContent='';show();}
 function show(){
- const game=M[grade],task=game[level][turn],panel=$('mission');
+ const mode=$('mission-kind').value,atomic=mode==='particles',balanced=mode==='balance'||(mode==='grade'&&grade===8),type=mode==='grade'?grade:0;
+ const game=atomic?PARTICLES:mode==='balance'?BALANCE:M[grade],task=game[level][turn],panel=$('mission');
  if(!task){panel.innerHTML='<div class="mission-card"><h3>Миссия аяқталды</h3><p>'+solved+' / '+game[level].length+' тапсырма орындалды.</p><button id="restart-mission" type="button">Қайта ойнау</button></div>';$('restart-mission').onclick=setup;$('restart-mission').focus();return;}
  const [prompt,a,b,why]=task;let markup='',evaluate;
  const choiceButtons=choices=>'<div class="rail">'+choices.map((label,i)=>'<button type="button" data-choice="'+i+'">'+esc(label)+'</button>').join('')+'</div>';
- if(grade===7||grade===9)markup=choiceButtons(grade===7?game.labels:a);
- if(grade===8){
-  markup='<div class="rail coeff">'+prompt.split(/\s*[+→]\s*/).map(p=>'<label>'+esc(p)+'<input type="text" class="answer" inputmode="numeric" maxlength="2" autocomplete="off"></label>').join('')+'</div><button class="primary" type="submit">Тексеру</button>';
-  evaluate=()=>[[...panel.querySelectorAll('.answer')].every((el,i)=>/^\d+$/.test(el.value.trim())&&Number(el.value)===a[i]),'Ең кіші бүтін қатынас: '+a.join(' : ')+'. Екі жақтағы әр элемент атомдарының саны бірдей.'];
+ if(type===7||type===9)markup=choiceButtons(type===7?game.labels:a);
+ if(balanced){
+  const [left,right]=prompt.split('→').map(side=>side.split('+').map(x=>x.trim()));
+  markup='<p>Формулалар өзгермейді. Әр заттың алдындағы коэффициентті енгіз; 1-ді де жаз.</p><div class="equation-work"><div class="rail coeff">'+left.map(x=>inputRow(x)).join('')+'</div><span aria-hidden="true">→</span><div class="rail coeff">'+right.map(x=>inputRow(x)).join('')+'</div></div><div class="actions"><button class="primary" type="submit">Тексеру</button></div><div id="atom-counts"></div>';
+  evaluate=()=>{
+   const v=[...panel.querySelectorAll('.answer')].map(whole);
+   if(v.some(n=>!Number.isInteger(n)||n<1)){$('atom-counts').replaceChildren();return [false,'Әр бос ұяшыққа 1 немесе одан үлкен бүтін сан жаз.'];}
+   const rows=balanceRows(prompt,v),unequal=rows.filter(([,l,r])=>l!==r);
+   $('atom-counts').innerHTML='<table class="scoreboard"><caption>Сенің коэффициенттерің бойынша атом саны</caption><thead><tr><th scope="col">Элемент</th><th scope="col">Сол жақ</th><th scope="col">Оң жақ</th></tr></thead><tbody>'+rows.map(([e,l,r])=>'<tr class="'+(l===r?'good':'miss')+'"><th scope="row">'+e+'</th><td>'+l+'</td><td>'+r+'</td></tr>').join('')+'</tbody></table>';
+   if(unequal.length)return [false,'Тең емес элементтер: '+unequal.map(([e])=>e).join(', ')+'. Кестеге қарап коэффициенттерді өзгерт.'];
+   return v.every((n,i)=>n===a[i])?[true,'Ең кіші бүтін коэффициенттер: '+a.join(' : ')+'.']:[false,'Атом сандары тең. Енді коэффициенттерді ортақ бөлгішіне бөліп, ең кіші бүтін сандарды тап.'];
+  };
  }
- if(grade===10){
+ if(atomic){
+  const [z,mass,charge]=[a,b,why],correct=[z,mass-z,z-charge],names=['Протон','Нейтрон','Электрон'];
+  const chargeLabel=charge===0?'0':charge>0?'+'+charge:'−'+Math.abs(charge);
+  markup='<p class="atom-facts">Z = '+z+' · A = '+mass+' · q = '+chargeLabel+'</p>'
+   +(level==='easy'?'<p>Бейтарап атомда: p = Z, n = A − Z, e = Z.</p>':'<p>Ионның таңбалы зарядын ескер. Оң ион электрон жоғалтады, теріс ион электрон қосып алады.</p>')
+   +'<div class="rail particles">'+names.map(n=>inputRow(n)).join('')+'</div><div class="actions"><button class="primary" type="submit">Тексеру</button></div>';
+  evaluate=()=>{
+   const checks=[...panel.querySelectorAll('.answer')].map((el,i)=>{
+    const ok=whole(el)===correct[i];
+    el.setAttribute('aria-invalid',String(!ok));el.dataset.state=ok?'ok':'bad';return ok;
+   });
+   if(checks.every(Boolean))return [true,'p = '+z+'; n = '+mass+' − '+z+' = '+correct[1]+'; e = '+correct[2]+'.'];
+   const hints=['p = Z','n = A − Z',level==='easy'?'e = Z':'e = Z − q (q таңбасымен)'];
+   return [false,'Қайта қара: '+hints.filter((_,i)=>!checks[i]).join('; ')+'.'];
+  };
+ }
+ if(type===10){
   const shell=level==='hard'?['1s','2s','2pₓ','2pᵧ','2p_z']:['2pₓ','2pᵧ','2p_z'];
   markup=(level==='easy'?'<p>1s² және 2s² толтырылған. 2p ұяшықтарын ретте.</p>':'<p>1s, 2s және 2p ұяшықтарын түгел толтыр.</p>')+'<div class="orbitals">'+shell.map((s,i)=>'<label>'+s+'<br><button type="button" data-orbit="'+i+'" data-fill="0" aria-label="'+s+': бос">□</button></label>').join('')+'</div><button class="primary" type="submit">Тексеру</button>';
   evaluate=()=>{const v=[...panel.querySelectorAll('[data-orbit]')].map(x=>Number(x.dataset.fill)),p=v.slice(-3);return [(level==='easy'||(v[0]===2&&v[1]===2))&&p.reduce((s,n)=>s+n,0)===b&&(!p.includes(2)||!p.includes(0)),'2p-де '+b+' электрон болуы керек: алдымен бос ұяшықтарға бір-бірден, содан кейін жұппен орналастыр.'];};
  }
- if(grade===11){
+ if(type===11){
   markup='<label>NaOH немесе HCl көлемі, мл<input type="text" class="answer" inputmode="decimal" autocomplete="off"></label><button class="primary" type="submit">Тексеру</button>';
   evaluate=()=>{const v=panel.querySelector('.answer').value.trim().replace(',','.');return [/^\d+(\.\d+)?$/.test(v)&&Math.abs(Number(v)-a)<.051,b+' Дұрыс көлем: '+a+' мл.'];};
  }
- panel.innerHTML='<div class="mission-card"><p class="eyebrow">'+grade+'-сынып · '+(turn+1)+' / '+game[level].length+'</p><h3>'+esc(game.name)+'</h3><p>'+esc(game.desc)+'</p><p><strong>'+esc(grade===10?prompt+' · Z = '+a:prompt)+'</strong></p><form id="mission-form"><fieldset id="mission-fields">'+markup+'</fieldset></form><p id="mission-explanation"></p><button id="mission-next" type="button" hidden>Келесі тапсырма</button></div>';
+ panel.innerHTML='<div class="mission-card"><p class="eyebrow">'+(atomic?'Атом құрылысы':mode==='balance'?'Теңдеулер':grade+'-сынып')+' · '+(turn+1)+' / '+game[level].length+'</p><h3>'+esc(game.name)+'</h3><p>'+esc(game.desc)+'</p><p><strong>'+esc(type===10?prompt+' · Z = '+a:prompt)+'</strong></p><form id="mission-form"><fieldset id="mission-fields">'+markup+'</fieldset></form><p id="mission-explanation"></p><button id="mission-next" type="button" hidden>Келесі тапсырма</button></div>';
  let complete=false;
  function feedback(ok,explanation){if(complete)return;
   $('motivation').textContent=ok?'Жарайсың! +100 ұпай':'Тағы бір рет байқап көр!';
   $('motivation').className=ok?'good':'miss';
-  $('mission-explanation').textContent=ok?explanation:(grade===10?'Ұяшықтардың толу ретін және электрон санын тексер.':'Жауабыңды қайта қара. Қаласаң, келесі тапсырмаға өт.');
+  $('mission-explanation').textContent=ok||balanced||atomic?explanation:(type===10?'Ұяшықтардың толу ретін және электрон санын тексер.':'Жауабыңды қайта қара. Қаласаң, келесі тапсырмаға өт.');
   if(ok){complete=true;solved++;$('mission-fields').disabled=true;salute();}
   $('mission-next').hidden=false;
  }
  $('mission-next').onclick=()=>{turn++;$('motivation').textContent='';show();panel.querySelector('button,input')?.focus();};
  $('mission-form').onsubmit=e=>{e.preventDefault();if(evaluate)feedback(...evaluate());};
- for(const btn of panel.querySelectorAll('[data-choice]'))btn.onclick=()=>{const index=Number(btn.dataset.choice);feedback(index===(grade===7?a:b),grade===7?b:why);};
+ for(const btn of panel.querySelectorAll('[data-choice]'))btn.onclick=()=>{const index=Number(btn.dataset.choice);feedback(index===(type===7?a:b),type===7?b:why);};
  for(const btn of panel.querySelectorAll('[data-orbit]'))btn.onclick=()=>{const n=(Number(btn.dataset.fill)+1)%3;btn.dataset.fill=String(n);btn.textContent=flags[n];btn.setAttribute('aria-label',btn.parentElement.firstChild.textContent+': '+['бос','бір электрон','екі электрон'][n]);};
 }
 $('mission-grade').onchange=$('mission-level').onchange=setup;
+$('mission-kind').onchange=()=>{
+ $('mission-grade').disabled=$('mission-kind').value!=='grade';
+ setup();
+};
 const params=new URLSearchParams(location.search),requested=params.get('grade');
 if(M[requested])$('mission-grade').value=requested;
 if(params.get('difficulty')==='hard')$('mission-level').value='hard';
-setup();
+if(['balance','particles'].includes(params.get('mission')))$('mission-kind').value=params.get('mission');
+$('mission-kind').onchange();
 const cfg=window.__CHEM_CONFIG__,db=cfg?.supabaseUrl&&cfg?.supabaseAnonKey?new SupabaseStore(cfg.supabaseUrl,cfg.supabaseAnonKey):null;
 const roomStatus=msg=>{$('live-status').textContent=msg;};
 const errorText=e=>{
