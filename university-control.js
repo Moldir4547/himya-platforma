@@ -99,11 +99,25 @@ export function createUniversityControl({store,state,render,shell}){
  else {if(state.user.role!=='admin')load();content='<h1>1-ағымдық бақылау</h1>'+(state.user.role==='admin'?'<p>Әкімші режимі: алдын ала көру, жеке нәтиже сақталмайды.</p>':'')+(!loaded&&state.user.role!=='admin'?'<p>Талпыныс жүктелуде…</p>':!attempt?intro():attempt.finished_at?review(attempt)+'<p><button data-control-restart>Қайта орындау · жаңа 30 минут</button></p>':active());}
  return shell('<div class="school-path" data-university-control><a href="/universitet">← Университет модулі</a>'+navigation()+content+'<p role="status" data-control-status>'+esc(path===CARD?'':status)+'</p><p role="alert">'+esc(error)+'</p>'+(error&&!loaded?'<button data-control-load>Қайта жүктеу</button>':'')+(path===CARD?'':'<p class="school-source">Дерек: университеттің №1–6 дәрістері; эквивалент пен газдың молярлық массасын анықтау зертханалары; Ж.Ә. Шоқыбаев, Д.Ә. Қаражанова, М.А. Оразбаева, «Бейорганикалық химияның теориялық негіздері және элементтер химиясы практикумы», 2013. Сұрақтар платформа үшін қайта құрастырылды.</p>')+'</div>');}
  function addExerciseLink(root){
-  if(!/\/universitet\/?$/.test(location.pathname)||root.querySelector('[data-university-exercise-link]'))return;
-  const title=root.querySelector('h1');if(!title)return;
-  const section=document.createElement('p'),link=document.createElement('a');
-  link.href=exercisesHref;link.className='primary-button';link.dataset.universityExerciseLink='';
-  link.textContent='Есептер мен жаттығулар · БӨЖ және БӨОЖ →';section.append(link);title.after(section);
+  if(!/\/universitet\/?$/.test(location.pathname))return;
+  const list=root.querySelector('.lms-curriculum .lms-unit-list');
+  if(!list||list.querySelector('[data-university-exercise-link]'))return;
+  const link=document.createElement('a');
+  link.href=exercisesHref;
+  link.className='lms-unit-card';
+  link.dataset.universityExerciseLink='';
+  const index=document.createElement('span');
+  index.className='lms-unit-index';
+  index.textContent=String(list.querySelectorAll('.lms-unit-card').length+1).padStart(2,'0');
+  const body=document.createElement('div');
+  const label=document.createElement('small'),title=document.createElement('strong'),description=document.createElement('p');
+  label.textContent='Курс';title.textContent='Есептер мен жаттығулар';description.textContent='БӨЖ және БӨОЖ · 12 тақырып';
+  body.append(label,title,description);
+  const arrow=document.createElement('em');
+  arrow.setAttribute('aria-hidden','true');arrow.textContent='→';
+  link.append(index,body,arrow);
+  list.querySelector('.resource-empty')?.remove();
+  list.append(link);
  }
  function bind(root){clearInterval(timer);timer=null;addExerciseLink(root);const host=root.querySelector('[data-university-control]');if(!host)return;syncOwner();
  host.querySelector('[data-card-user]')?.addEventListener('change',e=>{cardUser=e.target.value;render();});
