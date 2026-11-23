@@ -29,3 +29,5 @@ body{background:radial-gradient(ellipse at 9% 0,#ca79fd22,transparent 55%),radia
 .task label+label{margin-top:.55rem}.cell input[type=text]{background:var(--soft)}.cell input[data-state=ok]{border-color:var(--ok)}.cell input[data-state=bad]{border-color:var(--bad)}
 @media(max-width:600px){.hero{grid-template-columns:minmax(0,1fr);gap:0}.hero-art{max-height:134px}.challenge{grid-template-columns:repeat(2,minmax(0,1fr))}.timer-box{grid-column:1 / -1}}
 @media print{body,.cell input[type=text]{background:#fff;color:#000}#round-fields :disabled{opacity:1}}
+
+.arena-link{display:inline-block;background:#ffe4a8;color:#482565;border:1px solid #d19042;border-radius:.65rem;padding:.55rem .85rem;text-decoration:none;font-weight:750}.arena-link:hover{background:#fff0c8}

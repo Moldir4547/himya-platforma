@@ -105,6 +105,9 @@ function render(){
  const topic=TOPICS.find(t=>t.id===$('topic').value);if(!topic)return;
  cleanup();
  const seconds=Number($('seconds').value);
+ const mission=new URL('chem-missions.html',location.href);
+ mission.searchParams.set('grade',String(topic.grade||10));mission.searchParams.set('difficulty',isHard()?'hard':'easy');
+ $('mission-launch').href=mission.href;
  const url=new URL(location.href);url.search=new URLSearchParams({topic:topic.id,mode,difficulty:$('difficulty').value,seconds:String(seconds)});history.replaceState(null,'',url);
  document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  const v={cross:crossView,match:matchView,code:codeView}[mode](topic);
