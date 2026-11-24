@@ -18,12 +18,13 @@ test('guided step, one wrong attempt locks, correct answer counts, mobile table 
  await page.locator('#shell-step').click();assert.match(await page.locator('#shell-game').textContent(),/2 электрон қосылды/);
  await page.locator('#shell-practice').click();
  assert.equal(await page.locator('#occupied-answer').count(),0);
- await page.getByRole('button',{name:'Тексеру',exact:true}).click();assert.ok(await page.locator('[data-shell]').first().isEnabled());
- await page.locator('[data-shell]').first().fill('2');await page.getByRole('button',{name:'Тексеру',exact:true}).click();
+ assert.equal(await page.getByRole('button',{name:'Тексеру',exact:true}).count(),0);
+ await page.locator('[data-shell]').last().press('Enter');assert.ok(await page.locator('[data-shell]').first().isEnabled());
+ await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
  assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: 1/);
  assert.ok(await page.locator('[data-shell]').first().isDisabled());await page.reload();assert.ok(await page.locator('[data-shell]').first().isDisabled());
  await page.locator('#shell-next').click();
- await page.locator('[data-shell]').first().fill('2');await page.getByRole('button',{name:'Тексеру',exact:true}).click();
+ await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
  assert.match(await page.locator('#shell-score').textContent(),/2 \/ 50 · Дұрысы: 1/);
  assert.ok(await page.locator('.shell-scroll').evaluate(x=>x.scrollWidth>x.clientWidth));assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>server.close(r));}

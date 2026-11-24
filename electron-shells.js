@@ -47,12 +47,19 @@ function render(focus=false){
   if($('shell-back'))$('shell-back').onclick=()=>{step=0;render();$('shell-step').focus();};
   if($('shell-start'))$('shell-start').onclick=()=>advance();
  }else{
-  player.innerHTML=header+'<p>Әр қабаттағы электрон санын жазыңыз.</p>'+
+  player.innerHTML=header+'<p>Әр қабаттағы электрон санын жазып, Enter басыңыз.</p>'+
    '<form id="shell-form" novalidate><fieldset '+(isLocked?'disabled':'')+'><legend>Жауабыңыз</legend><div class="shell-fields">'+e.shells.map((_,i)=>
-    '<label>'+names[i]+' (n = '+(i+1)+')<input data-shell type="text" inputmode="numeric" maxlength="2" autocomplete="off" value="'+(prior?Number(prior.answers[i]):'')+'"></label>'
-   ).join('')+'</div><button class="primary" type="submit">Тексеру</button></fieldset></form>'+
+    '<label>'+names[i]+' (n = '+(i+1)+')<input data-shell type="text" inputmode="'+(i===e.shells.length-1?'text':'numeric')+'" enterkeyhint="'+(i===e.shells.length-1?'done':'next')+'" maxlength="2" autocomplete="off" value="'+(prior?Number(prior.answers[i]):'')+'"></label>'
+   ).join('')+'</div></fieldset></form>'+
    (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: '+e.shells.join(' · ')+'</p></div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
   const form=$('shell-form');
+  form.addEventListener('keydown',ev=>{
+   if(ev.key!=='Enter'||ev.isComposing||!ev.target.matches('[data-shell]'))return;
+   ev.preventDefault();
+   const fields=[...form.querySelectorAll('[data-shell]')],index=fields.indexOf(ev.target);
+   if(index<fields.length-1){fields[index+1].focus();return;}
+   form.requestSubmit();
+  });
   form.onsubmit=ev=>{
    ev.preventDefault();if(recorded(e))return;
    const answers=[...form.querySelectorAll('[data-shell]')].map(el=>el.value.trim()),result=evaluate(e,answers);
