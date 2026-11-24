@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {readFile} from 'node:fs/promises';
 const {chromium}=await import(process.env.GAMES_QA_PLAYWRIGHT||'playwright');
-test('guided step, one wrong attempt locks, correct answer counts, mobile table scrolls',async()=>{
+test('two separate examples and 118 tasks, one wrong attempt locks, correct answer counts, mobile table scrolls',async()=>{
  const server=createServer(async(req,res)=>{try{const path=new URL(req.url,'http://localhost').pathname.split('/').at(-1);
  res.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html; charset=utf-8');
  res.end(await readFile(new URL('../'+path,import.meta.url)));}catch{res.writeHead(404).end();}});
@@ -14,18 +14,20 @@ test('guided step, one wrong attempt locks, correct answer counts, mobile table 
  const page=await browser.newPage({viewport:{width:360,height:750},isMobile:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(url);
  assert.equal(await page.locator('.shell-breakdown').count(),0);
- assert.equal(await page.locator('#shell-table-body [data-z]').count(),54);
- await page.locator('#shell-step').click();assert.match(await page.locator('#shell-game').textContent(),/2 электрон қосылды/);
+ assert.equal(await page.locator('#shell-table-body [data-z]').count(),118);
+ assert.equal(await page.locator('#shell-demos details').count(),2);
+ await page.locator('[data-z="118"]').click();assert.equal(await page.locator('[data-shell]').count(),7);
+ assert.equal(await page.locator('#shell-game .shell-config').count(),0);
  await page.locator('#shell-practice').click();
  assert.equal(await page.locator('#occupied-answer').count(),0);
  assert.equal(await page.getByRole('button',{name:'Тексеру',exact:true}).count(),0);
  await page.locator('[data-shell]').last().press('Enter');assert.ok(await page.locator('[data-shell]').first().isEnabled());
  await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
- assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: 1/);
+ assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: K = 1/);
  assert.ok(await page.locator('[data-shell]').first().isDisabled());await page.reload();assert.ok(await page.locator('[data-shell]').first().isDisabled());
  await page.locator('#shell-next').click();
  await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
- assert.match(await page.locator('#shell-score').textContent(),/2 \/ 50 · Дұрысы: 1/);
+ assert.match(await page.locator('#shell-score').textContent(),/2 \/ 118 · Дұрысы: 1/);
  assert.ok(await page.locator('.shell-scroll').evaluate(x=>x.scrollWidth>x.clientWidth));assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>server.close(r));}
 });
