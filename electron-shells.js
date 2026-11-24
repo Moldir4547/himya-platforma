@@ -29,7 +29,10 @@ function update(){
 $('shell-table-head').innerHTML='<tr><th scope="col">Период</th>'+Array.from({length:18},(_,i)=>'<th scope="col">'+(i+1)+'</th>').join('')+'</tr>';
 body.innerHTML=TABLE.map(({label,cells})=>'<tr><th scope="row">'+label+'</th>'+cells.map(z=>{
  if(!z)return '<td></td>';
- if(typeof z==='string')return '<td class="shell-muted">'+z+'</td>';
+ if(typeof z==='string'){
+  const lanthanides=z==='57–71',name=lanthanides?'Лантаноидтар':'Актиноидтар';
+  return '<td><button type="button" class="shell-series" data-series="'+(lanthanides?57:89)+'" aria-label="'+name+' '+z+' қатарына өту"><small>'+name+'</small><b>'+z+' ↓</b></button></td>';
+ }
  return '<td><button type="button" data-z="'+z+'"><small>'+z+'</small><b>'+SYMBOLS[z-1]+'</b><span class="shell-marker" aria-hidden="true"></span></button></td>';
 }).join('')+'</tr>').join('');
 demos.innerHTML=DEMOS.map(z=>{
@@ -39,8 +42,8 @@ demos.innerHTML=DEMOS.map(z=>{
 function render(focus=false){
  const e=active,prior=recorded(e),isLocked=Boolean(prior);
  const header='<h3 tabindex="-1">'+e.z+' · '+e.symbol+' — '+e.name+'</h3>';
-  player.innerHTML=header+'<p>Толық электрондық конфигурацияны жазып, Enter басыңыз.</p>'+
-   '<form id="shell-form" novalidate><label>Электрондық конфигурация<input id="shell-input" type="text" enterkeyhint="done" maxlength="200" autocomplete="off" autocapitalize="off" spellcheck="false" '+(isLocked?'disabled':'')+'></label></form>'+
+  player.innerHTML=header+'<p>Толық электрондық конфигурацияны жазып, «Тексеру» батырмасын немесе Enter басыңыз.</p>'+
+   '<form id="shell-form" novalidate><label>Электрондық конфигурация<input id="shell-input" type="text" enterkeyhint="done" maxlength="200" autocomplete="off" autocapitalize="off" spellcheck="false" '+(isLocked?'disabled':'')+'></label><button type="submit" class="primary" '+(isLocked?'disabled':'')+'>Тексеру</button></form>'+
    (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: ' +config(e)+'</p></div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
   const form=$('shell-form');
   const input=$('shell-input');
@@ -66,7 +69,16 @@ function advance(){
  const next=PRACTICE.find(e=>e.z>active.z&&!recorded(e))||PRACTICE.find(e=>!recorded(e));
  if(next)select(next.z);else{const b=$('shell-next');b.textContent='Барлық тапсырма тексерілді';b.disabled=true;}
 }
-body.addEventListener('click',ev=>{const b=ev.target.closest('[data-z]');if(b)select(Number(b.dataset.z));});
+body.addEventListener('click',ev=>{
+ const series=ev.target.closest('[data-series]');
+ if(series){
+  const first=body.querySelector('[data-z="'+series.dataset.series+'"]');
+  first?.focus();
+  first?.scrollIntoView({block:'nearest',inline:'nearest'});
+  return;
+ }
+ const b=ev.target.closest('[data-z]');if(b)select(Number(b.dataset.z));
+});
 window.addEventListener('storage',event=>{
  if(event.key!==storage||!event.newValue)return;
  try{Object.assign(records,JSON.parse(event.newValue));render();}catch{}
