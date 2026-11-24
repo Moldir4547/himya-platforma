@@ -1,0 +1,28 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {readFile} from 'node:fs/promises';
+const {chromium}=await import(process.env.GAMES_QA_PLAYWRIGHT||'playwright');
+test('guided step, one wrong attempt locks, correct answer counts, mobile table scrolls',async()=>{
+ const server=createServer(async(req,res)=>{try{const path=new URL(req.url,'http://localhost').pathname.split('/').at(-1);
+ res.setHeader('Content-Type',path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html; charset=utf-8');
+ res.end(await readFile(new URL('../'+path,import.meta.url)));}catch{res.writeHead(404).end();}});
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const url='http://127.0.0.1:'+server.address().port+'/electron-shells.html';
+ let browser;
+ try{browser=await chromium.launch(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{});
+ const page=await browser.newPage({viewport:{width:360,height:750},isMobile:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(url);
+ assert.equal(await page.locator('#shell-table-body [data-z]').count(),54);
+ await page.locator('#shell-step').click();assert.match(await page.locator('#shell-game').textContent(),/2 электрон қосылды/);
+ await page.locator('#shell-practice').click();
+ await page.getByRole('button',{name:'Тексеру',exact:true}).click();assert.ok(await page.locator('[data-shell]').first().isEnabled());
+ await page.locator('[data-shell]').first().fill('2');await page.locator('#occupied-answer').fill('1');await page.getByRole('button',{name:'Тексеру',exact:true}).click();
+ assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: 1/);
+ assert.ok(await page.locator('[data-shell]').first().isDisabled());await page.reload();assert.ok(await page.locator('[data-shell]').first().isDisabled());
+ await page.locator('#shell-next').click();
+ await page.locator('[data-shell]').first().fill('2');await page.locator('#occupied-answer').fill('1');await page.getByRole('button',{name:'Тексеру',exact:true}).click();
+ assert.match(await page.locator('#shell-score').textContent(),/2 \/ 50 · Дұрысы: 1/);
+ assert.ok(await page.locator('.shell-scroll').evaluate(x=>x.scrollWidth>x.clientWidth));assert.deepEqual(errors,[]);
+ }finally{await browser?.close();await new Promise(r=>server.close(r));}
+});

@@ -1,0 +1,14 @@
+.shell-scroll{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:12px}
+.shell-periodic{width:100%;min-width:770px;border-spacing:3px;text-align:center}
+.shell-periodic caption{font-size:.85rem;padding:.5rem}.shell-periodic th{font-size:.75rem;color:var(--muted)}
+.shell-periodic td{padding:0}.shell-periodic button,.shell-muted{padding:.22rem;display:grid;align-content:center;justify-items:center;min-height:3.5rem;width:100%;border-radius:.45rem;position:relative}
+.shell-periodic button small,.shell-muted small{font-size:.67rem}.shell-muted{background:var(--soft);color:var(--muted)}
+.shell-marker{position:absolute;top:0;right:.2rem;font-size:.7rem}.shell-periodic [aria-pressed=true]{outline:2px solid var(--accent);outline-offset:-2px}
+.shell-periodic [data-result=ok]{color:var(--ok);border-color:var(--ok)}.shell-periodic [data-result=wrong]{color:var(--bad);border-color:var(--bad)}
+.shell-legend,.shell-score{color:var(--muted)}.shell-config{font-size:clamp(1.1rem,3vw,1.5rem);letter-spacing:.015em;font-weight:700}
+.shell-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr));gap:.65rem;margin-bottom:.7rem}
+.shell-fields input{width:100%;display:block}.shell-breakdown{padding-left:0;list-style:none}
+.shell-breakdown li{display:grid;grid-template-columns:minmax(5rem,1fr) minmax(7rem,3fr) auto;gap:.5rem;border-bottom:1px solid var(--line);padding:.4rem .25rem}
+.shell-note{padding:.7rem;background:var(--soft);border-radius:.5rem;margin:.7rem 0}
+.shell-correct{color:var(--ok)}.shell-wrong>p{color:var(--bad)}
+#shell-game button{margin:.25rem .35rem .25rem 0}#shell-game h3:focus{outline:0}
