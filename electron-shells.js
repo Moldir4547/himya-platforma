@@ -6,10 +6,12 @@ let records={},persistent=true,active,step=0;
 const params=new URLSearchParams(location.search);
 try{const parsed=JSON.parse(localStorage.getItem(storage)||'{}');records=parsed&&typeof parsed==='object'?parsed:{};}catch{persistent=false;}
 const recorded=e=>{
- const r=records[e.z];return PRACTICE.includes(e)&&r&&['ok','wrong'].includes(r.result)&&evaluate(e,r.answers||[])!==null&&Number.isInteger(r.occupied)?r:null;
+ const r=records[e.z];
+ if(!PRACTICE.includes(e)||!r||!['ok','wrong'].includes(r.result)||!Array.isArray(r.answers))return null;
+ const checks=evaluate(e,r.answers);
+ return checks?{...r,result:checks.every(Boolean)?'ok':'wrong'}:null;
 };
 const config=e=>e.terms.map(t=>t.orbital+superscript(t.count)).join(' ');
-const occupied=e=>e.shells.filter(n=>n>0).length;
 function save(){
  try{localStorage.setItem(storage,JSON.stringify(records));persistent=true;}catch{persistent=false;}
 }
@@ -31,39 +33,33 @@ body.innerHTML=TABLE.map(({label,cells})=>'<tr><th scope="row">'+label+'</th>'+c
  return '<td>'+(z<=54?'<button type="button" data-z="'+z+'"><small>'+z+'</small><b>'+SYMBOLS[z-1]+'</b><span class="shell-marker" aria-hidden="true"></span></button>':'<span class="shell-muted"><small>'+z+'</small><b>'+SYMBOLS[z-1]+'</b></span>')+'</td>';
 }).join('')+'</tr>').join('');
 demos.innerHTML=DEMOS.map(z=>'<button type="button" data-demo="'+z+'">'+ELEMENTS[z-1].symbol+' · '+ELEMENTS[z-1].name+'</button>').join('');
-function breakdown(e,terms=e.terms){
- return '<ol class="shell-breakdown">'+e.shells.map((_,i)=>{
-  const matching=terms.filter(t=>t.n===i+1),sum=matching.reduce((a,t)=>a+t.count,0);
-  return '<li><b>'+names[i]+' (n = '+(i+1)+')</b><span>'+(matching.length?matching.map(t=>t.orbital+superscript(t.count)).join(' + '):'Бұл қабатта электрон жоқ')+'</span><strong>'+sum+' e⁻</strong></li>';
- }).join('')+'</ol>';
-}
 function render(focus=false){
  const e=active,isDemo=DEMOS.includes(e.z),prior=recorded(e),isLocked=Boolean(prior);
  for(const b of demos.querySelectorAll('button'))b.setAttribute('aria-pressed',String(Number(b.dataset.demo)===e.z));
  const header='<h3 tabindex="-1">'+e.z+' · '+e.symbol+' — '+e.name+'</h3><p class="shell-config" aria-label="Электрондық конфигурация">'+config(e)+'</p>';
  if(isDemo){
-  const seen=e.terms.slice(0,step),current=e.terms[step-1];
+  const current=e.terms[step-1];
   player.innerHTML=header+'<p><b>Қадамдық үлгі.</b> Әр қадамда бір деңгейшенің электрондарын тиісті қабатқа қосыңыз.</p>'+
-   (current?'<p role="status" class="shell-note"><b>'+current.orbital+superscript(current.count)+'</b> → n = '+current.n+' қабатына '+current.count+' электрон қосылды.</p>':'')+breakdown(e,seen)+
-   (step<e.terms.length?'<button type="button" id="shell-step" class="primary">Келесі деңгейді қосу</button>':'<p class="shell-correct">Жауабы: '+e.shells.join(' · ')+'; электрон бар қабаттар саны — '+occupied(e)+'.</p><button type="button" id="shell-start" class="primary">Өзім орындаймын →</button>')+
+   (current?'<p role="status" class="shell-note"><b>'+current.orbital+superscript(current.count)+'</b> → n = '+current.n+' қабатына '+current.count+' электрон қосылды.</p>':'')+
+   (step<e.terms.length?'<button type="button" id="shell-step" class="primary">Келесі деңгейді қосу</button>':'<p class="shell-correct">Жауабы: '+e.shells.join(' · ')+'</p><button type="button" id="shell-start" class="primary">Өзім орындаймын →</button>')+
    (step?'<button type="button" id="shell-back">Үлгіні басынан қарау</button>':'');
   if($('shell-step'))$('shell-step').onclick=()=>{step++;render();($('shell-step')||$('shell-start')).focus();};
   if($('shell-back'))$('shell-back').onclick=()=>{step=0;render();$('shell-step').focus();};
   if($('shell-start'))$('shell-start').onclick=()=>advance();
  }else{
-  player.innerHTML=header+'<p>Әр қабаттағы электрон санын және электрон бар қабаттар санын жазыңыз. Бос қабатқа 0 жазыңыз.</p>'+
+  player.innerHTML=header+'<p>Әр қабаттағы электрон санын жазыңыз.</p>'+
    '<form id="shell-form" novalidate><fieldset '+(isLocked?'disabled':'')+'><legend>Жауабыңыз</legend><div class="shell-fields">'+e.shells.map((_,i)=>
     '<label>'+names[i]+' (n = '+(i+1)+')<input data-shell type="text" inputmode="numeric" maxlength="2" autocomplete="off" value="'+(prior?Number(prior.answers[i]):'')+'"></label>'
-   ).join('')+'<label>Электрон бар қабаттар саны<input id="occupied-answer" type="text" inputmode="numeric" maxlength="1" autocomplete="off" value="'+(prior?prior.occupied:'')+'"></label></div><button class="primary" type="submit">Тексеру</button></fieldset></form>'+
-   (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: '+e.shells.join(' · ')+'; электрон бар қабаттар саны — '+occupied(e)+'.</p>'+breakdown(e)+'</div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
+   ).join('')+'</div><button class="primary" type="submit">Тексеру</button></fieldset></form>'+
+   (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: '+e.shells.join(' · ')+'</p></div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
   const form=$('shell-form');
   form.onsubmit=ev=>{
    ev.preventDefault();if(recorded(e))return;
-   const answers=[...form.querySelectorAll('[data-shell]')].map(el=>el.value.trim()),number=$('occupied-answer').value.trim(),result=evaluate(e,answers);
-   if(!result||!/^\d$/.test(number)){
+   const answers=[...form.querySelectorAll('[data-shell]')].map(el=>el.value.trim()),result=evaluate(e,answers);
+   if(!result){
     $('shell-feedback').textContent='Барлық өріске бүтін сан жазыңыз.';return;
    }
-   const n=Number(number);records[e.z]={result:result.every(Boolean)&&n===occupied(e)?'ok':'wrong',answers,occupied:n};
+   records[e.z]={result:result.every(Boolean)?'ok':'wrong',answers};
    save();render(true);
   };
   if($('shell-next'))$('shell-next').onclick=advance;
