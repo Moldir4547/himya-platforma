@@ -14,3 +14,5 @@
 #shell-game button{margin:.25rem .35rem .25rem 0}#shell-game h3:focus{outline:0}
 
 #shell-input{display:block;width:100%;margin-top:.4rem}
+
+.shell-periodic .shell-series{background:var(--soft);font-size:.85rem}.shell-series small{white-space:nowrap}
