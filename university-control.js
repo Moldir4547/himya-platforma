@@ -101,23 +101,30 @@ export function createUniversityControl({store,state,render,shell}){
  function addExerciseLink(root){
   if(!/\/universitet\/?$/.test(location.pathname))return;
   const list=root.querySelector('.lms-curriculum .lms-unit-list');
-  if(!list||list.querySelector('[data-university-exercise-link]'))return;
+  if(!list)return;
+  const links=[
+   ['universityExerciseLink',exercisesHref,'Есептер мен жаттығулар','БӨЖ және БӨОЖ · 12 тақырып'],
+   ['universityElectronLink',new URL('./electron-shells.html',import.meta.url).href,'Электрон қабаттары','Менделеев кестесі · 50 тапсырма']
+  ];
+  for(const [key,href,name,desc] of links){
+  if([...list.querySelectorAll('.lms-unit-card')].some(a=>key in a.dataset))continue;
   const link=document.createElement('a');
-  link.href=exercisesHref;
+  link.href=href;
   link.className='lms-unit-card';
-  link.dataset.universityExerciseLink='';
+  link.dataset[key]='';
   const index=document.createElement('span');
   index.className='lms-unit-index';
   index.textContent=String(list.querySelectorAll('.lms-unit-card').length+1).padStart(2,'0');
   const body=document.createElement('div');
   const label=document.createElement('small'),title=document.createElement('strong'),description=document.createElement('p');
-  label.textContent='Курс';title.textContent='Есептер мен жаттығулар';description.textContent='БӨЖ және БӨОЖ · 12 тақырып';
+  label.textContent='Курс';title.textContent=name;description.textContent=desc;
   body.append(label,title,description);
   const arrow=document.createElement('em');
   arrow.setAttribute('aria-hidden','true');arrow.textContent='→';
   link.append(index,body,arrow);
   list.querySelector('.resource-empty')?.remove();
   list.append(link);
+  }
  }
  function bind(root){clearInterval(timer);timer=null;addExerciseLink(root);const host=root.querySelector('[data-university-control]');if(!host)return;syncOwner();
  host.querySelector('[data-card-user]')?.addEventListener('change',e=>{cardUser=e.target.value;render();});
