@@ -1,15 +1,15 @@
-import {TABLE,SYMBOLS,ELEMENTS,PRACTICE,DEMOS,evaluate,superscript} from './electron-shells-data.js';
+import {TABLE,SYMBOLS,ELEMENTS,PRACTICE,DEMOS,evaluateConfiguration,superscript} from './electron-shells-data.js';
 const $=id=>document.getElementById(id);
 const player=$('shell-game'),body=$('shell-table-body'),demos=$('shell-demos');
-const names=['K','L','M','N','O','P','Q'],storage='chembridge-electron-shells-v1';
+const storage='chembridge-electron-config-v1';
 let records={},persistent=true,active;
 const params=new URLSearchParams(location.search);
 try{const parsed=JSON.parse(localStorage.getItem(storage)||'{}');records=parsed&&typeof parsed==='object'?parsed:{};}catch{persistent=false;}
 const recorded=e=>{
  const r=records[e.z];
- if(!PRACTICE.includes(e)||!r||!['ok','wrong'].includes(r.result)||!Array.isArray(r.answers))return null;
- const checks=evaluate(e,r.answers);
- return checks?{...r,result:checks.every(Boolean)?'ok':'wrong'}:null;
+ if(!PRACTICE.includes(e)||!r||!['ok','wrong'].includes(r.result)||typeof r.input!=='string')return null;
+ const checks=evaluateConfiguration(e,r.input);
+ return checks===null?null:{...r,result:checks?'ok':'wrong'};
 };
 const config=e=>e.terms.map(t=>t.orbital+superscript(t.count)).join(' ');
 function save(){
@@ -32,34 +32,26 @@ body.innerHTML=TABLE.map(({label,cells})=>'<tr><th scope="row">'+label+'</th>'+c
  if(typeof z==='string')return '<td class="shell-muted">'+z+'</td>';
  return '<td><button type="button" data-z="'+z+'"><small>'+z+'</small><b>'+SYMBOLS[z-1]+'</b><span class="shell-marker" aria-hidden="true"></span></button></td>';
 }).join('')+'</tr>').join('');
-const answer=e=>e.shells.map((n,i)=>names[i]+' = '+n).join(' · ');
 demos.innerHTML=DEMOS.map(z=>{
  const e=ELEMENTS[z-1];
- return '<details><summary>'+e.symbol+' · '+e.name+'</summary><p>'+config(e)+'</p><p><b>'+answer(e)+'</b></p></details>';
+ return '<details><summary>'+e.symbol+' · '+e.name+'</summary><p>'+config(e)+'</p></details>';
 }).join('');
 function render(focus=false){
  const e=active,prior=recorded(e),isLocked=Boolean(prior);
  const header='<h3 tabindex="-1">'+e.z+' · '+e.symbol+' — '+e.name+'</h3>';
-  player.innerHTML=header+'<p>Әр қабаттағы электрон санын жазып, Enter басыңыз.</p>'+
-   '<form id="shell-form" novalidate><fieldset '+(isLocked?'disabled':'')+'><legend>Жауабыңыз</legend><div class="shell-fields">'+e.shells.map((_,i)=>
-    '<label>'+names[i]+' (n = '+(i+1)+')<input data-shell type="text" inputmode="'+(i===e.shells.length-1?'text':'numeric')+'" enterkeyhint="'+(i===e.shells.length-1?'done':'next')+'" maxlength="2" autocomplete="off" value="'+(prior?Number(prior.answers[i]):'')+'"></label>'
-   ).join('')+'</div></fieldset></form>'+
-   (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: '+answer(e)+'</p></div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
+  player.innerHTML=header+'<p>Толық электрондық конфигурацияны жазып, Enter басыңыз.</p>'+
+   '<form id="shell-form" novalidate><label>Электрондық конфигурация<input id="shell-input" type="text" enterkeyhint="done" maxlength="200" autocomplete="off" autocapitalize="off" spellcheck="false" '+(isLocked?'disabled':'')+'></label></form>'+
+   (isLocked?'<div class="shell-note '+(prior.result==='ok'?'shell-correct':'shell-wrong')+'"><p><b>'+(prior.result==='ok'?'Дұрыс!':'Қате жауап. Бұл тапсырма жабылды.')+'</b> Дұрыс жауап: ' +config(e)+'</p></div><button type="button" id="shell-next" class="primary">Келесі тапсырма →</button>':'<p id="shell-feedback" role="status"></p>');
   const form=$('shell-form');
-  form.addEventListener('keydown',ev=>{
-   if(ev.key!=='Enter'||ev.isComposing||!ev.target.matches('[data-shell]'))return;
-   ev.preventDefault();
-   const fields=[...form.querySelectorAll('[data-shell]')],index=fields.indexOf(ev.target);
-   if(index<fields.length-1){fields[index+1].focus();return;}
-   form.requestSubmit();
-  });
+  const input=$('shell-input');
+  if(prior)input.value=prior.input;
   form.onsubmit=ev=>{
    ev.preventDefault();if(recorded(e))return;
-   const answers=[...form.querySelectorAll('[data-shell]')].map(el=>el.value.trim()),result=evaluate(e,answers);
-   if(!result){
-    $('shell-feedback').textContent='Барлық өріске бүтін сан жазыңыз.';return;
+   const value=input.value.trim(),result=evaluateConfiguration(e,value);
+   if(result===null){
+    $('shell-feedback').textContent='Жауапты 1s2 2s2 2p6 үлгісімен жазыңыз. Әр деңгейшені бір рет көрсетіңіз.';return;
    }
-   records[e.z]={result:result.every(Boolean)?'ok':'wrong',answers};
+   records[e.z]={result:result?'ok':'wrong',input:value};
    save();render(true);
   };
   if($('shell-next'))$('shell-next').onclick=advance;

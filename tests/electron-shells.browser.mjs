@@ -16,17 +16,17 @@ test('two separate examples and 118 tasks, one wrong attempt locks, correct answ
  assert.equal(await page.locator('.shell-breakdown').count(),0);
  assert.equal(await page.locator('#shell-table-body [data-z]').count(),118);
  assert.equal(await page.locator('#shell-demos details').count(),2);
- await page.locator('[data-z="118"]').click();assert.equal(await page.locator('[data-shell]').count(),7);
+ await page.locator('[data-z="118"]').click();assert.equal(await page.locator('#shell-input').count(),1);
  assert.equal(await page.locator('#shell-game .shell-config').count(),0);
  await page.locator('#shell-practice').click();
  assert.equal(await page.locator('#occupied-answer').count(),0);
  assert.equal(await page.getByRole('button',{name:'Тексеру',exact:true}).count(),0);
- await page.locator('[data-shell]').last().press('Enter');assert.ok(await page.locator('[data-shell]').first().isEnabled());
- await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
- assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: K = 1/);
- assert.ok(await page.locator('[data-shell]').first().isDisabled());await page.reload();assert.ok(await page.locator('[data-shell]').first().isDisabled());
+ await page.locator('#shell-input').last().press('Enter');assert.ok(await page.locator('#shell-input').first().isEnabled());
+ await page.locator('#shell-input').first().fill('1s2');await page.locator('#shell-input').last().press('Enter');
+ assert.match(await page.locator('#shell-game').textContent(),/Қате жауап.*Дұрыс жауап: 1s¹/);
+ assert.ok(await page.locator('#shell-input').first().isDisabled());await page.reload();assert.ok(await page.locator('#shell-input').first().isDisabled());
  await page.locator('#shell-next').click();
- await page.locator('[data-shell]').first().fill('2');await page.locator('[data-shell]').last().press('Enter');
+ await page.locator('#shell-input').first().fill('1s²');await page.locator('#shell-input').last().press('Enter');
  assert.match(await page.locator('#shell-score').textContent(),/2 \/ 118 · Дұрысы: 1/);
  assert.ok(await page.locator('.shell-scroll').evaluate(x=>x.scrollWidth>x.clientWidth));assert.deepEqual(errors,[]);
  }finally{await browser?.close();await new Promise(r=>server.close(r));}

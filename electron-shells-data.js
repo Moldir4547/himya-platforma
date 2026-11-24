@@ -62,3 +62,17 @@ export const evaluate=(element,values)=>{
  if(values.length!==element.period||!values.every(v=>/^\d{1,2}$/.test(v.trim())))return null;
  return values.map(Number).map((v,i)=>v===element.shells[i]);
 };
+
+export function evaluateConfiguration(element, input){
+ const value=input.toLowerCase().replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,d=>String(supers.indexOf(d))).replace(/\s/g,'');
+ if(!value)return null;
+ const tokens=/([1-7][spdf])\^?([1-9]\d?)(?=[1-7][spdf]|$)/gy, entered=new Map();
+ let i=0;
+ while(i<value.length){
+  const term=tokens.exec(value);
+  if(!term||entered.has(term[1]))return null;
+  entered.set(term[1],Number(term[2]));
+  i=tokens.lastIndex;
+ }
+ return entered.size===element.terms.length&&element.terms.every(t=>entered.get(t.orbital)===t.count);
+}

@@ -12,3 +12,5 @@
 .shell-note{padding:.7rem;background:var(--soft);border-radius:.5rem;margin:.7rem 0}
 .shell-correct{color:var(--ok)}.shell-wrong>p{color:var(--bad)}
 #shell-game button{margin:.25rem .35rem .25rem 0}#shell-game h3:focus{outline:0}
+
+#shell-input{display:block;width:100%;margin-top:.4rem}
