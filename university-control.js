@@ -104,7 +104,7 @@ export function createUniversityControl({store,state,render,shell}){
   if(!list)return;
   const links=[
    ['universityExerciseLink',exercisesHref,'Есептер мен жаттығулар','БӨЖ және БӨОЖ · 12 тақырып'],
-   ['universityElectronLink',new URL('./electron-shells.html',import.meta.url).href,'Электрон қабаттары','Менделеев кестесі · 118 тапсырма']
+   ['universityElectronLink',new URL('./electron-shells.html',import.meta.url).href,'Электрондық конфигурация','Менделеев кестесі · 118 тапсырма']
   ];
   for(const [key,href,name,desc] of links){
   if([...list.querySelectorAll('.lms-unit-card')].some(a=>key in a.dataset))continue;
