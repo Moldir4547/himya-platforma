@@ -7,7 +7,8 @@ test('self-assessment is separate from review; counts, versions, roles and teach
  await db.exec("create role anon;create role authenticated;create schema auth;create function auth.uid() returns uuid language sql as $$ select nullif(current_setting('app.uid',true),'')::uuid $$; grant usage on schema auth to authenticated;create table profiles(id uuid primary key,display_name text,role text,participant_type text);");
  const ids=[1,2,3,4,5].map(n=>'00000000-0000-4000-8000-00000000000'+n);
  for(const [i,id] of ids.entries())await q('insert into profiles values($1,$2,$3,$4)',[id,'QA'+i,i===0?'admin':'student',['teacher','teacher','school_student','university_student','teacher'][i]]);
- for(const f of ['202611180001_worksheet_photos','202611200001_bridge_exit'])await db.exec(readFileSync(new URL('../supabase/migrations/'+f+'.sql',import.meta.url),'utf8'));
+ await db.exec("create table content_items(id text primary key,area text,is_published boolean,path text);create table content_resources(id text primary key,item_id text);insert into content_items values('labs','university',true,'/universitet/ozin-ozi-daiyndau/test'),('hidden','university',false,'/universitet/teoriya/unpublished'),('lectures','university',true,'/universitet/teoriya');insert into content_resources values('lecture1','lectures');");
+ for(const f of ['202611180001_worksheet_photos','202611200001_bridge_exit','202611200002_lesson_reflection'])await db.exec(readFileSync(new URL('../supabase/migrations/'+f+'.sql',import.meta.url),'utf8'));
  const as=async i=>{await db.exec('reset role');await q("select set_config('app.uid',$1,false)",[ids[i]]);await db.exec('set role authenticated');};
  await as(0);await q('select ws_authorize($1)',[ids[1]]);await as(1);const code=(await q('select ws_code() code')).rows[0].code;
  const save=(lesson,step,rev=0,c=null,keep=false,text='Иондар қозғалады')=>q("select * from bridge_exit_save($1,$2,$3,'diagram','first','',$4,$5,$6)",[lesson,step,text,c,keep,rev]);
@@ -23,5 +24,8 @@ test('self-assessment is separate from review; counts, versions, roles and teach
  await as(1);await assert.rejects(q("select bridge_exit_review($1,1,'partial')",[rec.id]));
  await as(0);assert.equal((await stats(true)).rows.reduce((s,v)=>s+Number(v.responses),0),2);assert.equal(Number((await stats(true,'school_student')).rows[0].responses),1);await assert.rejects(save('bond',2));
  await as(2);await save('bond',2,2);await as(1);assert.equal((await stats()).rows.length,0);
+ await as(2);await save('school:safety-mixtures',2);await save('school:bonding',1);
+ await assert.rejects(save('school:no-such-lesson',2));await assert.rejects(save('uni:hidden',2));
+ await as(3);await save('lecture:lecture1',4);await save('uni:labs',3);await assert.rejects(save('lecture:missing',4));
  }finally{await db.close();}
 });
